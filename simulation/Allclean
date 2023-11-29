@@ -1,0 +1,20 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/CleanFunctions      # Tutorial clean functions
+#------------------------------------------------------------------------------
+
+cleanCase0
+
+# Remove surface and features
+rm -rf constant/triSurface
+rm -rf constant/extendedFeatureEdgeMesh
+
+# EXTENDED STEPS: delete all traces of possible previous runs
+# remove all processors if present
+rm -rf processor*
+# remove all time directories terminating with a number
+rm -rf *[0-9]
+# remove all log files
+rm -rf log.*
+
+#------------------------------------------------------------------------------
