@@ -6,6 +6,7 @@
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 
+# include "../0.orig/include/angulationParameters"
 forceCoeffs1
 {
     type            forceCoeffs;
@@ -22,11 +23,13 @@ forceCoeffs1
     rhoInf          1;           // Required when rho = rhoInf
     liftDir         (0 1 0);
     dragDir         (1 0 0);
-    CofR            (0 0.015 0);  // Axle midpoint on ground
+    CofR            (0 0 0);  // Axle midpoint on ground
     pitchAxis       (0 0 1);
-    magUInf         20;
-    lRef            0.0157;        // Wheelbase length
-    Aref            0.00885;        // Estimated
+    magUInf         $parallelVelocity;
+    lRef            0.644;        // Wheelbase length
+    //The estimation for the reference area, in this case, has to be parametrized
+    // using the angle of inclination of the wind velocity.
+    Aref            #eval{0.118 * 0.76 * cos(degToRad($angulationAngle)) + 0.118 * 0.644 * sin(degToRad($angulationAngle)) };        // Estimated
 }
 
 /*

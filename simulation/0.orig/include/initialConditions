@@ -6,7 +6,9 @@
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 
-flowVelocity         (-20 0 0);
+#include "angulationParameters"
+
+flowVelocity         (-$x_velocity 0 $z_velocity);
 pressure             0;
 turbulentKE          0.24;
 turbulentOmega       1.78;

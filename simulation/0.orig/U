@@ -45,6 +45,40 @@ boundaryField
     }
 
     #include "include/frontBackUpperPatches"
+
+    //Redefinition of back and frontWall in case the angluationFlag is set to TRUE
+
+    #ifeq $angulationFlag true
+        #if #eval {$angulationAngle > 0}
+            backWall
+            {
+                type  fixedValue;
+                value $internalField;
+            }
+        #else
+            backWall
+            {
+                type            inletOutlet;
+                inletValue      uniform (0 0 0);
+                value           $internalField;
+            }
+        #endif
+        
+        #if #eval {$angulationAngle < 0}
+            frontWall
+            {
+                type  fixedValue;
+                value $internalField;
+            }
+        #else
+            frontWall
+            {
+                type            inletOutlet;
+                inletValue      uniform (0 0 0);
+                value           $internalField;
+            }
+        #endif
+    #endif
 }
 
 

@@ -46,6 +46,39 @@ boundaryField
     }
 
     #include "include/frontBackUpperPatches"
+
+    // In case the angluationFlag is set to TRUE, the following patches are redefined
+    #ifeq $angulationFlag true
+        #if #eval {$angulationAngle > 0}
+            backWall
+            {
+                type  fixedValue;
+                value $internalField;
+            }
+        #else
+            backWall
+            {
+                type            inletOutlet;
+                inletValue      $internalField;
+                value           $internalField;
+            }
+        #endif
+
+        #if #eval {$angulationAngle < 0}
+            frontWall
+            {
+                type  fixedValue;
+                value $internalField;
+            }
+        #else
+            frontWall
+            {
+                type            inletOutlet;
+                inletValue      $internalField;
+                value           $internalField;
+            }
+        #endif
+    #endif
 }
 
 

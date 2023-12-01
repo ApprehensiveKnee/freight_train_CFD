@@ -1,0 +1,48 @@
+/*---------------------------------------------------------------------------*\
+                 DEFINITION OF ANGULATION PARAMETERS AND FLAGS:
+
+    We include in this file a series of parameters and flags to be used
+    during the testing phase, to experiment with different inclinations of
+    the wind velocity when perfomeing the simulation. For this first 
+    implementation, we define the following parameters:
+    -  angulationFlag: flag to indicate whether the wind velocity is 
+        inclined or not.
+    -  angulationAngle: angle of inclination of the wind velocity. In this
+        case, the angle is defined with respect to the x-axis,  over the x-z 
+        plane. The angle is defined in degrees and a limit angle is defined
+        to 15, to avoid too inclied wind velocities.
+\*---------------------------------------------------------------------------*/
+
+// Just a variable to set the module of the velocity.
+parallelVelocity      20;
+
+// ---------------------------* Angulation flag *---------------------------
+// false: no angulation
+// true: angulation
+
+angulationFlag          true;
+// In case the angulation flag is true, the boundary conditions and inlet velocity
+// values must me modifed and recomputed using the angulationAngle parameter.
+// Please note that the angle is defined for an analogous clockwise rotation 
+// of the train over the x-z plane for positive  values of the angle. 
+// The angle is defined in degrees and a limit angle is defined too
+
+angulationAngle         15;
+angleLimit              20;
+#ifeq $angulationFlag true  
+    #if #eval {$angulationAngle > $angleLimit}
+        angulationAngle      $angleLimit;
+    #else
+        angulationAngle      $angulationAngle;
+    #endif
+#else
+    angulationAngle      0;
+#endif
+
+// Compute the input velocity components
+// The velocity is defined in the x-z plane, with the x component being the
+// parallel velocity and the z component being the perpendicular velocity.
+
+
+x_velocity              #eval{ $parallelVelocity * cos(degToRad($angulationAngle)) };
+z_velocity              #eval{ $parallelVelocity * sin(degToRad($angulationAngle)) };
