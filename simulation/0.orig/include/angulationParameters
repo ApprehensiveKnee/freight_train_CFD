@@ -20,7 +20,7 @@ parallelVelocity      20;
 // false: no angulation
 // true: angulation
 
-angulationFlag          true;
+angulationFlag          false;
 // In case the angulation flag is true, the boundary conditions and inlet velocity
 // values must me modifed and recomputed using the angulationAngle parameter.
 // Please note that the angle is defined for an analogous clockwise rotation 

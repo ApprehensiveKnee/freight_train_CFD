@@ -7,6 +7,28 @@
 \*---------------------------------------------------------------------------*/
 
 # include "../0.orig/include/angulationParameters"
+
+
+// Compute the area of the maximum cross section, obtained by intersecating the train shape
+// (rectangular for simolicity) with the plane perpendicular to the wind velocity.
+
+// First define Theta, the limit angle, that is the angle at which the lenght of the cross section
+// becomes larger than the effective length of diagonal the train, that is d = sqrt(0.076^2 + 0.644^2)
+
+d               #eval{ sqrt(0.076*0.076 + 0.644*0.644) };
+Theta           #eval{ acos(0.076/$d) };
+
+// Consider the limit case, regardless of the limiting angle defined in the angulationParameters file.
+#if #eval {$angulationAngle < $Theta}
+    lCross       #eval{ 0.076 / cos(degToRad($angulationAngle)) };
+#else
+    lCross       $d;
+#endif
+
+dragX        #eval {-cos(degToRad($angulationAngle))};
+dragZ        #eval {sin(degToRad($angulationAngle))};
+
+// ************************************************************************* //
 forceCoeffs1
 {
     type            forceCoeffs;
@@ -22,14 +44,14 @@ forceCoeffs1
     rho             rhoInf;      // Indicates incompressible
     rhoInf          1;           // Required when rho = rhoInf
     liftDir         (0 1 0);
-    dragDir         (1 0 0);
+    dragDir         ($dragX 0 $dragZ);
     CofR            (0 0 0);  // Axle midpoint on ground
     pitchAxis       (0 0 1);
     magUInf         $parallelVelocity;
     lRef            0.644;        // Wheelbase length
     //The estimation for the reference area, in this case, has to be parametrized
     // using the angle of inclination of the wind velocity.
-    Aref            #eval{0.118 * 0.76 * cos(degToRad($angulationAngle)) + 0.118 * 0.644 * sin(degToRad($angulationAngle)) };        // Estimated
+    Aref            #eval{ $lCross * 0.118};        // Estimated
 }
 
 /*

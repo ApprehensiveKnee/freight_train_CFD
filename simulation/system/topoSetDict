@@ -16,15 +16,283 @@ FoamFile
 
 actions
 (
-    // For easier post-processing, and data-conversion tests
+    // ----------------------------------------------------------------- //
+    
+    // Extract faces from the lower, upper, front and back patches
+
+    // LOWERWALL
+    // {
+    //     name    lowerWallFaces;
+    //     type    faceSet;
+    //     action  new;
+    //     source  patchToFace;
+    //     sourceInfo
+    //     {
+    //         name "lowerWall";
+    //     }
+    // }
+    // UPPERWALL
     {
-        name    inner;
-        type    cellZoneSet;
+        name    upperWallFaces;
+        type    faceSet;
+        action  new;
+        source  patchToFace;
+        sourceInfo
+        {
+            patch "upperWall";
+        }
+    }
+    // FRONTWALL
+    {
+        name    frontWallFaces;
+        type    faceSet;
+        action  new;
+        source  patchToFace;
+        sourceInfo
+        {
+            patch "frontWall";
+        }
+    }
+    // BACKWALL
+    {
+        name    backWallFaces;
+        type    faceSet;
+        action  new;
+        source  patchToFace;
+        sourceInfo
+        {
+            patch "backWall";
+        }
+    }
+
+    //-----------------------------------------------------------------//
+
+    // Create face sets for the patches in question, defining appropriate bounding boxes
+    // for each patch, enclosing the interested areas of the patch (depending on the dimensions of the gallery)
+    
+    // UPPERWALL faceSet
+    {
+        name    upperCells;
+        type    cellSet;
         action  new;
         source  boxToCell;
-        min     (-1 -0.5 0);
-        max     ( 6  0.5 2);
+        sourceInfo
+        {
+            box     (-1.3 1.23 -1.221) (0.6 1.31 1.221);
+        }
     }
+
+    {
+        name    upperFaces;
+        type    faceSet;
+        action  new;
+        source  cellToFace;
+        sourceInfo
+        {
+            set     upperCells;
+            option  all;
+        }
+    }
+
+    // FRONTWALL faceSet
+
+ 	{
+        name    frontCells;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        sourceInfo
+        {
+            box     (-1.3 -0.01 1.15) (0.6 1.31 1.221);
+
+        }
+ 	}
+
+ 	{
+        name    frontFaces;
+        type    faceSet;
+        action  new;
+        source  cellToFace;
+        sourceInfo
+        {
+            set     frontCells;
+            option  all;
+        }
+    }
+
+    // BACKWALL faceSet
+
+    {
+        name    backCells;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        sourceInfo
+        {
+            box     (-1.3 -0.01 -1.221) (0.6 1.31 -1.15);
+
+        }
+ 	}
+
+ 	{
+        name    backFaces;
+        type    faceSet;
+        action  new;
+        source  cellToFace;
+        sourceInfo
+        {
+            set     backCells;
+            option  all;
+        }
+    }
+
+    //-----------------------------------------------------------------//
+    // Finally, cut out the faces defined by bounding boxes from the original patches
+    // and generate the new ones as a union of the new smaller patches and the cut-out ones
+    
+
+    //UPPERWALL
+ 	{
+        name    cutoutUpperFaces;
+        type    faceSet;
+        action  new;
+        source  faceToFace;
+        sourceInfo
+        {
+            set upperWallFaces;  		// Start with entire upperWall face
+        }
+    }
+
+ 	{
+        name    cutoutUpperFaces;
+        type    faceSet;
+        action  delete;
+        source  faceToFace;
+        sourceInfo
+        {
+			set upperFaces;  		// Remove upperFaces faces
+        }
+    }
+
+
+ 	{
+        name    innerUpperFaces;
+        type    faceSet;
+        action  new;
+        source  faceToFace;
+        sourceInfo
+        {
+            set upperWallFaces; 		// Start with entire upperWall face
+        }
+    }
+
+ 	{
+        name    innerUpperFaces;
+        type    faceSet;
+        action  delete;
+        source  faceToFace;
+        sourceInfo
+        {
+			set cutoutUpperFaces;  // Remove cutoutUpperFaces faces
+        }
+    }
+
+    // FRONTWALL
+
+    {
+        name    cutoutFrontFaces;
+        type    faceSet;
+        action  new;
+        source  faceToFace;
+        sourceInfo
+        {
+            set frontWallFaces;  		// Start with entire frontWall face
+        }
+    }
+
+    {
+        name    cutoutFrontFaces;
+        type    faceSet;
+        action  delete;
+        source  faceToFace;
+        sourceInfo
+        {
+			set frontFaces;  		// Remove frontFaces faces
+        }
+    }
+
+    {
+        name    innerFrontFaces;
+        type    faceSet;
+        action  new;
+        source  faceToFace;
+        sourceInfo
+        {
+            set frontWallFaces; 		// Start with entire frontWall face
+        }
+    }
+
+    {
+        name    innerFrontFaces;
+        type    faceSet;
+        action  delete;
+        source  faceToFace;
+        sourceInfo
+        {
+            set cutoutFrontFaces;  // Remove cutoutFrontFaces faces
+        }
+    }
+
+    // BACKWALL
+
+    {
+        name    cutoutBackFaces;
+        type    faceSet;
+        action  new;
+        source  faceToFace;
+        sourceInfo
+        {
+            set backWallFaces;  		// Start with entire backWall face
+        }
+    }
+
+    {
+        name    cutoutBackFaces;
+        type    faceSet;
+        action  delete;
+        source  faceToFace;
+        sourceInfo
+        {
+            set backFaces;  		// Remove backFaces faces
+        }
+    }
+
+    {
+        name    innerBackFaces;
+        type    faceSet;
+        action  new;
+        source  faceToFace;
+        sourceInfo
+        {
+            set backWallFaces; 		// Start with entire backWall face
+        }
+    }
+
+    {
+        name    innerBackFaces;
+        type    faceSet;
+        action  delete;
+        source  faceToFace;
+        sourceInfo
+        {
+            set cutoutBackFaces;  // Remove cutoutBackFaces faces
+        }
+    }
+
+ 	
+
+    //-----------------------------------------------------------------//
+
 );
 
 
