@@ -33,7 +33,7 @@ runParallel $decompDict snappyHexMesh -overwrite
 
 runParallel $decompDict topoSet
 
-# runParallel $decompDict createPatch -overwrite
+runParallel $decompDict createPatch -overwrite
 
 #- For non-parallel running: - set the initial fields
 # restore0Dir

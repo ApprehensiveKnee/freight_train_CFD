@@ -40,6 +40,26 @@ boundaryField
         type            zeroGradient;
     }
 
+    // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
+
+    innerBack
+    {
+        type            zeroGradient;
+    }
+
+    innerUpper
+    {
+        type            zeroGradient;
+    }
+
+    innerFront
+    {
+        type            zeroGradient;
+    }
+
+    // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
+
+
     train
     {
         type            zeroGradient;

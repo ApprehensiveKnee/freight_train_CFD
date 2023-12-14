@@ -40,6 +40,28 @@ boundaryField
         value           $internalField;
     }
 
+    // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
+
+    innerBack
+    {
+        type            kqRWallFunction;
+        value           $internalField;
+    }
+
+    innerUpper
+    {
+        type            kqRWallFunction;
+        value           $internalField;
+    }
+
+    innerFront
+    {
+        type            kqRWallFunction;
+        value           $internalField;
+    }
+
+    // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
+
     train
     {
         type            kqRWallFunction;

@@ -58,6 +58,28 @@ boundaryField
         value           uniform 0;
     }
 
+    // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
+
+    innerBack
+    {
+        type            nutkWallFunction;
+        value           uniform 0;
+    }
+
+    innerUpper
+    {
+        type            nutkWallFunction;
+        value           uniform 0;
+    }
+
+    innerFront
+    {
+        type            nutkWallFunction;
+        value           uniform 0;
+    }
+
+    // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
+
     train
     {
         type            nutkWallFunction;

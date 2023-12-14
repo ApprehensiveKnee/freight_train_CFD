@@ -35,14 +35,35 @@ boundaryField
 
     lowerWall
     {
-        type            fixedValue;
-        value           $internalField;
+        type            noSlip;
     }
+
+    // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
+
+    innerBack
+    {
+        type            noSlip;
+    }
+
+    innerUpper
+    {
+        type            noSlip;
+    }
+
+    innerFront
+    {
+        type            noSlip;
+    }
+
+    // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
+
 
     train
     {
         type            noSlip;
     }
+
+
 
     #include "include/frontBackUpperPatches"
 

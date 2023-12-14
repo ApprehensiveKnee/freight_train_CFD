@@ -17,7 +17,7 @@ FoamFile
 // Which of the steps to run
 castellatedMesh true;
 snap            true;
-addLayers       false;
+addLayers       true;
 
 // Include custom defined refinement parameters file
 #include "../0.orig/include/refinementParameters"

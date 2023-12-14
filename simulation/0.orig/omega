@@ -39,6 +39,28 @@ boundaryField
         value           $internalField;
     }
 
+    // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
+
+    innerBack
+    {
+        type            omegaWallFunction;
+        value           $internalField;
+    }
+
+    innerUpper
+    {
+        type            omegaWallFunction;
+        value           $internalField;
+    }
+
+    innerFront
+    {
+        type            omegaWallFunction;
+        value           $internalField;
+    }
+    // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
+
+
     train
     {
         type            omegaWallFunction;
