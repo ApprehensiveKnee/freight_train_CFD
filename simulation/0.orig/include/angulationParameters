@@ -20,15 +20,15 @@ parallelVelocity      20;
 // false: no angulation
 // true: angulation
 
-angulationFlag          false;
+angulationFlag          true;
 // In case the angulation flag is true, the boundary conditions and inlet velocity
 // values must me modifed and recomputed using the angulationAngle parameter.
 // Please note that the angle is defined for an analogous clockwise rotation 
 // of the train over the x-z plane for positive  values of the angle. 
 // The angle is defined in degrees and a limit angle is defined too
 
-angulationAngle         15;
-angleLimit              20;
+angulationAngle         10;
+angleLimit              20.;
 #ifeq $angulationFlag true  
     #if #eval {$angulationAngle > $angleLimit}
         angulationAngle      $angleLimit;
@@ -36,7 +36,7 @@ angleLimit              20;
         angulationAngle      $angulationAngle;
     #endif
 #else
-    angulationAngle      0;
+    angulationAngle      0.;
 #endif
 
 // Compute the input velocity components

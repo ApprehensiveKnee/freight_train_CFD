@@ -19,13 +19,13 @@ d               #eval{ sqrt(0.076*0.076 + 0.644*0.644) };
 Theta           #eval{ acos(0.076/$d) };
 
 // Consider the limit case, regardless of the limiting angle defined in the angulationParameters file.
-#if #eval {$angulationAngle < $Theta}
+#if #eval{$angulationAngle > -$Theta} && #eval{$angulationAngle < $Theta}
     lCross       #eval{ 0.076 / cos(degToRad($angulationAngle)) };
 #else
     lCross       $d;
 #endif
 
-dragX        #eval {-cos(degToRad($angulationAngle))};
+dragX        #eval {cos(degToRad($angulationAngle))};
 dragZ        #eval {sin(degToRad($angulationAngle))};
 
 // ************************************************************************* //

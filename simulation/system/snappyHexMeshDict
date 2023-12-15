@@ -16,13 +16,18 @@ FoamFile
 
 // Which of the steps to run
 castellatedMesh true;
-snap            true;
-addLayers       true;
+snap            false;
+addLayers       false;
 
 // Include custom defined refinement parameters file
+#include "../0.orig/include/angulationParameters"
 #include "../0.orig/include/refinementParameters"
 
+e1_x    #eval{cos(degToRad($angulationAngle))};
+e1_z    #eval{sin(degToRad($angulationAngle))};
 
+e3_x    #eval{sin(degToRad($angulationAngle))};
+e3_z    #eval{cos(degToRad($angulationAngle))};
 // Geometry. Definition of all surfaces. All surfaces are of class
 // searchableSurface.
 // Surfaces are used
@@ -40,40 +45,54 @@ geometry
     #ifeq $REFINEMENT_BOX_0 true
     refinementBox0
     {
-        type box;
-        min     $MIN_0;
-        max     $MAX_0;
+        type searchableRotatedBox;
+        span       $SPAN_0;
+        origin     $ORIG_0;
+        e1              ($e1_x 0 $e1_z);    //relationship of e1 local axes and global coord.system
+        e3              ($e3_x 0 $e3_z);    //relationship of e3 local axes and global coord.system
     }
+
+
+    
     #endif
 
     // refinement box 2 (include only if REFINEMENT_BOX_2 is defined)
     #ifeq $REFINEMENT_BOX_1 true
     refinementBox1
     {
-        type box;
-        min     $MIN_1;
-        max     $MAX_1;
+        type searchableRotatedBox;
+        span      $SPAN_1;
+        origin    $ORIG_1;
+        e1              ($e1_x 0 $e1_z);    //relationship of e1 local axes and global coord.system
+        e3              ($e3_x 0 $e3_z);    //relationship of e3 local axes and global coord.system
     }
+
     #endif
 
     // refinement box 3 (include only if REFINEMENT_BOX_3 is defined)
     #ifeq $REFINEMENT_BOX_2 true
     refinementBox2
     {
-        type box;
-        min     $MIN_2;
-        max     $MAX_2;
+        type searchableRotatedBox;
+        span      $SPAN_2;
+        origin    $ORIG_2;
+        e1              ($e1_x 0 $e1_z);    //relationship of e1 local axes and global coord.system
+        e3              ($e3_x 0 $e3_z);    //relationship of e3 local axes and global coord.system
     }
+
     #endif
 
     // refinement box 4 (include only if REFINEMENT_BOX_4 is defined)
     #ifeq $REFINEMENT_BOX_3 true
     refinementBox3
     {
-        type box;
-        min     $MIN_3;
-        max     $MAX_3;
+        type searchableRotatedBox;
+        span      $SPAN_3;
+        origin    $ORIG_3;
+        e1              ($e1_x 0 $e1_z);    //relationship of e1 local axes and global coord.system
+        e3              ($e3_x 0 $e3_z);    //relationship of e3 local axes and global coord.system
     }
+
     #endif
 }
 
@@ -156,6 +175,8 @@ castellatedMeshControls
                 inGroups (trainGroup);
             }
         }
+
+
     }
 
     // Resolve sharp angles
@@ -177,6 +198,7 @@ castellatedMeshControls
 
     refinementRegions
     {
+
         #ifeq $REFINEMENT_BOX_0 true
         refinementBox0
         {
@@ -208,7 +230,6 @@ castellatedMeshControls
             levels ((1E15 $REFINEMENT_LEVEL_3));
         }
         #endif
-
         #ifeq $REFINEMENT_TRAIN true
         train
         {

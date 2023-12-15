@@ -71,7 +71,7 @@ boundaryField
 
     // In case the angluationFlag is set to TRUE, the following patches are redefined
     #ifeq $angulationFlag true
-        #if #eval {$angulationAngle > 0}
+        #if #eval {$angulationAngle < 0}
             backWall
             {
                 type  fixedValue;
@@ -86,7 +86,7 @@ boundaryField
             }
         #endif
 
-        #if #eval {$angulationAngle < 0}
+        #if #eval {$angulationAngle > 0}
             frontWall
             {
                 type  fixedValue;
