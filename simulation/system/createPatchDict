@@ -19,6 +19,7 @@ pointSync false;
 // Patches to create.
 patches
 (
+    /*
     {
         // Name of new patch
         name innerUpper;
@@ -68,6 +69,43 @@ patches
 
         // If constructFrom = set : name of faceSet
         set innerBackFaces;
+    }
+    */
+
+    // Generate the new patches from the faceSets
+
+    {
+        // Name of new patch
+        name innerBackPlane;
+
+        // Type of new patch
+        patchInfo
+        {
+            type wall;
+        }
+
+        // How to construct: either from 'patches' or 'set'
+        constructFrom set;
+
+        // If constructFrom = patches : names of patches
+        set backPlane;
+    }
+
+    {
+        // Name of the new patch
+        name innerFrontPlane;
+
+        // Type of new patch
+        patchInfo
+        {
+            type wall;
+        }
+
+        // How to construct: either from 'patches' or 'set'
+        constructFrom set;
+
+        // If constructFrom = patches : names of patches
+        set frontPlane;
     }
 
 );

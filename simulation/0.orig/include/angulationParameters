@@ -5,9 +5,11 @@
     during the testing phase, to experiment with different inclinations of
     the wind velocity when perfomeing the simulation. For this first 
     implementation, we define the following parameters:
-    -  angulationFlag: flag to indicate whether the wind velocity is 
+    --> AngulationFlag: flag to indicate whether the wind velocity is 
         inclined or not.
-    -  angulationAngle: angle of inclination of the wind velocity. In this
+
+            /* IMPORTANT: DON'T MODIFY THE FOLLOWING COMMENTS *\
+    --> AngulationAngle: angle of inclination of the wind velocity. In this
         case, the angle is defined with respect to the x-axis,  over the x-z 
         plane. The angle is defined in degrees and a limit angle is defined
         to 15, to avoid too inclied wind velocities.
@@ -22,12 +24,12 @@ parallelVelocity      20;
 
 angulationFlag          true;
 // In case the angulation flag is true, the boundary conditions and inlet velocity
-// values must me modifed and recomputed using the angulationAngle parameter.
+// values must me modifed and recomputed using the AngulationAngle parameter.
 // Please note that the angle is defined for an analogous clockwise rotation 
 // of the train over the x-z plane for positive  values of the angle. 
 // The angle is defined in degrees and a limit angle is defined too
 
-angulationAngle         10;
+angulationAngle         10 ;
 angleLimit              20.;
 #ifeq $angulationFlag true  
     #if #eval {$angulationAngle > $angleLimit}

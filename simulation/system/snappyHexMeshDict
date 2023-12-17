@@ -28,6 +28,11 @@ e1_z    #eval{sin(degToRad($angulationAngle))};
 
 e3_x    #eval{sin(degToRad($angulationAngle))};
 e3_z    #eval{cos(degToRad($angulationAngle))};
+
+normal_x   #eval{sin(degToRad($angulationAngle))};
+normal_z   #eval{cos(degToRad($angulationAngle))};
+
+
 // Geometry. Definition of all surfaces. All surfaces are of class
 // searchableSurface.
 // Surfaces are used
@@ -41,6 +46,25 @@ geometry
         type triSurfaceMesh;
         name train;
     }
+
+    box_galleria.stl
+    {
+        type triSurfaceMesh;
+        name box_gallery;
+    }
+
+    backInternalWall.stl
+    {
+        type triSurfaceMesh;
+        name backPlane;
+    }   
+
+    frontInternalWall.stl
+    {
+        type triSurfaceMesh;
+        name frontPlane;
+    }
+
     // refinement box 1 (include only if REFINEMENT_BOX_1 is defined)
     #ifeq $REFINEMENT_BOX_0 true
     refinementBox0
@@ -176,6 +200,44 @@ castellatedMeshControls
             }
         }
 
+        box_gallery
+        {
+            // Surface-wise min and max refinement level
+            level (2 3);
+
+            // Optional specification of patch type (default is wall). No
+            // constraint types (cyclic, symmetry) etc. are allowed.
+            patchInfo
+            {
+                type wall;
+                inGroups (boxGroup);
+            }
+        }
+
+        backPlane
+        {
+            level (2 3);
+
+            patchInfo
+            {
+                type wall;
+                inGroups (backGroup);
+            }
+        }
+
+        frontPlane
+        {
+
+            level (2 3);
+
+            patchInfo
+            {
+                type wall;
+                inGroups (frontGroup);
+            }
+        }
+
+
 
     }
 
@@ -249,7 +311,8 @@ castellatedMeshControls
     // section reachable from the locationInMesh is kept.
     // NOTE: This point should never be on a face, always inside a cell, even
     // after refinement.
-    locationInMesh (1.267 1.29 1.21);
+    locationInMesh (2.8 1 1);
+
 
 
     // Whether any faceZones (as specified in the refinementSurfaces)

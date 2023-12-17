@@ -15,6 +15,30 @@ cp -f \
     "$FOAM_RUN"/freight_train_CFD/objects/motrice_rescaled.stl \
     constant/triSurface/
 
+cp -f \
+    "$FOAM_RUN"/freight_train_CFD/objects/box_galleria.stl \
+    constant/triSurface/
+
+cp -f \
+    "$FOAM_RUN"/freight_train_CFD/objects/frontInternalWall.stl \
+    constant/triSurface/   
+
+cp -f \
+    "$FOAM_RUN"/freight_train_CFD/objects/backInternalWall.stl \
+    constant/triSurface/
+
+# Define the rotation angle (take the first value retrieved by the awk command)
+angle=$(cat 0.orig/include/angulationParameters | grep angulationAngle | awk 'NR ==1{print $2}')
+
+
+# Rotate the box_galleria.stl file by an angle specified in the 0.orig/include/angulationParameters filen along the y axis (also translate the box_galleria.stl file to the origin)
+# Also suppress the output of the surfaceTransformPoints command
+surfaceTransformPoints -translate "(-0.5 0 -0.25)" -rollPitchYaw "(0 $angle 0)" constant/triSurface/box_galleria.stl constant/triSurface/box_galleria.stl > /dev/null
+
+# Do the same for the front and back internal planes
+surfaceTransformPoints -translate "(-60 0 0.25)" -rollPitchYaw "(0 $angle 0)" constant/triSurface/frontInternalWall.stl constant/triSurface/frontInternalWall.stl > /dev/null
+surfaceTransformPoints -translate "(-60 0 -0.25)" -rollPitchYaw "(0 $angle 0)" constant/triSurface/backInternalWall.stl constant/triSurface/backInternalWall.stl > /dev/null
+
 runApplication surfaceFeatureExtract
 
 runApplication blockMesh
@@ -33,7 +57,7 @@ runParallel $decompDict snappyHexMesh -overwrite
 
 runParallel $decompDict topoSet
 
-#runParallel $decompDict createPatch -overwrite
+# runParallel $decompDict createPatch -overwrite
 
 #- For non-parallel running: - set the initial fields
 # restore0Dir
@@ -52,6 +76,7 @@ runParallel $decompDict $(getApplication)
 runApplication reconstructParMesh -constant
 
 runApplication reconstructPar -latestTime
+
 
 touch train.foam
 

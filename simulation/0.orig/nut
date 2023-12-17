@@ -60,27 +60,26 @@ boundaryField
 
     // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
 
-    innerBack
+    backPlane
     {
-        type            nutkWallFunction;
+        type            calculated;
         value           uniform 0;
     }
 
-    innerUpper
+    frontPlane
     {
-        type            nutkWallFunction;
+        type            calculated;
         value           uniform 0;
     }
-
-    innerFront
-    {
-        type            nutkWallFunction;
-        value           uniform 0;
-    }
-
     // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
 
     train
+    {
+        type            nutkWallFunction;
+        value           uniform 0;
+    }
+
+    box_gallery
     {
         type            nutkWallFunction;
         value           uniform 0;

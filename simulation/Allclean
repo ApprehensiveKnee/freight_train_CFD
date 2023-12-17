@@ -9,6 +9,7 @@ cleanCase0
 rm -rf constant/triSurface
 rm -rf constant/extendedFeatureEdgeMesh
 
+
 # EXTENDED STEPS: delete all traces of possible previous runs
 # remove all processors if present
 rm -rf processor*

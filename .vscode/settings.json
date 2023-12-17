@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.cypher": "sql",
+        "forcecoeffs": "cpp"
+    }
+}

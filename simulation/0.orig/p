@@ -42,25 +42,25 @@ boundaryField
 
     // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
 
-    innerBack
+    backPlane
     {
-        type            zeroGradient;
+        type            slip;
     }
 
-    innerUpper
+    frontPlane
     {
-        type            zeroGradient;
-    }
-
-    innerFront
-    {
-        type            zeroGradient;
+        type            slip;
     }
 
     // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
 
 
     train
+    {
+        type            zeroGradient;
+    }
+
+    box_gallery
     {
         type            zeroGradient;
     }
