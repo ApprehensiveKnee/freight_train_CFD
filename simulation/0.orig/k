@@ -40,20 +40,6 @@ boundaryField
         value           $internalField;
     }
 
-    // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
-
-    backPlane
-    {
-        type            slip;
-    }
-
-    frontPlane
-    {
-        type            slip;
-    }
-
-    // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
-
     train
     {
         type            kqRWallFunction;

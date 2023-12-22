@@ -216,7 +216,7 @@ castellatedMeshControls
 
         backPlane
         {
-            level (2 3);
+            level (1 1);
 
             patchInfo
             {
@@ -228,7 +228,7 @@ castellatedMeshControls
         frontPlane
         {
 
-            level (2 3);
+            level (1 1);
 
             patchInfo
             {

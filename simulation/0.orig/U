@@ -38,21 +38,6 @@ boundaryField
         type            noSlip;
     }
 
-    // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
-
-    backPlane
-    {
-        type            slip;
-    }
-
-    frontPlane
-    {
-        type            slip;
-    }
-
-    // -<-<-<-<-<-<-<-< Patches created from createPatchDict >->->->->->->->->-
-
-
     train
     {
         type            noSlip;

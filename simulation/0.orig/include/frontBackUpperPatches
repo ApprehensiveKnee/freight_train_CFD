@@ -21,6 +21,21 @@ backWall
     type slip;
 }
 
+// -<-<-<-<-<-<-<-< Patches created from snappyHex >->->->->->->->->-
+
+backPlane
+{
+    type            slip;
+}
+
+frontPlane
+{
+    type            slip;
+}
+
+// -<-<-<-<-<-<-<-< Patches created from snappyHex >->->->->->->->->-
+
+
 
 
 // ************************************************************************* //
