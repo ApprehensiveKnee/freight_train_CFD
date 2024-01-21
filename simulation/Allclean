@@ -17,5 +17,9 @@ rm -rf processor*
 rm -rf *[0-9]
 # remove all log files
 rm -rf log.*
+# remove the angulationParameters file
+rm -rf 0.orig/include/angulationParameters
+# remove the results directory
+rm -rf results
 
 #------------------------------------------------------------------------------

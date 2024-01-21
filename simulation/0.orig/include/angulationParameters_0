@@ -8,11 +8,12 @@
     --> AngulationFlag: flag to indicate whether the wind velocity is 
         inclined or not.
 
-            /* IMPORTANT: DON'T MODIFY THE FOLLOWING COMMENTS *\
     --> AngulationAngle: angle of inclination of the wind velocity. In this
         case, the angle is defined with respect to the x-axis,  over the x-z 
         plane. The angle is defined in degrees and a limit angle is defined
         to 15, to avoid too inclied wind velocities.
+        PLEASE NOTE: THE ANGULATION ANGLE WILL BE DEFINED USING A PLACEHOLDER,
+        WHOSE VALUE WILL BE DEFINED IN THE ALLRUN SHELL SCRIPT.
 \*---------------------------------------------------------------------------*/
 
 // Just a variable to set the module of the velocity.
@@ -29,7 +30,9 @@ angulationFlag          true;
 // of the train over the x-z plane for positive  values of the angle. 
 // The angle is defined in degrees and a limit angle is defined too
 
-angulationAngle         10 ;
+angulationAngle         ANGULATION_ANGLE_PLACEHOLDER ;
+// Also define a parameter for the angle to be used in the Allrun shell script to represent the value of the angle
+
 angleLimit              20.;
 #ifeq $angulationFlag true  
     #if #eval {$angulationAngle > $angleLimit}

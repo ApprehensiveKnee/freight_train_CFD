@@ -27,9 +27,12 @@ cp -f \
     "$FOAM_RUN"/freight_train_CFD/objects/backInternalWall.stl \
     constant/triSurface/
 
-# Define the rotation angle (take the first value retrieved by the awk command)
-angle=$(cat 0.orig/include/angulationParameters | grep angulationAngle | awk 'NR ==1{print $2}')
+# Define the rotation angle to be used for the simulation
+#angle=$(cat 0.orig/include/angulationParameters | grep angulationAngle | awk 'NR ==1{print $2}')
+angle=0
 
+# Replace the placeholder in the angulationParameters_0 file with the value in angle and save the result in the angulationParameters file
+sed "s/ANGULATION_ANGLE_PLACEHOLDER/$angle/g" "0.orig/include/angulationParameters_0"> \0.orig/include/angulationParameters
 
 # Rotate the box_galleria.stl file by an angle specified in the 0.orig/include/angulationParameters filen along the y axis (also translate the box_galleria.stl file to the origin)
 # Also suppress the output of the surfaceTransformPoints command
@@ -38,6 +41,11 @@ surfaceTransformPoints -translate "(-0.5 0 -0.25)" -rollPitchYaw "(0 $angle 0)" 
 # Do the same for the front and back internal planes
 surfaceTransformPoints -translate "(-60 0 0.25)" -rollPitchYaw "(0 $angle 0)" constant/triSurface/frontInternalWall.stl constant/triSurface/frontInternalWall.stl > /dev/null
 surfaceTransformPoints -translate "(-60 0 -0.25)" -rollPitchYaw "(0 $angle 0)" constant/triSurface/backInternalWall.stl constant/triSurface/backInternalWall.stl > /dev/null
+
+#Create the results directory if it does not exist
+mkdir -p results
+
+# Run the applications and return the log files to the results directory
 
 runApplication surfaceFeatureExtract
 
@@ -55,7 +63,7 @@ fi
 
 runParallel $decompDict snappyHexMesh -overwrite
 
-runParallel $decompDict topoSet
+#runParallel $decompDict topoSet
 
 # runParallel $decompDict createPatch -overwrite
 
@@ -63,21 +71,25 @@ runParallel $decompDict topoSet
 # restore0Dir
 
 #- For parallel running: set the initial fields
-restore0Dir -processor
+#restore0Dir -processor
 
-runParallel $decompDict patchSummary
+#runParallel $decompDict patchSummary
 
-runParallel $decompDict potentialFoam -writephi
+#runParallel $decompDict potentialFoam -writephi
 
-runParallel $decompDict checkMesh -writeFields '(nonOrthoAngle)' -constant
+#runParallel $decompDict checkMesh -writeFields '(nonOrthoAngle)' -constant
 
-runParallel $decompDict $(getApplication)
+#runParallel $decompDict $(getApplication)
 
 runApplication reconstructParMesh -constant
 
-runApplication reconstructPar -latestTime
+#runApplication reconstructPar -latestTime
 
-
+#Generate the train.foam file
 touch train.foam
+
+# Move all the log files to the results directory
+mv log.* results
+
 
 #------------------------------------------------------------------------------
