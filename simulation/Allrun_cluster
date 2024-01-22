@@ -2,8 +2,6 @@
 cd "${0%/*}" || exit                                # Run from this directory
 . ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
 #------------------------------------------------------------------------------
-
-pwd
 # Alternative decomposeParDict name:
 #decompDict="-decomposeParDict system/decomposeParDict.6"
 ## Standard decomposeParDict name:
@@ -14,7 +12,7 @@ pwd
 localDir = "/home/meccanica/ecabiati/freight_train_CFD"
 
 # copy motorbike surface from resources directory
-mkdir -p /constant/triSurface
+mkdir -p "$localDir"/simulation/constant/triSurface
 
 cp -f \
     "$localDir"/objects/motrice_rescaled.stl \
@@ -37,18 +35,18 @@ cp -f \
 angle=0
 
 # Replace the placeholder in the angulationParameters_0 file with the value in angle and save the result in the angulationParameters file
-sed "s/ANGULATION_ANGLE_PLACEHOLDER/$angle/g" "0.orig/include/angulationParameters_0"> \0.orig/include/angulationParameters
+sed "s/ANGULATION_ANGLE_PLACEHOLDER/$angle/g" "/home/meccanica/ecabiati/freight_train_CFD/simulation/0.orig/include/angulationParameters_0"> /home/meccanica/ecabiati/freight_train_CFD/simulation/\0.orig/include/angulationParameters
 
 # Rotate the box_galleria.stl file by an angle specified in the 0.orig/include/angulationParameters filen along the y axis (also translate the box_galleria.stl file to the origin)
 # Also suppress the output of the surfaceTransformPoints command
-surfaceTransformPoints -translate "(-0.5 0 -0.25)" -rollPitchYaw "(0 $angle 0)" /constant/triSurface/box_galleria.stl /constant/triSurface/box_galleria.stl > /dev/null
+surfaceTransformPoints -translate "(-0.5 0 -0.25)" -rollPitchYaw "(0 $angle 0)" "$localDir"/simulation/constant/triSurface/box_galleria.stl "$localDir"/simulation/constant/triSurface/box_galleria.stl > /dev/null
 
 # Do the same for the front and back internal planes
-surfaceTransformPoints -translate "(-60 0 0.25)" -rollPitchYaw "(0 $angle 0)" /constant/triSurface/frontInternalWall.stl /constant/triSurface/frontInternalWall.stl > /dev/null
-surfaceTransformPoints -translate "(-60 0 -0.25)" -rollPitchYaw "(0 $angle 0)" /constant/triSurface/backInternalWall.stl /constant/triSurface/backInternalWall.stl > /dev/null
+surfaceTransformPoints -translate "(-60 0 0.25)" -rollPitchYaw "(0 $angle 0)" "$localDir"/simulation/constant/triSurface/frontInternalWall.stl "$localDir"/simulation/constant/triSurface/frontInternalWall.stl > /dev/null
+surfaceTransformPoints -translate "(-60 0 -0.25)" -rollPitchYaw "(0 $angle 0)" "$localDir"/simulation/constant/triSurface/backInternalWall.stl "$localDir"/simulation/constant/triSurface/backInternalWall.stl > /dev/null
 
 #Create the results directory if it does not exist
-mkdir -p results
+mkdir -p "$localDir"/results
 
 # Run the applications and return the log files to the results directory
 
@@ -91,10 +89,10 @@ runApplication reconstructParMesh -constant
 #runApplication reconstructPar -latestTime
 
 #Generate the train.foam file
-touch train.foam
+touch "$localDir"/simulation/train.foam
 
 # Move all the log files to the results directory
-mv log.* results
+mv "$localDir"/simulation/log.* "$localDir"/results
 
 
 #------------------------------------------------------------------------------
