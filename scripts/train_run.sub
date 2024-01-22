@@ -10,5 +10,5 @@ module use /software/spack/spack/share/spack/modules/linux-rocky8-sandybridge/
 module load openfoam
 
 cd /home/meccanica/ecabiati/freight_train_CFD/simulation
-sort ${PBS_NODEFILE} | uniq -c | awk '{ printf("%s\n", $2); }' > /home/meccanica/ecabiati/mpd.nodes
+#sort ${PBS_NODEFILE} | uniq -c | awk '{ printf("%s\n", $2); }' > /home/meccanica/ecabiati/mpd.nodes
 time ./Allrun_cluster > /home/meccanica/ecabiati/freight_train_CFD/simulation/output.txt
