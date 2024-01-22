@@ -8,7 +8,7 @@ cd "${0%/*}" || exit                                # Run from this directory
 ## Standard decomposeParDict name:
 # unset decompDict
 
-# copy motorbike surface from resources directory
+# copy train surface from resources directory
 mkdir -p constant/triSurface
 
 cp -f \

@@ -8,10 +8,9 @@ cd "${0%/*}" || exit                                # Run from this directory
 # unset decompDict
 
 # Define the local directory where the simulation is run
+localDir='/home/meccanica/ecabiati/freight_train_CFD'
 
-localDir = "/home/meccanica/ecabiati/freight_train_CFD"
-
-# copy motorbike surface from resources directory
+# copy train surface from resources directory
 mkdir -p "$localDir"/simulation/constant/triSurface
 
 cp -f \
