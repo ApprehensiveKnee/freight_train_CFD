@@ -4,12 +4,7 @@
 #PBS -l select=1:ncpus=16:mpiprocs=16,mem=1g,walltime=1:00:00
 #PBS -N freight_train
 
-source /etc/profile.d/modules.sh
-
-# Load the modules
-module purge
-module use /software/spack/spack/share/spack/modules/linux-rocky8-sandybridge/
-module load openfoam
+source /home/meccanica/ecabiati/.bashrc
 
 #Define the number of processors
 nProcs=16
