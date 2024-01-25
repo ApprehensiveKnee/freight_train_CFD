@@ -15,16 +15,17 @@ source "$FOAM_ETC"/bashrc
 #Define the number of processors
 nProcs=16
 
-cd "${0%/*}" || exit                                # Run from this directory
-. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
-#------------------------------------------------------------------------------
-# Alternative decomposeParDict name:
-#decompDict="-decomposeParDict system/decomposeParDict.6"
-## Standard decomposeParDict name:
-# unset decompDict
 
 # Define the local directory where the simulation is run
 localDir='/home/meccanica/ecabiati/freight_train_CFD'
+
+cd "$localDir"/simulation
+# Save the node names to a file
+sort ${PBS_NODEFILE} | uniq -c | awk '{ printf("%s\n", $2); }' >  mpd.nodes
+
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
 
 # copy train surface from resources directory
 mkdir -p "$localDir"/simulation/constant/triSurface
@@ -103,6 +104,7 @@ touch "$localDir"/simulation/train.foam
 
 # Move all the log files to the results directory
 mv "$localDir"/simulation/log.* "$localDir"/simulation/results
+
 
 
 #------------------------------------------------------------------------------
