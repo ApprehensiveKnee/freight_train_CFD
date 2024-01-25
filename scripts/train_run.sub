@@ -9,6 +9,11 @@ module purge
 module use /software/spack/spack/share/spack/modules/linux-rocky8-sandybridge/
 module load openfoam
 
+# Wait for the OpenFOAM module to be loaded
+while [ -z "$FOAM_ETC" ]; do
+    sleep 1
+done
+
 # Source the OpenFOAM settings
 source "$FOAM_ETC"/bashrc
 
