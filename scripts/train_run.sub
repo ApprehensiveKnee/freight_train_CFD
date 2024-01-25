@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #PBS -S /bin/bash
-#PBS -l nodes=2:ppn=16,mem=1g,walltime=1:00:00
+#PBS -l select=1:ncpus=16:mpiprocs=1,mem=1g,walltime=1:00:00
 #PBS -N freight_train
 
 # Load the modules
@@ -72,38 +72,38 @@ runApplication blockMesh
 
 runApplication decomposePar
 
-# Using distributedTriSurfaceMesh?
-# if foamDictionary -entry geometry -value system/snappyHexMeshDict | \
-#    grep -q distributedTriSurfaceMesh
-# then
-#     echo "surfaceRedistributePar does not need to be run anymore"
-#     echo " - distributedTriSurfaceMesh will do on-the-fly redistribution"
-# fi
+# # Using distributedTriSurfaceMesh?
+# # if foamDictionary -entry geometry -value system/snappyHexMeshDict | \
+# #    grep -q distributedTriSurfaceMesh
+# # then
+# #     echo "surfaceRedistributePar does not need to be run anymore"
+# #     echo " - distributedTriSurfaceMesh will do on-the-fly redistribution"
+# # fi
 
-# Run snappyHexMesh in parallel
-mpirun -hostfile ${PBS_NODEFILE} -np $nProcs snappyHexMesh -overwrite -parallel
+# # Run snappyHexMesh in parallel
+# mpirun -hostfile ${PBS_NODEFILE} -np $nProcs snappyHexMesh -overwrite -parallel
 
-# Remove the 0 directory in the processor* directories and replace it with the 0.org directory
-ls -d processor* | xargs -I {} rm -rf ./{}/0
-ls -d processor* | xargs -I {} cp -r 0.org ./{}/0
+# # Remove the 0 directory in the processor* directories and replace it with the 0.org directory
+# ls -d processor* | xargs -I {} rm -rf ./{}/0
+# ls -d processor* | xargs -I {} cp -r 0.org ./{}/0
 
-mpirun -hostfile ${PBS_NODEFILE} -np $nProcs patchSummary -parallel
+# mpirun -hostfile ${PBS_NODEFILE} -np $nProcs patchSummary -parallel
 
-mpirun -hostfile ${PBS_NODEFILE} -np $nProcs potentialFoam -parallel
+# mpirun -hostfile ${PBS_NODEFILE} -np $nProcs potentialFoam -parallel
 
-mpirun -hostfile ${PBS_NODEFILE} -np $nProcs checkMesh -parallel
+# mpirun -hostfile ${PBS_NODEFILE} -np $nProcs checkMesh -parallel
 
-mpirun -hostfile ${PBS_NODEFILE} -np $nProcs simpleFoam -parallel
+# mpirun -hostfile ${PBS_NODEFILE} -np $nProcs simpleFoam -parallel
 
-runApplication reconstructParMesh -constant
+# runApplication reconstructParMesh -constant
 
-runApplication reconstructPar # -latestTime
+# runApplication reconstructPar # -latestTime
 
-#Generate the train.foam file
-touch "$localDir"/simulation/train.foam
+# #Generate the train.foam file
+# touch "$localDir"/simulation/train.foam
 
-# Move all the log files to the results directory
-mv "$localDir"/simulation/log.* "$localDir"/simulation/results
+# # Move all the log files to the results directory
+# mv "$localDir"/simulation/log.* "$localDir"/simulation/results
 
 
 
