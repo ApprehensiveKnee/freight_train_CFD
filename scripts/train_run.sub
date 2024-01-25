@@ -20,13 +20,13 @@ source "$FOAM_ETC"/bashrc
 #Define the number of processors
 nProcs=16
 
-
 # Define the local directory where the simulation is run
 localDir='/home/meccanica/ecabiati/freight_train_CFD'
 
 cd "$localDir"/simulation
 # Save the node names to a file
-sort ${PBS_NODEFILE} | uniq -c | awk '{ printf("%s\n", $2); }' >  mpd.nodes
+cat "$PBS_NODEFILE" > mpd.nodes
+
 
 cd "${0%/*}" || exit                                # Run from this directory
 . ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
