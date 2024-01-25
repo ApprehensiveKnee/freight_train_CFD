@@ -32,19 +32,19 @@ mkdir -p "$localDir"/simulation/constant/triSurface
 
 cp -f \
     "$localDir"/objects/motrice_rescaled.stl \
-    constant/triSurface/
+    "$localDir"/simulation/constant/triSurface/
 
 cp -f \
     "$localDir"/objects/box_galleria.stl \
-    constant/triSurface/
+    "$localDir"/simulation/constant/triSurface/
 
 cp -f \
     "$localDir"/objects/frontInternalWall.stl \
-    constant/triSurface/   
+    "$localDir"/simulation/constant/triSurface/   
 
 cp -f \
     "$localDir"/objects/backInternalWall.stl \
-    constant/triSurface/
+    "$localDir"/simulation/constant/triSurface/
 
 # Define the rotation angle to be used for the simulation
 #angle=$(cat 0.orig/include/angulationParameters | grep angulationAngle | awk 'NR ==1{print $2}')
@@ -81,19 +81,19 @@ runApplication decomposePar
 # fi
 
 # Run snappyHexMesh in parallel
-mpirun -hostfile ${PBS_NODFILE} -np $nProcs snappyHexMesh -overwrite -parallel | tee log.snappyHexMesh
+mpirun -hostfile ${PBS_NODEFILE} -np $nProcs snappyHexMesh -overwrite -parallel
 
 # Remove the 0 directory in the processor* directories and replace it with the 0.org directory
 ls -d processor* | xargs -I {} rm -rf ./{}/0
 ls -d processor* | xargs -I {} cp -r 0.org ./{}/0
 
-mpirun -hostfile ${PBS_NODFILE} -np $nProcs patchSummary -parallel | tee log.patchSummary
+mpirun -hostfile ${PBS_NODEFILE} -np $nProcs patchSummary -parallel
 
-mpirun -hostfile ${PBS_NODFILE} -np $nProcs potentialFoam -parallel | tee log.potentialFoam
+mpirun -hostfile ${PBS_NODEFILE} -np $nProcs potentialFoam -parallel
 
-mpirun -hostfile ${PBS_NODFILE} -np $nProcs checkMesh -parallel | tee log.checkMesh
+mpirun -hostfile ${PBS_NODEFILE} -np $nProcs checkMesh -parallel
 
-mpirun -hostfile ${PBS_NODFILE} -np $nProcs simpleFoam -parallel | tee log.simpleFoam
+mpirun -hostfile ${PBS_NODEFILE} -np $nProcs simpleFoam -parallel
 
 runApplication reconstructParMesh -constant
 

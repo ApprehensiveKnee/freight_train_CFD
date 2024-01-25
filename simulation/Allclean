@@ -21,5 +21,7 @@ rm -rf log.*
 rm -rf 0.orig/include/angulationParameters
 # remove the results directory
 rm -rf results
+# remove the mpd.nodes file
+rm -rf mpd.nodes
 
 #------------------------------------------------------------------------------
