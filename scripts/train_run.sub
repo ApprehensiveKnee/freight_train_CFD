@@ -1,107 +1,15 @@
 #!/bin/bash
 
 #PBS -S /bin/bash
-#PBS -l select=1:ncpus=16:mpiprocs=16,mem=1g,walltime=1:00:00
+#PBS -l nodes=1:ppn=1,mem=1g,walltime=1:00:00
 #PBS -N freight_train
-
-source /etc/profile.d/modules.sh
 
 # Load the modules
 module purge
 module use /software/spack/spack/share/spack/modules/linux-rocky8-sandybridge/
 module load openfoam
 
-#Define the number of processors
-nProcs=16
 
-# Define the local directory where the simulation is run
-localDir='/home/meccanica/ecabiati/freight_train_CFD'
-
-cd "$localDir"/simulation
-# Save the node names to a file
-cat "$PBS_NODEFILE" > mpd.nodes
-
-
-cd "${0%/*}" || exit                                # Run from this directory
-. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
-#------------------------------------------------------------------------------
-
-# copy train surface from resources directory
-mkdir -p "$localDir"/simulation/constant/triSurface
-
-cp -f \
-    "$localDir"/objects/motrice_rescaled.stl \
-    "$localDir"/simulation/constant/triSurface/
-
-cp -f \
-    "$localDir"/objects/box_galleria.stl \
-    "$localDir"/simulation/constant/triSurface/
-
-cp -f \
-    "$localDir"/objects/frontInternalWall.stl \
-    "$localDir"/simulation/constant/triSurface/   
-
-cp -f \
-    "$localDir"/objects/backInternalWall.stl \
-    "$localDir"/simulation/constant/triSurface/
-
-# Define the rotation angle to be used for the simulation
-#angle=$(cat 0.orig/include/angulationParameters | grep angulationAngle | awk 'NR ==1{print $2}')
-angle=0
-
-# Replace the placeholder in the angulationParameters_0 file with the value in angle and save the result in the angulationParameters file
-sed "s/ANGULATION_ANGLE_PLACEHOLDER/$angle/g" "/home/meccanica/ecabiati/freight_train_CFD/simulation/0.orig/include/angulationParameters_0"> /home/meccanica/ecabiati/freight_train_CFD/simulation/\0.orig/include/angulationParameters
-
-# Rotate the box_galleria.stl file by an angle specified in the 0.orig/include/angulationParameters filen along the y axis (also translate the box_galleria.stl file to the origin)
-# Also suppress the output of the surfaceTransformPoints command
-surfaceTransformPoints -translate "(-0.5 0 -0.25)" -rollPitchYaw "(0 $angle 0)" "$localDir"/simulation/constant/triSurface/box_galleria.stl "$localDir"/simulation/constant/triSurface/box_galleria.stl > /dev/null
-
-# Do the same for the front and back internal planes
-surfaceTransformPoints -translate "(-60 0 0.25)" -rollPitchYaw "(0 $angle 0)" "$localDir"/simulation/constant/triSurface/frontInternalWall.stl "$localDir"/simulation/constant/triSurface/frontInternalWall.stl > /dev/null
-surfaceTransformPoints -translate "(-60 0 -0.25)" -rollPitchYaw "(0 $angle 0)" "$localDir"/simulation/constant/triSurface/backInternalWall.stl "$localDir"/simulation/constant/triSurface/backInternalWall.stl > /dev/null
-
-#Create the results directory if it does not exist
-mkdir -p "$localDir"/simulation/results
-
-# Run the applications and return the log files to the results directory
-
-runApplication surfaceFeatureExtract
-
-runApplication blockMesh
-
-runApplication decomposePar
-
-# Using distributedTriSurfaceMesh?
-# if foamDictionary -entry geometry -value system/snappyHexMeshDict | \
-#    grep -q distributedTriSurfaceMesh
-# then
-#     echo "surfaceRedistributePar does not need to be run anymore"
-#     echo " - distributedTriSurfaceMesh will do on-the-fly redistribution"
-# fi
-
-# Run snappyHexMesh in parallel
-mpirun -hostfile ${PBS_NODEFILE} -np $nProcs snappyHexMesh -overwrite -parallel | tee log.snappyHexMesh
-
-# Remove the 0 directory in the processor* directories and replace it with the 0.org directory
-ls -d processor* | xargs -I {} rm -rf ./{}/0
-ls -d processor* | xargs -I {} cp -r 0.org ./{}/0
-
-mpirun -hostfile ${PBS_NODEFILE} -np $nProcs patchSummary -parallel | tee log.patchSummary
-
-mpirun -hostfile ${PBS_NODEFILE} -np $nProcs potentialFoam -parallel    | tee log.potentialFoam
-
-mpirun -hostfile ${PBS_NODEFILE} -np $nProcs checkMesh -parallel   | tee log.checkMesh
-
-mpirun -hostfile ${PBS_NODEFILE} -np $nProcs simpleFoam -parallel  | tee log.simpleFoam
-
-runApplication reconstructParMesh -constant | tee log.reconstructParMesh
-
-runApplication reconstructPar  | tee log.recontructPar   # -latestTime 
-
-#Generate the train.foam file
-touch "$localDir"/simulation/train.foam
-
-# Move all the log files to the results directory
-mv "$localDir"/simulation/log.* "$localDir"/simulation/results
-
-#------------------------------------------------------------------------------
+cd /home/meccanica/ecabiati/freight_train_CFD/simulation
+#sort ${PBS_NODEFILE} | uniq -c | awk '{ printf("%s\n", $2); }' > /home/meccanica/ecabiati/mpd.nodes
+time ./Allrun_cluster > /home/meccanica/ecabiati/freight_train_CFD/simulation/output.txt
