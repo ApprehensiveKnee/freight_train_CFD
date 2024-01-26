@@ -9,7 +9,7 @@
 source /etc/bashrc
 
 # Load the modules
-module purge
+module --version
 module use /software/spack/spack/share/spack/modules/linux-rocky8-sandybridge/
 module load openfoam
 
