@@ -6,7 +6,7 @@
 
 # Source the bashrc file
 
-source /home/meccanica/ecabiati/.bashrc
+source /etc/bashrc
 
 # Load the modules
 module purge
