@@ -1,4 +1,10 @@
 #!/bin/sh
+
+# Load the modules
+module purge
+module use /software/spack/spack/share/spack/modules/linux-rocky8-sandybridge/
+module load openfoam
+
 cd "${0%/*}" || exit                                # Run from this directory
 . ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
 #------------------------------------------------------------------------------
