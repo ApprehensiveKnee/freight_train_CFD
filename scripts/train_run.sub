@@ -6,7 +6,8 @@
 
 # Source the bashrc file
 
-source /etc/bashrc
+source /etc/profile.d/modules.sh
+
 
 # Load the modules
 module purge
