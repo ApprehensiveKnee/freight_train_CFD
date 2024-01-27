@@ -1,17 +1,10 @@
 #!/bin/bash
 
+#$ -V
+
 #PBS -S /bin/bash
 #PBS -l nodes=1:ppn=16,mem=1g,walltime=1:00:00
 #PBS -N freight_train
-
-# Source the bashrc file
-
-if [ -f /usr/share/Modules/init/$shell ]
-then
-  . /usr/share/Modules/init/$shell
-else
-  . /usr/share/Modules/init/sh
-fi
 
 # Load the modules
 module purge
