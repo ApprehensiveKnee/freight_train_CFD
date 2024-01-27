@@ -65,27 +65,27 @@ fi
 
 runParallel $decompDict snappyHexMesh -overwrite
 
-# runParallel $decompDict topoSet
+runParallel $decompDict topoSet
 
-# runParallel $decompDict createPatch -overwrite
+runParallel $decompDict createPatch -overwrite
 
-# #- For non-parallel running: - set the initial fields
-# # restore0Dir
+#- For non-parallel running: - set the initial fields
+# restore0Dir
 
-# #- For parallel running: set the initial fields
-# restore0Dir -processor
+#- For parallel running: set the initial fields
+restore0Dir -processor
 
-# runParallel $decompDict patchSummary
+runParallel $decompDict patchSummary
 
-# runParallel $decompDict potentialFoam -writephi
+runParallel $decompDict potentialFoam -writephi
 
-# runParallel $decompDict checkMesh -writeFields '(nonOrthoAngle)' -constant
+runParallel $decompDict checkMesh -writeFields '(nonOrthoAngle)' -constant
 
-# runParallel $decompDict $(getApplication)
+runParallel $decompDict $(getApplication)
 
 runApplication reconstructParMesh -constant
 
-# runApplication reconstructPar # -latestTime
+runApplication reconstructPar # -latestTime
 
 #Generate the train.foam file
 touch "$localDir"/simulation/train.foam
