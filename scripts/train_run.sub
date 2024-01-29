@@ -5,6 +5,7 @@
 #PBS -N freight_train
 #PBS -o results.out
 #PBS -e results.err
+#PBS -V
 
 
 
