@@ -6,11 +6,6 @@
 #PBS -o results.out
 #PBS -e results.err
 
-#$ -V
-
-
-
-echo $PBS_O_WORKDIR 
 
 
 cd /home/meccanica/ecabiati/freight_train_CFD/simulation
