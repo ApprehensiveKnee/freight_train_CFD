@@ -6,6 +6,8 @@
 #PBS -N freight_train
 #PBS -o results.out
 
+echo $PBS_O_WORKDIR 
+
 
 cd /home/meccanica/ecabiati/freight_train_CFD/simulation
 #sort ${PBS_NODEFILE} | uniq -c | awk '{ printf("%s\n", $2); }' > /home/meccanica/ecabiati/mpd.nodes
