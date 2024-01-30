@@ -53,7 +53,7 @@ runApplication surfaceFeatureExtract
 
 runApplication blockMesh
 
-runApplication $decompDict decomposePar
+runApplication decomposePar
 
 # Using distributedTriSurfaceMesh?
 if foamDictionary -entry geometry -value system/snappyHexMeshDict | \
