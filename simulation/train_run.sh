@@ -1,5 +1,5 @@
 #!/bin/bash             # use bash as command interpreter
-#$ -cwd                 # currentWorkingDirectory
+#$ -cwd                 # execute job from global_scratch/ecabiati directory
 #$ -N freight_train           # jobName
 #$ -j y                 # merges output and errors
 #$ -S /bin/bash         # scripting language
@@ -88,9 +88,9 @@ mpirun --hostfile machinefile.$JOB_ID cretePatch -paralle >& "$localDir"/simulat
 
 
 # restore the 0/ directory from the 0.orig/ directory inside each processor directory
-#echo "Restore 0/ form 0.orig/  [processor dictionaries]"
-#\ls -d processor* | xargs -I {} rm -rf ./{}/0
-#\ls -d processor* | xargs -I {} cp -r 0.orig ./{}/0 > /dev/null 2>&1
+echo "Restore 0/ form 0.orig/  [processor dictionaries]"
+\ls -d processor* | xargs -I {} rm -rf ./{}/0
+\ls -d processor* | xargs -I {} cp -r 0.orig ./{}/0 > /dev/null 2>&1
 
 mpirun --hostfile machinefile.$JOB_ID patchSummary -parallel >& "$localDir"/simulation/log.patchSummary
 
