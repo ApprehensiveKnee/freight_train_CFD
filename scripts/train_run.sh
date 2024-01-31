@@ -1,11 +1,12 @@
 #!/bin/bash             # use bash as command interpreter
-#$ -cwd                 # execute job from global_scratch/ecabiati directory
 #$ -N freight_train           # jobName
 #$ -j y                 # merges output and errors
 #$ -S /bin/bash         # scripting language
 #$ -l h_rt=1:00:00      # jobDuration hh:mm:ss
 #$ -q all.q             # queueName
 #$ -pe mpi 16           # cpuNumber
+
+cd ../simulation
 
 echo "Start Parallel Run":
 
