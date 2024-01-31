@@ -3,6 +3,10 @@ cd "${0%/*}" || exit                                # Run from this directory
 . ${WM_PROJECT_DIR:?}/bin/tools/CleanFunctions      # Tutorial clean functions
 #------------------------------------------------------------------------------
 
+# Define the local directory where the simulation is run
+localDir='/home/meccanica/ecabiati/freight_train_CFD'
+
+
 cleanCase0
 
 # Remove surface and features
