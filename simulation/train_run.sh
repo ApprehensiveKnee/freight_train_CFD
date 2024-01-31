@@ -7,13 +7,13 @@
 #$ -q all.q             # queueName
 #$ -pe mpi 16           # cpuNumber
 
-echo Start Parallel Run:
+echo "Start Parallel Run":
 
-echo - Importing OpenFOAM
+echo "- Importing OpenFOAM"
 
-source /home/meccanica/ecabiati/.openfoam_modules
+source "/home/meccanica/ecabiati/.openfoam_modules"
 
-echo - Initiating Simulation
+echo "- Initiating Simulation"
 
 
 #cd "${0%/*}" || exit                                # Run from this directory
@@ -86,11 +86,11 @@ mpirun --hostfile machinefile.$JOB_ID topoSet -parallel >& "$localDir"/simulatio
 
 mpirun --hostfile machinefile.$JOB_ID cretePatch -paralle >& "$localDir"/simulation/log.createPatch
 
-#- For non-parallel running: - set the initial fields
-# restore0Dir
 
-#- For parallel running: set the initial fields
-restore0Dir -processor
+# restore the 0/ directory from the 0.orig/ directory inside each processor directory
+echo "Restore 0/ form 0.orig/  [processor dictionaries]"
+\ls -d processor* | xargs -I {} rm -rf ./{}/0
+\ls -d processor* | xargs -I {} cp -r 0.orig ./{}/0 > /dev/null 2>&1
 
 mpirun --hostfile machinefile.$JOB_ID patchSummary -parallel >& "$localDir"/simulation/log.patchSummary
 
@@ -113,4 +113,4 @@ mv "$localDir"/simulation/log.* "$localDir"/simulation/logs
 
 #------------------------------------------------------------------------------
 
-echo End Parallel Run
+echo "End Parallel Run"
