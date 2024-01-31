@@ -80,11 +80,11 @@ decomposePar >& "$localDir"/simulation/log.decomposePar
 #     echo " - distributedTriSurfaceMesh will do on-the-fly redistribution"
 # fi
 
-mpirun --hostfile machinefile.$JOB_ID snappyHexMesh -parallel >& "$localDir"/simulation/log.snappyHexMesh
+mpirun --hostfile machinefile.$JOB_ID snappyHexMesh -parallel -overwrite >& "$localDir"/simulation/log.snappyHexMesh
 
 mpirun --hostfile machinefile.$JOB_ID topoSet -parallel >& "$localDir"/simulation/log.topoSet
 
-mpirun --hostfile machinefile.$JOB_ID cretePatch -paralle >& "$localDir"/simulation/log.createPatch
+mpirun --hostfile machinefile.$JOB_ID cretePatch -parallel -overwrite >& "$localDir"/simulation/log.createPatch
 
 
 # restore the 0/ directory from the 0.orig/ directory inside each processor directory
