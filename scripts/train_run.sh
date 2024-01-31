@@ -6,7 +6,12 @@
 #$ -q all.q             # queueName
 #$ -pe mpi 16           # cpuNumber
 
-cd ../simulation
+# Define the local directory where the simulation is run
+localDir='/home/meccanica/ecabiati/freight_train_CFD'
+
+cd "$localDir"/simulation || exit 
+
+echo "Moved inside $localDir/simulation"                               # Run from this directory
 
 echo "Start Parallel Run":
 
@@ -24,9 +29,6 @@ echo "- Initiating Simulation"
 #decompDict="-decomposeParDict system/decomposeParDict.6"
 ## Standard decomposeParDict name:
 # unset decompDict
-
-# Define the local directory where the simulation is run
-localDir='/home/meccanica/ecabiati/freight_train_CFD'
 
 # copy train surface from resources directory
 mkdir -p "$localDir"/simulation/constant/triSurface
