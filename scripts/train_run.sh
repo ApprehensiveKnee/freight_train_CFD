@@ -1,4 +1,5 @@
 #!/bin/bash             # use bash as command interpreter
+#$ -cwd                 # execute job from current directory
 #$ -N freight_train           # jobName
 #$ -j y                 # merges output and errors
 #$ -S /bin/bash         # scripting language
@@ -8,8 +9,6 @@
 
 # Define the local directory where the simulation is run
 localDir='/home/meccanica/ecabiati/freight_train_CFD'
-
-cd "$localDir"/simulation || exit 
 
 echo "Moved inside $localDir/simulation"                               # Run from this directory
 

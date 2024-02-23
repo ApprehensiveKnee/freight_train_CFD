@@ -10,7 +10,6 @@
 # Define the local directory where the simulation is run
 localDir='/home/meccanica/ecabiati/freight_train_CFD'
 
-
 echo "Moved inside $localDir/simulation"                               # Run from this directory
 
 echo "Start Parallel Run":
