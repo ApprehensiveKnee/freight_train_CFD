@@ -14,21 +14,12 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-<<<<<<< Updated upstream
-numberOfSubdomains 6;
-=======
-numberOfSubdomains 8;
->>>>>>> Stashed changes
-
+numberOfSubdomains 16
 method          hierarchical;
 
 coeffs
 {
-<<<<<<< Updated upstream
-    n           (3 1 2);
-=======
-    n           (4 1 2);
->>>>>>> Stashed changes
+    n           (8 1 2);
 }
 
 

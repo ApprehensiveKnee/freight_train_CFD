@@ -70,7 +70,6 @@ cp -f \
 # If no parameters are passed, the default value for the flag is false and the angle is 0
 echo "The angle is ${2:-0}"
 echo "The angulation flag is ${1:-false}"
-
 # Replace the placeholder in the angulationParameters_0 file with the value in angle and save the result in the angulationParameters file
 sed "s/ANGULATION_ANGLE_PLACEHOLDER/${2:-0}/g" "0.orig/include/angulationParameters_0"> \0.orig/include/angulationParameters
 sed -i "s/ANGULATION_FLAG_PLACEHOLDER/${1:-false}/g" "0.orig/include/angulationParameters" 
