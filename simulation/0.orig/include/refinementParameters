@@ -18,7 +18,7 @@
 // in case of angulation of the train, to center it in the middle of the
 // refinement boxes themselves
 factor  0.0085;
-#ifeq $ROTATE_REFINEMENT_FLAG true
+#ifeq $angulationFlag true
     displacement  #eval{$angulationAngle * $factor};
 #else
     displacement  0.;
@@ -60,5 +60,3 @@ ORIG_3             ($orig_3_x 0 $oirg_3_z);
 REFINEMENT_TRAIN            false;
 REFINEMENT_DISTANCE         0.07;
 REFINEMENT_LEVEL_TRAIN         5;
-
-// ************************************************************************* //
