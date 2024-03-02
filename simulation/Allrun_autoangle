@@ -1,0 +1,127 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+
+# Alternative decomposeParDict name:
+#decompDict="-decomposeParDict system/decomposeParDict.6"
+## Standard decomposeParDict name:
+# unset decompDict
+
+# copy train surface from resources directory
+mkdir -p constant/triSurface
+
+cp -f \
+    "$FOAM_RUN"/freight_train_CFD/objects/motrice_rescaled.stl \
+    constant/triSurface/
+
+cp -f \
+    "$FOAM_RUN"/freight_train_CFD/objects/box_galleria.stl \
+    constant/triSurface/
+
+cp -f \
+    "$FOAM_RUN"/freight_train_CFD/objects/frontInternalWall.stl \
+    constant/triSurface/   
+
+cp -f \
+    "$FOAM_RUN"/freight_train_CFD/objects/backInternalWall.stl \
+    constant/triSurface/
+
+# Define the maximum rotation angle to be used for the simulation
+# If no parameters are passed, the default value for the angle is 0
+echo "The maximum angle is ${1:-20}"
+
+# Define the delta to be used for the sequence of simulations
+# If no parameters are passed, the default value for the delta is 3
+echo "The delta is ${2:-3}"
+
+# Define whether the gallery is included in the simulation
+# If no parameters are passed, the default value for the flag is false
+echo "The gallery is included in the simulation: ${3:-false}"
+
+# Define whether the refinement boxes are rotated
+# If no parameters are passed, the default value for the flag is false
+echo "The refinement boxes are rotated: ${4:-false}"
+
+
+
+# Change the value progressively from 0 to MAX_ANGLE by DELTA units. For each value, run the simulation and store the results into 
+# a folder named after the value of the angle (results/results_xxx, where xxx is the value of the angle)
+angle=0
+while [ $angle -le ${1:-10} ];do
+    echo "Running the simulation with angle $angle"
+    
+    # Create the folder for the results
+    mkdir -p results/results_$angle
+
+    # ------------------------------------------------------------------------------
+    # Replace the placeholders in the angulationParameters_0 file with the value actual value and save the result in the angulationParameters file
+    sed "s/ANGULATION_ANGLE_PLACEHOLDER/$angle/g" "0.orig/include/angulationParameters_0"> \0.orig/include/angulationParameters
+    sed -i "s/ANGULATION_FLAG_PLACEHOLDER/true/g" "0.orig/include/angulationParameters" 
+    sed -i "s/GALLERY_FLAG_PLACEHOLDER/${3:-false}/g" "0.orig/include/angulationParameters"
+    sed -i "s/REFINEMENT_BOXES_ROTATION_FLAG_PLACEHOLDER/${4:-false}/g" "0.orig/include/angulationParameters"
+
+    # Rotate the box_galleria.stl file by an angle specified in the 0.orig/include/angulationParameters file along the y axis (also translate the box_galleria.stl file to the origin)
+    # Also suppress the output of the surfaceTransformPoints command
+    # Do all this only if the gallery is included in the simulation
+
+    if [ "${3:-false}" = true ]; then
+        surfaceTransformPoints -translate "(-0.5 0 -0.25)" -rollPitchYaw "(0 ${2:-0} 0)" constant/triSurface/box_galleria.stl constant/triSurface/box_galleria.stl > /dev/null
+
+        # Do the same for the front and back internal planes
+        surfaceTransformPoints -translate "(-60 0 0.25)" -rollPitchYaw "(0 ${2:-0} 0)" constant/triSurface/frontInternalWall.stl constant/triSurface/frontInternalWall.stl > /dev/null
+        surfaceTransformPoints -translate "(-60 0 -0.25)" -rollPitchYaw "(0 ${2:-0} 0)" constant/triSurface/backInternalWall.stl constant/triSurface/backInternalWall.stl > /dev/null
+    fi 
+
+    # ------------------------------------------------------------------------------
+
+    # Run the applications and return the log files to the results directory
+    runApplication surfaceFeatureExtract 
+
+    runApplication blockMesh 
+
+    runApplication $decompDict decomposePar 
+
+    # Using distributedTriSurfaceMesh?
+    if foamDictionary -entry geometry -value system/snappyHexMeshDict | \
+        grep -q distributedTriSurfaceMesh
+    then
+        echo "surfaceRedistributePar does not need to be run anymore"
+        echo " - distributedTriSurfaceMesh will do on-the-fly redistribution"
+    fi
+
+    runParallel $decompDict snappyHexMesh -overwrite 
+
+    runParallel $decompDict topoSet 
+
+    restore0Dir -processor
+
+    runParallel $decompDict patchSummary 
+
+    runParallel $decompDict potentialFoam -writephi
+
+    runParallel $decompDict checkMesh -writeFields '(nonOrthoAngle)' -constant
+
+    runParallel $decompDict $(getApplication) 
+
+    runApplication reconstructParMesh -constant 
+
+    runApplication reconstructPar -latestTime 
+
+    # Increase the angle by DELTA
+    angle=$(( $angle + ${2:-3} ))
+
+    # Move all the log files to the results directory
+    mv log.* results/results_$angle
+
+    # Run the .Allclean script to clean the case
+    ./Allclean
+
+done
+
+    
+    
+
+
+#------------------------------------------------------------------------------

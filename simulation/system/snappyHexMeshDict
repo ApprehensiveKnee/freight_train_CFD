@@ -23,6 +23,9 @@ addLayers       true;
 #include "../0.orig/include/angulationParameters"
 #include "../0.orig/include/refinementParameters"
 
+
+#ifeq $ROTATE_REFINEMENT_FLAG true
+    // Define the local axes for the refinement boxes
 e1_x    #eval{cos(degToRad($angulationAngle))};
 e1_z    #eval{sin(degToRad($angulationAngle))};
 
@@ -32,6 +35,17 @@ e3_z    #eval{cos(degToRad($angulationAngle))};
 normal_x   #eval{sin(degToRad($angulationAngle))};
 normal_z   #eval{cos(degToRad($angulationAngle))};
 
+#else
+    e1_x    1;
+    e1_z    0;
+
+    e3_x    0;
+    e3_z    1;
+
+    normal_x   0;
+    normal_z   1;
+
+#endif
 
 // Geometry. Definition of all surfaces. All surfaces are of class
 // searchableSurface.
@@ -46,6 +60,8 @@ geometry
         type triSurfaceMesh;
         name train;
     }
+
+    #ifeq $BOX_GALLERIA_FLAG true
 
     box_galleria.stl
     {
@@ -65,6 +81,8 @@ geometry
         name frontPlane;
     }
 
+    #endif
+
     // refinement box 1 (include only if REFINEMENT_BOX_1 is defined)
     #ifeq $REFINEMENT_BOX_0 true
     refinementBox0
@@ -75,8 +93,6 @@ geometry
         e1              ($e1_x 0 $e1_z);    //relationship of e1 local axes and global coord.system
         e3              ($e3_x 0 $e3_z);    //relationship of e3 local axes and global coord.system
     }
-
-
     
     #endif
 
@@ -200,6 +216,7 @@ castellatedMeshControls
             }
         }
 
+        #ifeq $BOX_GALLERIA_FLAG true
         box_gallery
         {
             // Surface-wise min and max refinement level
@@ -236,6 +253,8 @@ castellatedMeshControls
                 inGroups (frontGroup);
             }
         }
+
+        #endif
 
 
 
