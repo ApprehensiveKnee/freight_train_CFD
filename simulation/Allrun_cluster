@@ -45,7 +45,7 @@ surfaceTransformPoints -translate "(-60 0 0.25)" -rollPitchYaw "(0 $angle 0)" "$
 surfaceTransformPoints -translate "(-60 0 -0.25)" -rollPitchYaw "(0 $angle 0)" "$localDir"/simulation/constant/triSurface/backInternalWall.stl "$localDir"/simulation/constant/triSurface/backInternalWall.stl > /dev/null
 
 #Create the results directory if it does not exist
-mkdir -p "$localDir"/simulation/results
+mkdir -p "$localDir"/results
 
 # Run the applications and return the log files to the results directory
 
@@ -53,7 +53,7 @@ runApplication surfaceFeatureExtract
 
 runApplication blockMesh
 
-runApplication decomposePar
+runApplication $decompDict decomposePar
 
 # Using distributedTriSurfaceMesh?
 if foamDictionary -entry geometry -value system/snappyHexMeshDict | \
@@ -65,33 +65,33 @@ fi
 
 runParallel $decompDict snappyHexMesh -overwrite
 
-runParallel $decompDict topoSet
+#runParallel $decompDict topoSet
 
-runParallel $decompDict createPatch -overwrite
+# runParallel $decompDict createPatch -overwrite
 
 #- For non-parallel running: - set the initial fields
 # restore0Dir
 
 #- For parallel running: set the initial fields
-restore0Dir -processor
+#restore0Dir -processor
 
-runParallel $decompDict patchSummary
+#runParallel $decompDict patchSummary
 
-runParallel $decompDict potentialFoam -writephi
+#runParallel $decompDict potentialFoam -writephi
 
-runParallel $decompDict checkMesh -writeFields '(nonOrthoAngle)' -constant
+#runParallel $decompDict checkMesh -writeFields '(nonOrthoAngle)' -constant
 
-runParallel $decompDict $(getApplication)
+#runParallel $decompDict $(getApplication)
 
 runApplication reconstructParMesh -constant
 
-runApplication reconstructPar # -latestTime
+#runApplication reconstructPar -latestTime
 
 #Generate the train.foam file
 touch "$localDir"/simulation/train.foam
 
 # Move all the log files to the results directory
-mv "$localDir"/simulation/log.* "$localDir"/simulation/results
+mv "$localDir"/simulation/log.* "$localDir"/results
 
 
 #------------------------------------------------------------------------------

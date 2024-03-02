@@ -7,6 +7,23 @@
 #$ -q all.q             # queueName
 #$ -pe mpi 16           # cpuNumber
 
+
+# /----------------------------------------------------------------------------\
+#                             USAGE OF THIS SCRIPT:
+# The script is used to run the simulation. It allows the user to set some parameters
+# to be used in the simulation. These parameters shall be passed as arguments to the script.
+# Parameters:
+# 1. The first parameter is a flag to indicate whether the simulation should be run 
+#   with the train angulated or not. The default value is false.
+# 2. The second parameter is the angle to be used for the simulation. The default value is 0.
+# 3. The third parameter is a flag to indicate whether the gallery should be included in the 
+#   simulation. The default value is false.
+# 4. The fourth parameter is a flag to indicate whether the refinement boxes should be rotated.
+#   The default value is false. This last parameter was added to the script since it would allow
+#   for a better constructed mesh even in the eventuality that the case considered is rotated.
+# \----------------------------------------------------------------------------/
+
+
 # Define the local directory where the simulation is run
 localDir='/home/meccanica/ecabiati/freight_train_CFD'
 
@@ -48,20 +65,34 @@ cp -f \
     "$localDir"/objects/backInternalWall.stl \
     constant/triSurface/
 
-# Define the rotation angle to be used for the simulation
-#angle=$(cat 0.orig/include/angulationParameters | grep angulationAngle | awk 'NR ==1{print $2}')
-angle=0
+# Define the rotation angle to be used for the simulation: in this case, read the second argument passed to the script.
+# The first argument defines the flag to actually rotate the simulation
+# If no parameters are passed, the default value for the flag is false and the angle is 0
+echo "The angle is ${2:-0}"
+echo "The angulation flag is ${1:-false}"
 
 # Replace the placeholder in the angulationParameters_0 file with the value in angle and save the result in the angulationParameters file
-sed "s/ANGULATION_ANGLE_PLACEHOLDER/$angle/g" "/home/meccanica/ecabiati/freight_train_CFD/simulation/0.orig/include/angulationParameters_0"> /home/meccanica/ecabiati/freight_train_CFD/simulation/\0.orig/include/angulationParameters
+sed "s/ANGULATION_ANGLE_PLACEHOLDER/${2:-0}/g" "0.orig/include/angulationParameters_0"> \0.orig/include/angulationParameters
+sed -i "s/ANGULATION_FLAG_PLACEHOLDER/${1:-false}/g" "0.orig/include/angulationParameters" 
 
+# The gallery is included in the simulation accordincdg to the third argument passed to the script: if no parameter is passed, the default value is false
+echo "The gallery is included in the simulation: ${3:-false}"
+sed -i "s/GALLERY_FLAG_PLACEHOLDER/${3:-false}/g" "0.orig/include/angulationParameters"
 # Rotate the box_galleria.stl file by an angle specified in the 0.orig/include/angulationParameters filen along the y axis (also translate the box_galleria.stl file to the origin)
 # Also suppress the output of the surfaceTransformPoints command
-surfaceTransformPoints -translate "(-0.5 0 -0.25)" -rollPitchYaw "(0 $angle 0)" "$localDir"/simulation/constant/triSurface/box_galleria.stl "$localDir"/simulation/constant/triSurface/box_galleria.stl > /dev/null
+# Do all this only if the gallery is included in the simulation
 
-# Do the same for the front and back internal planes
-surfaceTransformPoints -translate "(-60 0 0.25)" -rollPitchYaw "(0 $angle 0)" "$localDir"/simulation/constant/triSurface/frontInternalWall.stl "$localDir"/simulation/constant/triSurface/frontInternalWall.stl > /dev/null
-surfaceTransformPoints -translate "(-60 0 -0.25)" -rollPitchYaw "(0 $angle 0)" "$localDir"/simulation/constant/triSurface/backInternalWall.stl "$localDir"/simulation/constant/triSurface/backInternalWall.stl > /dev/null
+if [ "${3:-false}" = true ]; then
+    surfaceTransformPoints -translate "(-0.5 0 -0.25)" -rollPitchYaw "(0 ${2:-0} 0)" constant/triSurface/box_galleria.stl constant/triSurface/box_galleria.stl > /dev/null
+
+    # Do the same for the front and back internal planes
+    surfaceTransformPoints -translate "(-60 0 0.25)" -rollPitchYaw "(0 ${2:-0} 0)" constant/triSurface/frontInternalWall.stl constant/triSurface/frontInternalWall.stl > /dev/null
+    surfaceTransformPoints -translate "(-60 0 -0.25)" -rollPitchYaw "(0 ${2:-0} 0)" constant/triSurface/backInternalWall.stl constant/triSurface/backInternalWall.stl > /dev/null
+fi
+
+# The refinement boxes are rotated according to the fourth argument passed to the script: if no parameter is passed, the default value is false
+echo "The refinement boxes are rotated: ${4:-false}"
+sed -i "s/REFINEMENT_BOXES_ROTATION_FLAG_PLACEHOLDER/${4:-false}/g" "0.orig/include/angulationParameters"
 
 #Create the logs directory if it does not exist
 mkdir -p "$localDir"/simulation/logs

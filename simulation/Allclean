@@ -3,10 +3,6 @@ cd "${0%/*}" || exit                                # Run from this directory
 . ${WM_PROJECT_DIR:?}/bin/tools/CleanFunctions      # Tutorial clean functions
 #------------------------------------------------------------------------------
 
-# Define the local directory where the simulation is run
-localDir='/home/meccanica/ecabiati/freight_train_CFD'
-
-
 cleanCase0
 
 # Remove surface and features
@@ -24,8 +20,6 @@ rm -rf log.*
 # remove the angulationParameters file
 rm -rf 0.orig/include/angulationParameters
 # remove the results directory
-rm -rf logs
-# remove the output files for the simulation
-rm -rf freight_train.* machinefile*
+rm -rf results
 
 #------------------------------------------------------------------------------
