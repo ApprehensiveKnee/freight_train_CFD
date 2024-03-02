@@ -1,3 +1,13 @@
+#!/bin/bash             # use bash as command interpreter
+#$ -cwd
+#$ -N freight_train           # jobName
+#$ -j y                 # merges output and errors
+#$ -S /bin/bash         # scripting language
+#$ -l h_rt=1:00:00      # jobDuration hh:mm:ss
+#$ -q all.q             # queueName
+#$ -pe mpi 16           # cpuNumber
+
+
 # /----------------------------------------------------------------------------\
 #                             USAGE OF THIS SCRIPT:
 # The script is used to run the simulation. It allows the user to set some parameters
@@ -14,33 +24,45 @@
 # \----------------------------------------------------------------------------/
 
 
-#!/bin/sh
-cd "${0%/*}" || exit                                # Run from this directory
-. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
-#------------------------------------------------------------------------------
+# Define the local directory where the simulation is run
+localDir='/home/meccanica/ecabiati/freight_train_CFD'
 
+echo "Moved inside $localDir/simulation"                               # Run from this directory
+
+echo "Start Parallel Run":
+
+echo "- Importing OpenFOAM"
+
+source "/home/meccanica/ecabiati/.openfoam_modules"
+
+echo "- Initiating Simulation"
+
+
+#cd "${0%/*}" || exit                                # Run from this directory
+#. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
 # Alternative decomposeParDict name:
 #decompDict="-decomposeParDict system/decomposeParDict.6"
 ## Standard decomposeParDict name:
 # unset decompDict
 
 # copy train surface from resources directory
-mkdir -p constant/triSurface
+mkdir -p "$localDir"/simulation/constant/triSurface
 
 cp -f \
-    "$FOAM_RUN"/freight_train_CFD/objects/motrice_rescaled.stl \
+    "$localDir"/objects/motrice_rescaled.stl \
     constant/triSurface/
 
 cp -f \
-    "$FOAM_RUN"/freight_train_CFD/objects/box_galleria.stl \
+    "$localDir"/objects/box_galleria.stl \
     constant/triSurface/
 
 cp -f \
-    "$FOAM_RUN"/freight_train_CFD/objects/frontInternalWall.stl \
+    "$localDir"/objects/frontInternalWall.stl \
     constant/triSurface/   
 
 cp -f \
-    "$FOAM_RUN"/freight_train_CFD/objects/backInternalWall.stl \
+    "$localDir"/objects/backInternalWall.stl \
     constant/triSurface/
 
 # Define the rotation angle to be used for the simulation: in this case, read the second argument passed to the script.
@@ -49,11 +71,11 @@ cp -f \
 echo "The angle is ${2:-0}"
 echo "The angulation flag is ${1:-false}"
 
-# Replace the placeholder in the angulationParameters_0 file with the actual value and save the result in the angulationParameters file
+# Replace the placeholder in the angulationParameters_0 file with the value in angle and save the result in the angulationParameters file
 sed "s/ANGULATION_ANGLE_PLACEHOLDER/${2:-0}/g" "0.orig/include/angulationParameters_0"> \0.orig/include/angulationParameters
 sed -i "s/ANGULATION_FLAG_PLACEHOLDER/${1:-false}/g" "0.orig/include/angulationParameters" 
 
-# The gallery is included in the simulation according to the third argument passed to the script: if no parameter is passed, the default value is false
+# The gallery is included in the simulation accordincdg to the third argument passed to the script: if no parameter is passed, the default value is false
 echo "The gallery is included in the simulation: ${3:-false}"
 sed -i "s/GALLERY_FLAG_PLACEHOLDER/${3:-false}/g" "0.orig/include/angulationParameters"
 # Rotate the box_galleria.stl file by an angle specified in the 0.orig/include/angulationParameters filen along the y axis (also translate the box_galleria.stl file to the origin)
@@ -72,54 +94,56 @@ fi
 echo "The refinement boxes are rotated: ${4:-false}"
 sed -i "s/REFINEMENT_BOXES_ROTATION_FLAG_PLACEHOLDER/${4:-false}/g" "0.orig/include/angulationParameters"
 
-#Create the results directory if it does not exist
-mkdir -p results
+#Create the logs directory if it does not exist
+mkdir -p "$localDir"/simulation/logs
 
-# Run the applications and return the log files to the results directory
+# Run the applications and return the log files to the logs directory
 
-runApplication surfaceFeatureExtract
+surfaceFeatureExtract >& "$localDir"/simulation/log.surfaceFeatureExtract
 
-runApplication blockMesh
+blockMesh >& "$localDir"/simulation/log.blockMesh
 
-runApplication $decompDict decomposePar
+decomposePar >& "$localDir"/simulation/log.decomposePar
 
 # Using distributedTriSurfaceMesh?
-if foamDictionary -entry geometry -value system/snappyHexMeshDict | \
-   grep -q distributedTriSurfaceMesh
-then
-    echo "surfaceRedistributePar does not need to be run anymore"
-    echo " - distributedTriSurfaceMesh will do on-the-fly redistribution"
-fi
+# if foamDictionary -entry geometry -value system/snappyHexMeshDict | \
+#    grep -q distributedTriSurfaceMesh
+# then
+#     echo "surfaceRedistributePar does not need to be run anymore"
+#     echo " - distributedTriSurfaceMesh will do on-the-fly redistribution"
+# fi
 
-runParallel $decompDict snappyHexMesh -overwrite
+mpirun --hostfile machinefile.$JOB_ID snappyHexMesh -parallel -overwrite >& "$localDir"/simulation/log.snappyHexMesh
 
-runParallel $decompDict topoSet
+mpirun --hostfile machinefile.$JOB_ID topoSet -parallel >& "$localDir"/simulation/log.topoSet
 
-# runParallel $decompDict createPatch -overwrite
+mpirun --hostfile machinefile.$JOB_ID cretePatch -parallel -overwrite >& "$localDir"/simulation/log.createPatch
 
-#- For non-parallel running: - set the initial fields
-# restore0Dir
 
-#- For parallel running: set the initial fields
-restore0Dir -processor
+# restore the 0/ directory from the 0.orig/ directory inside each processor directory
+echo "Restore 0/ form 0.orig/  [processor dictionaries]"
+\ls -d processor* | xargs -I {} rm -rf ./{}/0
+\ls -d processor* | xargs -I {} cp -r 0.orig ./{}/0 #> /dev/null 2>&1
 
-runParallel $decompDict patchSummary
+mpirun --hostfile machinefile.$JOB_ID patchSummary -parallel >& "$localDir"/simulation/log.patchSummary
 
-runParallel $decompDict potentialFoam -writephi
+mpirun --hostfile machinefile.$JOB_ID potentialFoam -parallel -writephi >& "$localDir"/simulation/log.potentialFoam
 
-runParallel $decompDict checkMesh -writeFields '(nonOrthoAngle)' -constant
+mpirun --hostfile machinefile.$JOB_ID checkMesh -parallel -writeFields '(nonOrthoAngle)' -constant >& "$localDir"/simulation/log.checkMesh
 
-runParallel $decompDict $(getApplication)
+mpirun --hostfile machinefile.$JOB_ID simpleFoam -parallel >& "$localDir"/simulation/log.simpleFoam
 
-runApplication reconstructParMesh -constant
+reconstructParMesh -constant
 
-runApplication reconstructPar -latestTime
+reconstructPar -latestTime
 
 #Generate the train.foam file
-touch train.foam
+touch "$localDir"/simulation/train.foam
 
-# Move all the log files to the results directory
-mv log.* results
+# Move all the log files to the logs directory
+mv "$localDir"/simulation/log.* "$localDir"/simulation/logs
 
 
 #------------------------------------------------------------------------------
+
+echo "End Parallel Run"

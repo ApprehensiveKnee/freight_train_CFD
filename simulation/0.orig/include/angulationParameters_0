@@ -14,16 +14,19 @@
         to 15, to avoid too inclied wind velocities.
         PLEASE NOTE: THE ANGULATION ANGLE WILL BE DEFINED USING A PLACEHOLDER,
         WHOSE VALUE WILL BE DEFINED IN THE ALLRUN SHELL SCRIPT.
+
+    --> ROTATE_REFINEMENT_FLAG: flag to indicate whether the refinement boxes
+        are rotated with the train or not. 
 \*---------------------------------------------------------------------------*/
 
 // Just a variable to set the module of the velocity.
 parallelVelocity      20;
 
-// ---------------------------* Angulation flag *---------------------------
+// ---------------------------* Angulation section *---------------------------
 // false: no angulation
 // true: angulation
 
-angulationFlag          true;
+angulationFlag          ANGULATION_FLAG_PLACEHOLDER;
 // In case the angulation flag is true, the boundary conditions and inlet velocity
 // values must me modifed and recomputed using the AngulationAngle parameter.
 // Please note that the angle is defined for an analogous clockwise rotation 
@@ -33,7 +36,7 @@ angulationFlag          true;
 angulationAngle         ANGULATION_ANGLE_PLACEHOLDER ;
 // Also define a parameter for the angle to be used in the Allrun shell script to represent the value of the angle
 
-angleLimit              20.;
+angleLimit              30.;
 #ifeq $angulationFlag true  
     #if #eval {$angulationAngle > $angleLimit}
         angulationAngle      $angleLimit;
@@ -51,3 +54,24 @@ angleLimit              20.;
 
 x_velocity              #eval{ $parallelVelocity * cos(degToRad($angulationAngle)) };
 z_velocity              #eval{ $parallelVelocity * sin(degToRad($angulationAngle)) };
+
+
+// We also include an addition flag to choose whether we would like the refinement boxes to be 
+// rotatated with the train or not. This flag will also influence eventual displacement introduced
+// to fit the train in the refinement boxes in the angulated case.
+
+ROTATE_REFINEMENT_FLAG       ROTATE_REFINEMENT_FLAG_PLACEHOLDER;
+
+// ---------------------------* Gallery Box Section *---------------------------
+//     The following section (indipendendt of the angulation parameters)
+//     is included in the angulationParameters file just to simplyfy the 
+//     change of parameters at run time by the Allrun script. The pourpose
+//     of this section is to include a simple flag to indicate whether the
+//     gallery box is included in the simulation or not.
+
+// false: no gallery box
+// true: gallery box
+
+BOX_GALLERIA_FLAG          GALLERY_BOX_FLAG_PLACEHOLDER;
+
+// ************************************************************************* //
