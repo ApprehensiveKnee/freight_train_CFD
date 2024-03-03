@@ -32,3 +32,75 @@ import os
 
 # ----------------- 1. Dimension of the box -----------------
 
+# Define an array of possible choices for the coordinates of the vertices of the box
+
+# (-1.268 0 -1.22) // 0
+# (2.812 0 -1.22) // 1
+# (2.812 1.3 -1.22) //2
+# (-1.268 1.3 -1.22) //3
+# (-1.268  0 1.22) //4
+# (2.812  0 1.22) // 5
+# (2.812  1.3 1.22) //6
+# (-1.268  1.3 1.22) //7
+
+box = [(-1.268, 0, -1.22), (2.812, 0, -1.22), (2.812, 1.3, -1.22), (-1.268, 1.3, -1.22),
+         (-1.268, 0, 1.22), (2.812, 0, 1.22), (2.812, 1.3, 1.22), (-1.268, 1.3, 1.22)]
+cells = [40, 13, 24]
+refinement_boxes = [["true", 2, (3.612, 0.5, 1), -0.9, -0.5],["true", 3, (3.1, 0.4, 0.7), -0.65, -0.35],["true", 4, (2.6, 0.3, 0.55), -0.55, -0.3],["false", 5 , (2.2, 0.25, 0.4),-0.4 , -0.25]]
+refinement_train = ["false", 0.07, 5]
+
+# Function to trasform the box data structures into strings
+# es box = [(-1.268, 0, -1.22), (2.812, 0, -1.22), (2.812, 1.3, -1.22), (-1.268, 1.3, -1.22),...] becomes
+# "{(-1.268 0 -1.22), (2.812 0 -1.22), (2.812 1.3 -1.22), (-1.268 1.3 -1.22),...}"
+def box_string(l):
+    s = "{"
+    for i in range(len(l)):
+        s += "(" + str(l[i][0]) + " " + str(l[i][1]) + " " + str(l[i][2]) + ")"
+        if i != len(l) - 1:
+            s += ", "
+    s += "}"
+    return s
+
+#Function to transform the refinement_boxes data structures into strings
+# es refinement_boxes = [["true", 2, (3.612, 0.5, 1), -0.9, -0.5],["true", 3, (3.1, 0.4, 0.7), -0.65, -0.35],["true", 4, (2.6, 0.3, 0.55), -0.55, -0.3],["false", 5 , (2.2, 0.25, 0.4),-0.4 , -0.25]] becomes
+# "{{true, 2, (3.612 0.5 1), -0.9, -0.5}, {true, 3, (3.1 0.4 0.7), -0.65, -0.35}, {true, 4, (2.6 0.3 0.55), -0.55, -0.3}, {false, 5, (2.2 0.25 0.4), -0.4, -0.25}}"
+def refinement_boxes_string(l):
+    s = "{"
+    for i in range(len(l)):
+        s += "{" + l[i][0] + ", " + str(l[i][1]) + ", (" + str(l[i][2][0]) + " " + str(l[i][2][1]) + " " + str(l[i][2][2]) + "), " + str(l[i][3]) + ", " + str(l[i][4]) + "}"
+        if i != len(l) - 1:
+            s += ", "
+    s += "}"
+    return s
+
+# Function to transform the refinement_train data structures into strings
+# es refinement_train = ["false", 0.07, 5] becomes "{false, 0.07, 5}"
+def refinement_train_string(l):
+    s = "{" + l[0] + ", " + str(l[1]) + ", " + str(l[2]) + "}"
+    return s
+
+# Function t transform the cells data structures into strings
+# es cells = [40, 13, 24] becomes "{40, 13, 24}"
+def cells_string(l):
+    s = "{"
+    for i in range(len(l)):
+        s += str(l[i])
+        if i != len(l) - 1:
+            s += ", "
+    s += "}"
+    return s
+
+# Function to call the allrun script given the list of parameters
+def run_simulation(box, cells, refinement_boxes, refinement_train):
+    # Convert the data structures into strings
+    box = box_string(box)
+    cells = cells_string(cells)
+    refinement_boxes = refinement_boxes_string(refinement_boxes)
+    refinement_train = refinement_train_string(refinement_train)
+    # Call the allrun script givin the parameters (strings) as arguments to the options
+    # ./Allrun -b box -c cells -r refinement_boxes -t refinement_train
+    os.system("./Allrun -b " + box + " -c " + cells + " -r " + refinement_boxes + " -t " + refinement_train)
+
+
+
+# Substitute the coordinates of the vertices

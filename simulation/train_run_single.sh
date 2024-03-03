@@ -35,7 +35,7 @@ echo "- Importing OpenFOAM"
 
 source "/home/meccanica/ecabiati/.openfoam_modules"
 
-echo "- Initiating Simulation"
+echo "- Preparing the simulation environment..."
 
 
 #cd "${0%/*}" || exit                                # Run from this directory
@@ -65,23 +65,51 @@ cp -f \
     "$localDir"/objects/backInternalWall.stl \
     constant/triSurface/
 
-# Define the rotation angle to be used for the simulation: in this case, read the second argument passed to the script.
-# The first argument defines the flag to actually rotate the simulation
-# If no parameters are passed, the default value for the flag is false and the angle is 0
-echo "The angle is ${2:-0}"
-echo "The angulation flag is ${1:-false}"
-# Replace the placeholder in the angulationParameters_0 file with the value in angle and save the result in the angulationParameters file
-sed "s/ANGULATION_ANGLE_PLACEHOLDER/${2:-0}/g" "0.orig/include/angulationParameters_0"> \0.orig/include/angulationParameters
-sed -i "s/ANGULATION_FLAG_PLACEHOLDER/${1:-false}/g" "0.orig/include/angulationParameters" 
+# Define some default values
+angulation_flag="false"
+angle_value="0"
+gallery_included="false"
+rotated_refinement="false"
 
-# The gallery is included in the simulation accordincdg to the third argument passed to the script: if no parameter is passed, the default value is false
-echo "The gallery is included in the simulation: ${3:-false}"
-sed -i "s/GALLERY_FLAG_PLACEHOLDER/${3:-false}/g" "0.orig/include/angulationParameters"
+OPTSTRING="av:go"
+
+# Parse the arguments passed to the script
+while getopts ${OPTSTRING} opt; do
+  case $opt in
+    a) angulation_flag="true"
+    ;;
+    v) angle_value="$OPTARG"
+    ;;
+    g) gallery_included="true"
+    ;;
+    o) rotated_refinement="true"
+    ;;
+    \?) echo "Invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
+
+if [[ $angulation_flag == "false" && $angle_value != "0" ]]; then
+  echo "Error - The angle value is not 0 but the angulation flag is set to false. Please set the angulation flag to true or set the angle value to 0."
+  exit 1
+fi
+
+echo "The angulation flag is $angulation_flag"
+echo "The angle is $angle_value"
+echo "The gallery is included in the simulation: $gallery_included"
+echo "The refinement boxes are rotated: $rotated_refinement"
+
+# Replace the placeholder in the angulationParameters_0 file with the actual value and save the result in the angulationParameters file
+sed "s/ANGULATION_ANGLE_PLACEHOLDER/$angle_value/g" "0.orig/include/angulationParameters_0"> \0.orig/include/angulationParameters
+sed -i "s/ANGULATION_FLAG_PLACEHOLDER/$angulation_flag/g" "0.orig/include/angulationParameters" 
+sed -i "s/GALLERY_FLAG_PLACEHOLDER/$gallery_included/g" "0.orig/include/angulationParameters"
+sed -i "s/REFINEMENT_BOXES_ROTATION_FLAG_PLACEHOLDER/$rotated_refinement/g" "0.orig/include/angulationParameters"
+
 # Rotate the box_galleria.stl file by an angle specified in the 0.orig/include/angulationParameters filen along the y axis (also translate the box_galleria.stl file to the origin)
 # Also suppress the output of the surfaceTransformPoints command
 # Do all this only if the gallery is included in the simulation
 
-if [ "${3:-false}" = true ]; then
+if [ "$gallery_included" = true ]; then
     surfaceTransformPoints -translate "(-0.5 0 -0.25)" -rollPitchYaw "(0 ${2:-0} 0)" constant/triSurface/box_galleria.stl constant/triSurface/box_galleria.stl > /dev/null
 
     # Do the same for the front and back internal planes
@@ -89,12 +117,11 @@ if [ "${3:-false}" = true ]; then
     surfaceTransformPoints -translate "(-60 0 -0.25)" -rollPitchYaw "(0 ${2:-0} 0)" constant/triSurface/backInternalWall.stl constant/triSurface/backInternalWall.stl > /dev/null
 fi
 
-# The refinement boxes are rotated according to the fourth argument passed to the script: if no parameter is passed, the default value is false
-echo "The refinement boxes are rotated: ${4:-false}"
-sed -i "s/REFINEMENT_BOXES_ROTATION_FLAG_PLACEHOLDER/${4:-false}/g" "0.orig/include/angulationParameters"
 
 #Create the logs directory if it does not exist
 mkdir -p "$localDir"/simulation/logs
+
+echo "- Meshing..."
 
 # Run the applications and return the log files to the logs directory
 
@@ -118,9 +145,8 @@ mpirun --hostfile machinefile.$JOB_ID topoSet -parallel >& "$localDir"/simulatio
 
 mpirun --hostfile machinefile.$JOB_ID cretePatch -parallel -overwrite >& "$localDir"/simulation/log.createPatch
 
-
+echo "- Running the simulation..."
 # restore the 0/ directory from the 0.orig/ directory inside each processor directory
-echo "Restore 0/ form 0.orig/  [processor dictionaries]"
 \ls -d processor* | xargs -I {} rm -rf ./{}/0
 \ls -d processor* | xargs -I {} cp -r 0.orig ./{}/0 #> /dev/null 2>&1
 

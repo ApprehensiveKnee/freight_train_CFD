@@ -1,0 +1,35 @@
+/*---------------------------------------------------------------------------*\
+                 DEFINITION OF OUTER BLOCK PARAMETERS
+
+    We include in this file a series of parameters to be used
+    to define the bonds of the domain used for the simulations: namely, the
+    coordinates of the corners of the domain, the number of cells in each
+    direction.
+
+\*---------------------------------------------------------------------------*/
+
+// Define the coordinates of the corners of the domain
+
+OUTER_0    OUTER_PLACEHOLDER_0;
+
+OUTER_1    OUTER_PLACEHOLDER_1;
+
+OUTER_2    OUTER_PLACEHOLDER_2;
+
+OUTER_3    OUTER_PLACEHOLDER_3;
+
+OUTER_4    OUTER_PLACEHOLDER_4;
+
+OUTER_5    OUTER_PLACEHOLDER_5;
+
+OUTER_6    OUTER_PLACEHOLDER_6;
+
+OUTER_7    OUTER_PLACEHOLDER_7;
+
+
+// Define the number of cells in each direction for the lower level
+// of refinement
+
+NCELLS_X    NCELLS_PLACEHOLDER_0;
+NCELLS_Y    NCELLS_PLACEHOLDER_1;
+NCELLS_Z    NCELLS_PLACEHOLDER_2;

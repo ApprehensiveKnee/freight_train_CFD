@@ -1,0 +1,64 @@
+/*---------------------------------------------------------------------------*\
+                 DEFINITION OF REFINEMENT PARAMETERS AND FLAGS:
+
+    We include in this file a series of parameters and flags to be used during
+    the validation phase, to decide on the correct refinement of the mesh.
+    Ideally, we would like to achieve a sort of optimal trade-off between
+    the computational complexity and correctness of the results. As such, some
+    fine tuning of mesh parameters is required.
+\*---------------------------------------------------------------------------*/
+
+// FLAG PARAMETERS FOR THE REFINEMENT BOXES (UP TO 4 REFINEMENT BOXES) inside Openfoam
+// false: no refinement
+// true: refinement
+// +  LEVEL REFINEMENT PARAMETERS
+// +  SPAN and ORIGIN COORDINATES OF THE REFINEMENT BOX
+
+// A parameter to take into account the shift ot the refinement boxes
+// in case of angulation of the train, to center it in the middle of the
+// refinement boxes themselves
+factor  0.0085;
+#ifeq $ROTATE_REFINEMENT_FLAG true
+    displacement  #eval{$angulationAngle * $factor};
+#else
+    displacement  0.;
+#endif
+
+// refinement box 1 
+REFINEMENT_BOX_0         REFINEMENT_BOX_PLACEHOLDER_0;
+REFINEMENT_LEVEL_0          REFINEMENT_LEVEL_PLACEHOLDER_0;
+SPAN_0         SPAN_PLACEHOLDER_0;
+orig_0_x       #eval{ ORIG_X_PLACEHOLDER_0 + $displacement/3 };
+orig_0_z       #eval{ ORIG_Z_PLACEHOLDER_0 + $displacement };        
+ORIG_0           ($orig_0_x 0 $orig_0_z);
+
+// refinement box 2
+REFINEMENT_BOX_1            REFINEMENT_BOX_PLACEHOLDER_1;
+REFINEMENT_LEVEL_1             REFINEMENT_LEVEL_PLACEHOLDER_1;
+SPAN_1             SPAN_PLACEHOLDER_1;
+orig_1_x       #eval{ ORIG_X_PLACEHOLDER_1 + $displacement/3 };
+orig_1_z       #eval{ ORIG_Z_PLACEHOLDER_1 + $displacement };
+ORIG_1             ($orig_1_x 0 $orig_1_z);
+
+// refinement box 3
+REFINEMENT_BOX_2           REFINEMENT_BOX_PLACEHOLDER_2;
+REFINEMENT_LEVEL_2             REFINEMENT_LEVEL_PLACEHOLDER_2;
+SPAN_2              SPAN_PLACEHOLDER_2;
+orig_2_x       #eval{ ORIG_X_PLACEHOLDER_2 + $displacement/3 };
+orig_2_z       #eval{ ORIG_Z_PLACEHOLDER_2 + $displacement };
+ORIG_2             ($orig_2_x 0 $orig_2_z);
+
+// refinement box 4
+REFINEMENT_BOX_3            REFINEMENT_BOX_PLACEHOLDER_3;
+REFINEMENT_LEVEL_3              REFINEMENT_LEVEL_PLACEHOLDER_3;
+SPAN_3              SPAN_PLACEHOLDER_3;
+orig_3_x       #eval{ ORIG_X_PLACEHOLDER_3 + $displacement/3 };
+orig_3_z       #eval{ ORIG_Z_PLACEHOLDER_3 + $displacement };
+ORIG_3             ($orig_3_x 0 $orig_3_z);
+
+// distance refinement from the train walls
+REFINEMENT_TRAIN            REFINEMENT_TRAIN_PLACEHOLDER;
+REFINEMENT_DISTANCE         REFINEMENT_DISTANCE_PLACEHOLDER;
+REFINEMENT_LEVEL_TRAIN         REFINEMENT_LEVEL_TRAIN_PLACEHOLDER;
+
+// ************************************************************************* //

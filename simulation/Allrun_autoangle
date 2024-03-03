@@ -28,28 +28,48 @@ cp -f \
     "$FOAM_RUN"/freight_train_CFD/objects/backInternalWall.stl \
     constant/triSurface/
 
-# Define the maximum rotation angle to be used for the simulation
-# If no parameters are passed, the default value for the angle is 0
-echo "The maximum angle is ${1:-20}"
+# Define some default values
+angle_value="10"
+angle_delta="3"
+gallery_included="false"
+rotated_refinement="false"
 
-# Define the delta to be used for the sequence of simulations
-# If no parameters are passed, the default value for the delta is 3
-echo "The delta is ${2:-3}"
+# Parse the arguments passed to the script
+while getopts "v:d:go" opt; do
+  case $opt in
+    v) angle_value="$OPTARG"
+    ;;
+    d) angle_delta="$OPTARG"
+    ;;
+    g) gallery_included="true"
+    ;;
+    o) rotated_refinement="true"
+    ;;
+    \?) echo "Invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
 
-# Define whether the gallery is included in the simulation
-# If no parameters are passed, the default value for the flag is false
-echo "The gallery is included in the simulation: ${3:-false}"
+if [[ $angle_value == "0"  ]]; then
+  echo "Error - The angle value is 0. Please set the angle value to a value greater than 0."
+  exit 1
+fi
 
-# Define whether the refinement boxes are rotated
-# If no parameters are passed, the default value for the flag is false
-echo "The refinement boxes are rotated: ${4:-false}"
+if [[ $angle_delta == "0"  ]]; then
+  echo "Error - The angle delta is 0. Please set the angle delta to a value greater than 0."
+  exit 1
+fi
 
+echo "The maxium angle is $angle_value"
+echo "The angle delta is $angle_delta"
+echo "The gallery is included in the simulation: $gallery_included"
+echo "The refinement boxes are rotated: $rotated_refinement"
 
 
 # Change the value progressively from 0 to MAX_ANGLE by DELTA units. For each value, run the simulation and store the results into 
 # a folder named after the value of the angle (results/results_xxx, where xxx is the value of the angle)
 angle=0
-while [ $angle -le ${1:-10} ];do
+while [ $angle -le $angle_value ];do
     echo "Running the simulation with angle $angle"
     
     # Create the folder for the results
@@ -59,14 +79,14 @@ while [ $angle -le ${1:-10} ];do
     # Replace the placeholders in the angulationParameters_0 file with the value actual value and save the result in the angulationParameters file
     sed "s/ANGULATION_ANGLE_PLACEHOLDER/$angle/g" "0.orig/include/angulationParameters_0"> \0.orig/include/angulationParameters
     sed -i "s/ANGULATION_FLAG_PLACEHOLDER/true/g" "0.orig/include/angulationParameters" 
-    sed -i "s/GALLERY_FLAG_PLACEHOLDER/${3:-false}/g" "0.orig/include/angulationParameters"
-    sed -i "s/REFINEMENT_BOXES_ROTATION_FLAG_PLACEHOLDER/${4:-false}/g" "0.orig/include/angulationParameters"
+    sed -i "s/GALLERY_FLAG_PLACEHOLDER/$gallery_included/g" "0.orig/include/angulationParameters"
+    sed -i "s/REFINEMENT_BOXES_ROTATION_FLAG_PLACEHOLDER/$rotated_refinement/g" "0.orig/include/angulationParameters"
 
     # Rotate the box_galleria.stl file by an angle specified in the 0.orig/include/angulationParameters file along the y axis (also translate the box_galleria.stl file to the origin)
     # Also suppress the output of the surfaceTransformPoints command
     # Do all this only if the gallery is included in the simulation
 
-    if [ "${3:-false}" = true ]; then
+    if [ "$gallery_included" = true ]; then
         surfaceTransformPoints -translate "(-0.5 0 -0.25)" -rollPitchYaw "(0 ${2:-0} 0)" constant/triSurface/box_galleria.stl constant/triSurface/box_galleria.stl > /dev/null
 
         # Do the same for the front and back internal planes
@@ -110,7 +130,7 @@ while [ $angle -le ${1:-10} ];do
     runApplication reconstructPar -latestTime 
 
     # Increase the angle by DELTA
-    angle=$(( $angle + ${2:-3} ))
+    angle=$(( $angle + $angle_delta ))
 
     # Move all the log files to the results directory
     mv log.* results/results_$angle

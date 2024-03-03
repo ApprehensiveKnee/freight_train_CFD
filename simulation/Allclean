@@ -18,7 +18,7 @@ rm -rf *[0-9]
 # remove all log files
 rm -rf log.*
 # remove the angulationParameters file
-rm -rf 0.orig/include/angulationParameters
+rm -rf 0.orig/include/angulationParameters 0.orig/include/refinementParameters 0.orig/include/blockParameters
 # remove the results directory
 rm -rf results
 
