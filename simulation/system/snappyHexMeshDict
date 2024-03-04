@@ -55,7 +55,7 @@ normal_z   #eval{cos(degToRad($angulationAngle))};
 // - to 'snap' the mesh boundary to the surface
 geometry
 {
-    motrice_rescaled.stl
+    train.stl
     {
         type triSurfaceMesh;
         name train;
@@ -184,7 +184,7 @@ castellatedMeshControls
     features
     (
         {
-            file "motrice_rescaled.eMesh";
+            file "train.eMesh";
             level 5;
         }
     );

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # /----------------------------------------------------------------------------\
 #                             USAGE OF THIS SCRIPT:
 # The script is used to run the simulation. It allows the user to set some parameters
@@ -14,7 +16,7 @@
 # \----------------------------------------------------------------------------/
 
 
-#!/bin/sh
+
 cd "${0%/*}" || exit                                # Run from this directory
 . ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
 #------------------------------------------------------------------------------
@@ -27,9 +29,9 @@ cd "${0%/*}" || exit                                # Run from this directory
 # copy train surface from resources directory
 mkdir -p constant/triSurface
 
-cp -f \
-    "$FOAM_RUN"/freight_train_CFD/objects/motrice_rescaled.stl \
-    constant/triSurface/
+# cp -f \
+#     "$FOAM_RUN"/freight_train_CFD/objects/motrice_rescaled.stl \
+#     constant/triSurface/
 
 cp -f \
     "$FOAM_RUN"/freight_train_CFD/objects/box_galleria.stl \
@@ -43,6 +45,10 @@ cp -f \
     "$FOAM_RUN"/freight_train_CFD/objects/backInternalWall.stl \
     constant/triSurface/
 
+cp -f \
+    "$FOAM_RUN"/freight_train_CFD/objects/train.stl \
+    constant/triSurface/
+
 # ----------------------------* PARAMETER PARSING *--------------------------
 # Define some default values
 angulation_flag="false"
@@ -50,7 +56,7 @@ angle_value=0
 gallery_included="false"
 rotated_refinement="false"
 
-OPTSTRING="av:gor:t:"
+OPTSTRING="av:gor:t:b:c:"
 
 # Copy the original refinementParameters_0 (template) file to the refinementParameters file
 cp 0.orig/include/refinementParameters_0 0.orig/include/refinementParameters
@@ -88,16 +94,14 @@ while getopts ${OPTSTRING} opt; do
         # by replacing the placeholders with the actual values
 
         echo "=========================* REFINEMENT - BOXES *========================="
-        echo "The refinement boxes included in the simulation at hand  are:"
 
-        # remove the outer "{" and "}" from the string
-        OPTARG=${OPTARG//[\{\}]/}
+        echo "The refinement boxes included in the simulation at hand  are:"
 
         # Parse the string, split it by the ; character and save the result in an array.
         # Then iterate over each element of the array and extract the values of the refinement box represented by the element of the array
         # Note that the index of the array is the number of the refinement box, while the first token extracted from each element of the array
         # is a flag to indicate whether the refinement box is included in the simulation or not.
-        IFS=',' read -ra refinementBoxes <<< "$OPTARG"
+        IFS=';' read -ra refinementBoxes <<< "$OPTARG"
         for i in "${!refinementBoxes[@]}"; do
             IFS=',' read -ra refinementBox <<< "${refinementBoxes[i]//[\{\}]/}"
             echo "REFINEMENT_BOX_$i is included in the simulation: ${refinementBox[0]}"
@@ -131,16 +135,19 @@ while getopts ${OPTSTRING} opt; do
             fi
         done
 
-        echo "=============================================================="
+        echo "========================================================================"
+        
     ;;
     t)  # The option lets insert the parameters to define eventual refinement at a certain distance from the train
         # The string is parsed and the values are saved in the refinementParameters file
         # by replacing the placeholders with the actual values
         # The format of the string is the following:
-        # {REFINEMENT_TRAIN_PLACHOLDER; REFINEMENT_DISTANCE_PLACEHOLDER, REFINEMENT_LEVEL_TRAIN_PLACEHOLDER}
+        # {REFINEMENT_TRAIN_PLACHOLDER, REFINEMENT_DISTANCE_PLACEHOLDER, REFINEMENT_LEVEL_TRAIN_PLACEHOLDER}
         echo "=========================* REFINEMENT - TRAIN *========================="
+        
+        OPTARG=${OPTARG//[\{\}]/}
 
-        IFS=',' read -ra refinementTrain <<< "$OPTARG//[\{\}]/}"
+        IFS=',' read -ra refinementTrain <<< "$OPTARG"
         echo " Refinement of the train is included in the simulation: ${refinementTrain[0]}"
         echo " Refinement distance from the train is: ${refinementTrain[1]}"
         echo " Refinement level for the train is: ${refinementTrain[2]}"
@@ -150,7 +157,7 @@ while getopts ${OPTSTRING} opt; do
         sed -i "s/REFINEMENT_DISTANCE_PLACEHOLDER/${refinementTrain[1]}/g" "0.orig/include/refinementParameters"
         sed -i "s/REFINEMENT_LEVEL_TRAIN_PLACEHOLDER/${refinementTrain[2]}/g" "0.orig/include/refinementParameters"
 
-        echo "=============================================================="
+        echo "========================================================================"
 
     ;;
     b)
@@ -158,20 +165,25 @@ while getopts ${OPTSTRING} opt; do
         # The string is parsed and the values are saved in the blockMeshDict file
         # by replacing the placeholders with the actual values
         # The format of the string is the following ):
-        #{ OUTHER_0, OUTER_1, OUTER_2, ...} 
+        #{ OUTER_0, OUTER_1, OUTER_2, ...} 
         # example: {(-1.268 0 -1.22),(2.812 0 -1.22), (2.812 1.3 -1.22), (-1.268 1.3 -1.22), (-1.268  0 1.22),(2.812  0 1.22) , (2.812  0 1.22), (2.812  0 1.22)}
         # To run the simulation, the option would require 8 vertices: the correcteness is left to the user.
         # Yet, some default values are set in the blockMeshDict file if no value for the vertices is given.
-        echo "=========================* BLOCK MESH *========================="
+        echo "=============================* BLOCK MESH *============================="
+        
+        OPTARG=${OPTARG//[\{\}]/}
 
-        IFS=',' read -ra blockMeshVertices <<< "$OPTARG//[\{\}]/}"
-        echo "The vertices of the block mesh are: ${blockMeshVertices[@]}"
+        IFS=',' read -ra blockMeshVertices <<< "$OPTARG"
+        echo "The vertices of the block mesh are:"
+        for i in "${!blockMeshVertices[@]}"; do
+            echo "OUTER_$i: ${blockMeshVertices[i]}"
+        done
         # Replace the placeholders in the blockMeshDict file with the actual values and save the result in the blockMeshDict file
         for i in "${!blockMeshVertices[@]}"; do
             sed -i "s/OUTER_PLACEHOLDER_$i/${blockMeshVertices[i]}/g" "0.orig/include/blockParameters"
         done
 
-        echo "=============================================================="
+        echo "========================================================================"
 
     ;;
     c) 
@@ -182,22 +194,38 @@ while getopts ${OPTSTRING} opt; do
         #{ NCELLS_X, NCELLS_Y, NCELLS_Z}
         #{40, 13, 24}
 
-        echo "=========================* NUM. CELLS *========================="
+        echo "=============================* NUM. CELLS *============================="
 
-        IFS=',' read -ra blockMeshCells <<< "$OPTARG//[\{\}]/}"
-        echo "The number of cells at the lowest level of refinement in the block mesh are: ${blockMeshCells[@]}"
+        OPTARG=${OPTARG//[\{\}]/}
+
+        IFS=',' read -ra blockMeshCells <<< "$OPTARG"
+        echo "The number of cells at the lowest level of refinement in the block mesh are:"
+        echo "${blockMeshCells[@]}"
         # Replace the placeholders in the blockMeshDict file with the actual values and save the result in the blockMeshDict file
         for i in "${!blockMeshCells[@]}"; do
             sed -i "s/NCELLS_PLACEHOLDER_$i/${blockMeshCells[i]}/g" "0.orig/include/blockParameters"
         done
 
-        echo "=============================================================="
+        echo "========================================================================"
 
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
   esac
 done
+
+#Handle the case in which no refinement boxes are given by setting default values in the refinementParameters file
+if [ -z "${refinementBoxes[0]}" ]; then
+    echo "The refinement boxes included in the simulation at hand  are:  --- NO DEFINITION GIVEN"
+    # Replace the placeholders in the refinementParameters file with the actual values and save the result in the refinementParameters file
+    for i in {0..3}; do
+        sed -i "s/REFINEMENT_BOX_PLACEHOLDER_$i/false/g" "0.orig/include/refinementParameters"
+        sed -i "s/REFINEMENT_LEVEL_PLACEHOLDER_$i/1/g" "0.orig/include/refinementParameters"
+        sed -i "s/SPAN_PLACEHOLDER_$i/(0.1 0.1 0.1)/g" "0.orig/include/refinementParameters"
+        sed -i "s/ORIG_X_PLACEHOLDER_$i/0/g" "0.orig/include/refinementParameters"
+        sed -i "s/ORIG_Z_PLACEHOLDER_$i/0/g" "0.orig/include/refinementParameters"
+    done
+fi
 
 #Handle the case in which no train refinement is required by settin default values in the refinementParameters file
 if [ -z "${refinementTrain[0]}" ]; then
@@ -242,8 +270,8 @@ fi
 
 sed -i "s/ANGULATION_FLAG_PLACEHOLDER/$angulation_flag/g" "0.orig/include/angulationParameters"
 sed -i "s/ANGULATION_ANGLE_PLACEHOLDER/$angle_value/g" "0.orig/include/angulationParameters"
-sed -i "s/GALLERY_FLAG_PLACEHOLDER/$gallery_included/g" "0.orig/include/angulationParameters"
-sed -i "s/REFINEMENT_BOXES_ROTATION_FLAG_PLACEHOLDER/$rotated_refinement/g" "0.orig/include/angulationParameters"
+sed -i "s/GGALLERY_BOX_FLAG_PLACEHOLDER/$gallery_included/g" "0.orig/include/angulationParameters"
+sed -i "s/ROTATE_REFINEMENT_FLAG_PLACEHOLDER/$rotated_refinement/g" "0.orig/include/angulationParameters"
 
 ##############################################################################
 
@@ -262,6 +290,9 @@ fi
 
 
 # ----------------------------* ACTUALLY RUN THE CODE *--------------------------
+
+
+echo "=========================* RUNNING THE SIMULATION *========================="
 
 #Create the results directory if it does not exist
 mkdir -p results
@@ -305,6 +336,8 @@ runParallel $decompDict $(getApplication)
 runApplication reconstructParMesh -constant
 
 runApplication reconstructPar -latestTime
+
+echo "========================================================================"
 
 #Generate the train.foam file
 touch train.foam

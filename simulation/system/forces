@@ -51,10 +51,10 @@ forces1
     liftDir         (0 1 0);
     dragDir         ($dragX 0 $dragZ);
     CofR            (0 0 0);  // Axle midpoint on ground
-    pitchAxis       ($pitchX 1 $pitchZ);
+    pitchAxis       ($pitchX 0 $pitchZ);
     magUInf         $parallelVelocity;
     lRef            0.434;        // Wheelbase length
-    Aref            0.00895;        // Estimated
+    Aref            #eval{ $lCross * 0.118};        // Estimated
 }
 
 
@@ -70,7 +70,7 @@ binField1
 
     binData
     {
-        nBin        100;          // output data into 100 bins
+        nBin        300;          // output data into 100 bins
         direction   (1 0 0);     // bin direction
         cumulative  yes;
     }

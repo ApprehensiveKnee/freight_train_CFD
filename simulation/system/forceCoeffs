@@ -28,6 +28,9 @@ Theta           #eval{ acos(0.076/$d) };
 dragX        #eval {cos(degToRad($angulationAngle))};
 dragZ        #eval {sin(degToRad($angulationAngle))};
 
+pitchX       #eval {sin(degToRad($angulationAngle))};
+pitchZ       #eval {cos(degToRad($angulationAngle))};
+
 // ************************************************************************* //
 forceCoeffs1
 {
@@ -46,7 +49,7 @@ forceCoeffs1
     liftDir         (0 1 0);
     dragDir         ($dragX 0 $dragZ);
     CofR            (0 0 0);  // Axle midpoint on ground
-    pitchAxis       (0 0 1);
+    pitchAxis       ($pitchX 0 $pitchZ);
     magUInf         $parallelVelocity;
     lRef            0.434;        // Wheelbase length
     //The estimation for the reference area, in this case, has to be parametrized
