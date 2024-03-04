@@ -80,8 +80,8 @@ def cells_string(l):
     s += "}\""
     return s
 
-# Function to call the allrun script given the list of parameters
-def run_simulation(box, cells, refinement_boxes, refinement_train, PATH = "../simulation/Allrun"):
+# Function to call the allrun script given the list of parametersn on local
+def run_simulation_local(box, cells, refinement_boxes, refinement_train, PATH = "../simulation/Allrun"):
     # Convert the data structures into strings
     box = box_string(box)
     cells = cells_string(cells)
@@ -91,6 +91,17 @@ def run_simulation(box, cells, refinement_boxes, refinement_train, PATH = "../si
     # ./Allrun -b box -c cells -r refinement_boxes -t refinement_train
     print("Fino a qui tutto bene")
     os.system(PATH + " -b " + box + " -c " + cells + " -r " + refinement_boxes + " -t " + refinement_train)
+
+# Function to call the allrun script given the list of parametersn on the cluster
+def run_simulation_cluster(box, cells, refinement_boxes, refinement_train, PATH = "/home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_single.sh"):
+    # Convert the data structures into strings
+    box = box_string(box)
+    cells = cells_string(cells)
+    refinement_boxes = refinement_boxes_string(refinement_boxes)
+    refinement_train = refinement_train_string(refinement_train)
+    # Call the allrun script givin the parameters (strings) as arguments to the options
+    # ./Allrun -b box -c cells -r refinement_boxes -t refinement_train
+    os.system("qsub " + PATH + " -b " + box + " -c " + cells + " -r " + refinement_boxes + " -t " + refinement_train)
 
 # ===============================================================================================================================
 
@@ -103,6 +114,6 @@ print("Refinement boxes: ", refinement_boxes_string(refinement_boxes))
 print("Refinement train: ", refinement_train_string(refinement_train))
 print("*--------------------------------------------------------------------------------*")
 # Run the simulation with the current parameters
-run_simulation(box, cells, refinement_boxes, refinement_train)
+run_simulation_cluster(box, cells, refinement_boxes, refinement_train)
 
 # Substitute the coordinates of the vertices
