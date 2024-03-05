@@ -285,14 +285,14 @@ def run_box():
     # Create a list for the boxes
     for i in range(len(boxes)):
         os.environ["box_" + str(i)] = box_string(boxes[i])
-    os.environ["Ncases"] = str(len(boxes))
+    os.environ["Ncases"] = str(len(boxes)-1)
     os.environ["cells"] = cells_string(cells_0)
     os.environ["refinement_boxes"] = refinement_boxes_string(refinement_boxes_0)
     os.environ["refinement_train"] = refinement_train_string(refinement_train_0)
     
     # Run the simulation with the current parameters
     os.system('''
-    for i in ((i=0; i<$Ncases; i++)), do
+    for i in {0..$Ncases}, do
         box="box_$i"
         echo "                         <<<<<<< RUNNING BOX CASE n $i >>>>>>>"
         echo "Running the simulation with the current parameters:"
