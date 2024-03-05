@@ -285,7 +285,7 @@ def run_box():
     
     for i in range(len(boxes)):
         box_string = box_string(boxes[i])
-        os.environ["box_"+i] = box_string[i]
+        os.environ["box_"+str(i)] = box_string[i]
     cells_string = cells_string(cells)
     refinement_boxes_string = refinement_boxes_string(refinement_boxes)
     refinement_train_string = refinement_train_string(refinement_train)
