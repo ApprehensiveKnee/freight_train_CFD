@@ -231,8 +231,13 @@ def extract_times(path):
 def test(path_results, path_times):
     # Extract the results
     Cx, Cx_std = extract_results(path_results)
+    print("Cx: ", Cx)
+    print("Cx_std: ", Cx_std)
     # Extract the times
     total_time, mesh_time, foam_time = extract_times(path_times)
+    print("Total time: ", total_time)
+    print("Mesh time: ", mesh_time)
+    print("Foam time: ", foam_time)
     return Cx, Cx_std, total_time, mesh_time, foam_time
 
 
