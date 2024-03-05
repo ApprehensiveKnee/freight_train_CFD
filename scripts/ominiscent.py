@@ -138,6 +138,8 @@ def cells_string(l):
 
 # Function to call the allrun script given the list of parametersn on local
 def run_simulation_local(box, cells, refinement_boxes, refinement_train, PATH = "../simulation/Allrun"):
+    # Move to the simulation folder
+    os.chdir("../simulation")
     # Convert the data structures into strings
     box = box_string(box)
     cells = cells_string(cells)
@@ -149,6 +151,8 @@ def run_simulation_local(box, cells, refinement_boxes, refinement_train, PATH = 
 
 # Function to call the allrun script given the list of parametersn on the cluster
 def run_simulation_cluster(box, cells, refinement_boxes, refinement_train, PATH = "/home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh"):
+    # Move to the simulation folder
+    os.chdir("/home/meccanica/ecabiati/freight_train_CFD/simulation")
     # Convert the data structures into strings
     box = box_string(box)
     cells = cells_string(cells)
@@ -250,31 +254,76 @@ def test(path_results, path_times):
 # Function to run the optimization of the box dimensions based on the use cases defined in the script
 
 def run_box():
-    print("*----------------------------------------------------------------------------------------*")
-    print("*---------------------------------]* OPTIMIZING BOXES *[---------------------------------*")
-    print("*----------------------------------------------------------------------------------------*")
+    os.system('''
+    echo "*----------------------------------------------------------------------------------------*"
+    echo "*---------------------------------]* OPTIMIZING BOXES *[---------------------------------*"
+    echo "*----------------------------------------------------------------------------------------*"
+    ''')
+    # for i in range(len(boxes)):
+        
+    #     print("                         <<<<<<< RUNNING BOX CASE n " +i+" >>>>>>>")
+    #     print("Running the simulation with the current parameters:")
+    #     print("*----------------------------------------------------------------------------------------*")
+    #     print("Box: ", box_string(boxes[i]))
+    #     print("Cells: ", cells_string(cells))
+    #     print("Refinement boxes: ", refinement_boxes_string(refinement_boxes))
+    #     print("Refinement train: ", refinement_train_string(refinement_train))
+    #     print("*----------------------------------------------------------------------------------------*")
+    #     # Run the simulation with the current parameters
+    #     run_simulation_cluster(boxes[i], cells, refinement_boxes, refinement_train) 
+    #     # Move the results of the simulation (in '/global-scratch/ecabiati/simulations') to '/global-scratch/ecabiati/results'
+    #     os.system("mv /global-scratch/ecabiati/simulations/simulation/0.orig /global-scratch/ecabiati/results/box_case_" + str(i))
+    #     os.system("mv /global-scratch/ecabiati/simulations/simulation/constant /global-scratch/ecabiati/results/box_case_" + str(i))
+    #     os.system("mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/box_case_" + str(i))
+    #     os.system("mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/box_case_" + str(i))
+    #     # Remove the simulation folder
+    #     os.system("rm -r /global-scratch/ecabiati/simulations/simulation")
+    #     # Run the allclean script to clean the /home/meccanica/ecabiati/freight_train_CFD/simulation folder
+    #     os.system("/home/meccanica/ecabiati/freight_train_CFD/simulation/Allclean")
+        
+        # Import the different cases into a list in shell
+    
     for i in range(len(boxes)):
-        
-        print("                         <<<<<<< RUNNING BOX CASE n " +i+" >>>>>>>")
-        print("Running the simulation with the current parameters:")
-        print("*----------------------------------------------------------------------------------------*")
-        print("Box: ", box_string(boxes[i]))
-        print("Cells: ", cells_string(cells))
-        print("Refinement boxes: ", refinement_boxes_string(refinement_boxes))
-        print("Refinement train: ", refinement_train_string(refinement_train))
-        print("*----------------------------------------------------------------------------------------*")
-        # Run the simulation with the current parameters
-        run_simulation_cluster(boxes[i], cells, refinement_boxes, refinement_train) 
-        # Move the results of the simulation (in '/global-scratch/ecabiati/simulations') to '/global-scratch/ecabiati/results'
-        os.system("mv /global-scratch/ecabiati/simulations/simulation/0.orig /global-scratch/ecabiati/results/box_case_" + str(i))
-        os.system("mv /global-scratch/ecabiati/simulations/simulation/constant /global-scratch/ecabiati/results/box_case_" + str(i))
-        os.system("mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/box_case_" + str(i))
-        os.system("mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/box_case_" + str(i))
-        # Remove the simulation folder
-        os.system("rm -r /global-scratch/ecabiati/simulations/simulation")
-        # Run the allclean script to clean the /home/meccanica/ecabiati/freight_train_CFD/simulation folder
-        os.system("/home/meccanica/ecabiati/freight_train_CFD/simulation/Allclean")
-        
+        box_string = box_string(boxes[i])
+        os.environ["box_"+i] = box_string[i]
+    cells_string = cells_string(cells)
+    refinement_boxes_string = refinement_boxes_string(refinement_boxes)
+    refinement_train_string = refinement_train_string(refinement_train)
+    # Export the variables to the shell
+    os.environ["cells"] = cells_string
+    os.environ["refinement_boxes"] = refinement_boxes_string
+    os.environ["refinement_train"] = refinement_train_string
+
+    os.system('''
+        for i in "${!box_@}"; do
+            echo "Running the simulation with the current parameters:"
+            echo "*--------------------------------------------------------------------------------*"
+            echo "Box: $i"
+            echo "Cells: $cells"
+            echo "Refinement boxes: $refinement_boxes"
+            echo "Refinement train: $refinement_train"
+            echo "*--------------------------------------------------------------------------------*"
+            # Move to the simulation folder
+            cd /home/meccanica/ecabiati/freight_train_CFD/simulation
+            # Run the simulation with the current parameters
+            qsub train_run_scratch.sh -b ${box[i]} -c $cells -r $refinement_boxes -t $refinement_train
+            mv /global-scratch/ecabiati/simulations/simulation/0.orig /global-scratch/ecabiati/results/box_case_$i
+            mv /global-scratch/ecabiati/simulations/simulation/constant /global-scratch/ecabiati/results/box_case_$i
+            mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/box_case_$i
+            mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/box_case_$i
+            rm -r /global-scratch/ecabiati/simulations/simulation
+            /home/meccanica/ecabiati/freight_train_CFD/simulation/Allclean
+        done
+
+    ''')
+
+    # Clean the environment
+    os.environ["box_@"] = ""
+    os.environ["cells"] = ""
+    os.environ["refinement_boxes"] = ""
+    os.environ["refinement_train"] = ""
+    # 
+    
     # DO ACTUAL OPTIMIZATION HERE
 
 # Function to run the optimization of the cells dimensions based on the use cases defined in the script
