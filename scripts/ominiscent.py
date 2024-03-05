@@ -145,11 +145,10 @@ def run_simulation_local(box, cells, refinement_boxes, refinement_train, PATH = 
     refinement_train = refinement_train_string(refinement_train)
     # Call the allrun script givin the parameters (strings) as arguments to the options
     # ./Allrun -b box -c cells -r refinement_boxes -t refinement_train
-    print("Fino a qui tutto bene")
     os.system(PATH + " -b " + box + " -c " + cells + " -r " + refinement_boxes + " -t " + refinement_train)
 
 # Function to call the allrun script given the list of parametersn on the cluster
-def run_simulation_cluster(box, cells, refinement_boxes, refinement_train, PATH = "/home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_single.sh"):
+def run_simulation_cluster(box, cells, refinement_boxes, refinement_train, PATH = "/home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh"):
     # Convert the data structures into strings
     box = box_string(box)
     cells = cells_string(cells)
