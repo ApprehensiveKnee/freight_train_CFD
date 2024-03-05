@@ -175,7 +175,7 @@ def extract_results(path, angle = 0, velocity = 20):
     # Dump the first 12 lines
     lines = lines[12:] 
     #Extract the values in the file
-    # Time, Cd, Cd(f), Cd(r), Cl, Cl(f), Cl(r), CmPitch, CmRoll, CmYaw,	Cs, Cs(f),Cs(r)         
+    # Time, total_x, total_y, total_z,	pressure_x, pressure_y, pressure_z,	viscous_x, viscous_y, viscous_z         
     # We are interested only in the values of the first 2:4 columns
     Fx = []
     Fy = []
@@ -227,6 +227,15 @@ def extract_times(path):
     return t[0]+t[1],t[0],t[1]
 
 
+# A test function to extract the results of the simulation and times
+def test(path_results, path_times):
+    # Extract the results
+    Cx, Cx_std = extract_results(path_results)
+    # Extract the times
+    total_time, mesh_time, foam_time = extract_times(path_times)
+    return Cx, Cx_std, total_time, mesh_time, foam_time
+
+
 
 # ========================================================================================================
 
@@ -258,6 +267,7 @@ def run_optimization_box():
         os.system("mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/box_case_" + str(i))
         # Run the allclean script to clean the simulation folder
         os.system("/global-scratch/ecabiati/simulations/simulation/Allclean")
+    # DO ACTUAL OPTIMIZATION HERE
 
 # Function to run the optimization of the cells dimensions based on the use cases defined in the script
 
@@ -282,6 +292,7 @@ def run_optimization_cells():
         os.system("mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/cells_case_" + str(i))
         # Run the allclean script to clean the simulation folder
         os.system("/global-scratch/ecabiati/simulations/simulation/Allclean")
+    # DO ACTUAL OPTIMIZATION HERE
     
 
 # Function to run the optimization of the refinement boxes based on the use cases defined in the script
@@ -307,6 +318,7 @@ def run_optimization_refinement_boxes():
         os.system("mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/refinement_boxes_case_" + str(i))
         # Run the allclean script to clean the simulation folder
         os.system("/global-scratch/ecabiati/simulations/simulation/Allclean")
+    # DO ACTUAL OPTIMIZATION HERE
 
     
 
@@ -333,6 +345,7 @@ def run_optimization_refinement_train():
         os.system("mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/refinement_train_case_" + str(i))
         # Run the allclean script to clean the simulation folder
         os.system("/global-scratch/ecabiati/simulations/simulation/Allclean")
+    # DO ACTUAL OPTIMIZATION HERE
 
 
 
@@ -342,7 +355,7 @@ def run_optimization_refinement_train():
 def optimize(optimization_case):
     match optimization_case:
         case "box":
-            
+            run_optimization_box()
         case "cells":
             run_optimization_cells()
         case "refinement_boxes":
@@ -361,38 +374,29 @@ def optimize(optimization_case):
 # -t : optimization of the refinement train (based on the use cases defined in the script)
     
 #Parse the options
-def main(argv):
-    try:
-        opts, args = getopt.getopt(argv, "b:c:r:t:", ["box=", "cells=", "refinement_boxes=", "refinement_train="])
-    except getopt.GetoptError:
-        print("ominiscent.py -b <box> -c <cells> -r <refinement_boxes> -t <refinement_train>")
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt in ("-b", "--box"):
-            print("Optimizing the box dimensions")
-            # Run the optimization of the box dimensions
-            run_optimization_box()
-        elif opt in ("-c", "--cells"):
-            print("Optimizing the cells dimensions")
-            # Run the optimization of the cells dimensions
-            run_optimization_cells()
-        elif opt in ("-r", "--refinement_boxes"):
-            print("Optimizing the refinement boxes")
-            # Run the optimization of the refinement boxes
-            run_optimization_refinement_boxes()
-        elif opt in ("-t", "--refinement_train"):
-            print("Optimizing the refinement train")
-            # Run the optimization of the refinement train
-            run_optimization_refinement_train()
+# def main(argv):
+#     try:
+#         opts, args = getopt.getopt(argv, "b:c:r:t:", ["box=", "cells=", "refinement_boxes=", "refinement_train="])
+#     except getopt.GetoptError:
+#         print("ominiscent.py -b <box> -c <cells> -r <refinement_boxes> -t <refinement_train>")
+#         sys.exit(2)
+#     for opt, arg in opts:
+#         if opt in ("-b", "--box"):
+#             print("Optimizing the box dimensions")
+#             # Run the optimization of the box dimensions
+#             run_optimization_box()
+#         elif opt in ("-c", "--cells"):
+#             print("Optimizing the cells dimensions")
+#             # Run the optimization of the cells dimensions
+#             run_optimization_cells()
+#         elif opt in ("-r", "--refinement_boxes"):
+#             print("Optimizing the refinement boxes")
+#             # Run the optimization of the refinement boxes
+#             run_optimization_refinement_boxes()
+#         elif opt in ("-t", "--refinement_train"):
+#             print("Optimizing the refinement train")
+#             # Run the optimization of the refinement train
+#             run_optimization_refinement_train()
 
-# print("Running the simulation with the current parameters:")
-# print("*--------------------------------------------------------------------------------*")
-# print("Box: ", box_string(box))
-# print("Cells: ", cells_string(cells))
-# print("Refinement boxes: ", refinement_boxes_string(refinement_boxes))
-# print("Refinement train: ", refinement_train_string(refinement_train))
-# print("*--------------------------------------------------------------------------------*")
-# # Run the simulation with the current parameters
-# run_simulation_cluster(box, cells, refinement_boxes, refinement_train)
-
-# Substitute the coordinates of the vertices
+#Calle the test function
+test("/global-scratch/ecabiati/simulations/simulation/postProcessing/forces1/0/forces.dat", "/global-scratch/ecabiati/simulations/simulation/simulation/logs/log.time")
