@@ -305,10 +305,11 @@ def run_box():
         # Run the simulation with the current parameters
         qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -b $box -c $cells -r $refinement_boxes -t $refinement_train
         # Move the results of the simulation (in '/global-scratch/ecabiati/simulations') to '/global-scratch/ecabiati/results'
+        mkdir /global-scratch/ecabiati/results/box_case_$i
         mv /global-scratch/ecabiati/simulations/simulation/0.orig /global-scratch/ecabiati/results/box_case_$i
-        mv /global-scratch/ecabiati/simulations/simulation/constant /global-scratch/ecabiati/results/box_case
-        mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/box_case
-        mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/box_case
+        mv /global-scratch/ecabiati/simulations/simulation/constant /global-scratch/ecabiati/results/box_case_$i
+        mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/box_case_$i
+        mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/box_case_$i
         # Remove the simulation folder
         rm -r /global-scratch/ecabiati/simulations/simulation
         # Run the allclean script to clean the /home/meccanica/ecabiati/freight_train_CFD/simulation folder
