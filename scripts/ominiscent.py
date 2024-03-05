@@ -285,7 +285,7 @@ def run_box():
     # Create a list for the boxes
     for i in range(len(boxes)):
         os.environ["box["+str(i)+"]"] = box_string(boxes[i])
-        os.system('echo "${box[0]}"')
+        os.system("echo "${sport[@]}"")
     os.environ["cells"] = cells_string(cells_0)
     os.environ["refinement_boxes"] = refinement_boxes_string(refinement_boxes_0)
     os.environ["refinement_train"] = refinement_train_string(refinement_train_0)
@@ -315,10 +315,10 @@ def run_box():
     ''')
 
     # Clean the environment
-    os.environ["box"] = ""
-    os.environ["cells"] = ""
-    os.environ["refinement_boxes"] = ""
-    os.environ["refinement_train"] = ""
+    # os.environ["box"] = ""
+    # os.environ["cells"] = ""
+    # os.environ["refinement_boxes"] = ""
+    # os.environ["refinement_train"] = ""
     # 
     
     # DO ACTUAL OPTIMIZATION HERE
