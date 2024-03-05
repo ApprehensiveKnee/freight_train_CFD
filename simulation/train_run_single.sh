@@ -308,7 +308,7 @@ fi
 
 sed -i "s/ANGULATION_FLAG_PLACEHOLDER/$angulation_flag/g" "0.orig/include/angulationParameters"
 sed -i "s/ANGULATION_ANGLE_PLACEHOLDER/$angle_value/g" "0.orig/include/angulationParameters"
-sed -i "s/GGALLERY_BOX_FLAG_PLACEHOLDER/$gallery_included/g" "0.orig/include/angulationParameters"
+sed -i "s/GALLERY_BOX_FLAG_PLACEHOLDER/$gallery_included/g" "0.orig/include/angulationParameters"
 sed -i "s/ROTATE_REFINEMENT_FLAG_PLACEHOLDER/$rotated_refinement/g" "0.orig/include/angulationParameters"
 
 ##############################################################################
