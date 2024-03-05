@@ -281,25 +281,20 @@ def run_box():
     #     # Run the allclean script to clean the /home/meccanica/ecabiati/freight_train_CFD/simulation folder
     #     os.system("/home/meccanica/ecabiati/freight_train_CFD/simulation/Allclean")
         
-        # Import the different cases into a list in shell
-    
+    # Import the different cases into a list in shell
+    # Create a list for the boxes
     for i in range(len(boxes)):
-        box_s = box_string(boxes[i])
-        os.environ["box_"+str(i)] = box_s[i]
-    cells_s = cells_string(cells_0)
-    refinement_boxes_s = refinement_boxes_string(refinement_boxes_0)
-    refinement_train_s = refinement_train_string(refinement_train_0)
-    # Export the variables to the shell
+        os.environ["box["+str(i)+"]"] = box_string(boxes[i])
     os.environ["Ncases"] = str(len(boxes)-1)
-    os.environ["cells"] = cells_s
-    os.environ["refinement_boxes"] = refinement_boxes_s
-    os.environ["refinement_train"] = refinement_train_s
+    os.environ["cells"] = cells_string(cells_0)
+    os.environ["refinement_boxes"] = refinement_boxes_string(refinement_boxes_0)
+    os.environ["refinement_train"] = refinement_train_string(refinement_train_0)
 
     os.system('''
         for i in {0..$Ncases}; do
             echo "Running the simulation with the current parameters:"
             echo "*--------------------------------------------------------------------------------*"
-            echo "Box: ${!box_${i}}"
+            echo "Box: ${box[i]}"
             echo "Cells: $cells"
             echo "Refinement boxes: $refinement_boxes"
             echo "Refinement train: $refinement_train"
@@ -307,7 +302,7 @@ def run_box():
             # Move to the simulation folder
             cd /home/meccanica/ecabiati/freight_train_CFD/simulation
             # Run the simulation with the current parameters
-            qsub train_run_scratch.sh -b $box_$i -c $cells -r $refinement_boxes -t $refinement_train
+            qsub train_run_scratch.sh -b ${box[i]} -c $cells -r $refinement_boxes -t $refinement_train
             mv /global-scratch/ecabiati/simulations/simulation/0.orig /global-scratch/ecabiati/results/box_case_$i
             mv /global-scratch/ecabiati/simulations/simulation/constant /global-scratch/ecabiati/results/box_case_$i
             mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/box_case_$i
