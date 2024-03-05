@@ -299,7 +299,7 @@ def run_box():
         for i in {0..$Ncases}; do
             echo "Running the simulation with the current parameters:"
             echo "*--------------------------------------------------------------------------------*"
-            echo "Box: ${box_${i}}"
+            echo "Box: ${!box_${i}}"
             echo "Cells: $cells"
             echo "Refinement boxes: $refinement_boxes"
             echo "Refinement train: $refinement_train"
