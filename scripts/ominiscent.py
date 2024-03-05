@@ -283,9 +283,8 @@ def run_box():
         
     # Import the different cases into a list in shell
     # Create a list for the boxes
-    os.system("box=()")
-    for i in range(len(boxes)):
-        os.system("box+=(" + box_string(boxes[i]) + ")")
+    boxes_string = " ".join(boxes)
+    os.environ["box"] = boxes_string
     os.environ["cells"] = cells_string(cells_0)
     os.environ["refinement_boxes"] = refinement_boxes_string(refinement_boxes_0)
     os.environ["refinement_train"] = refinement_train_string(refinement_train_0)
