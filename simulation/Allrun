@@ -268,7 +268,6 @@ if [[ $angulation_flag == "false" && $angle_value != "0" ]]; then
 fi
 
 # Replace the boundary type values of the placeholders in the blockParameters file based on the angulation flag
-
 if [ "$angulation_flag" = true ]; then
     sed -i "s/FRONTWALLTYPE_PLACEHOLDER/patch/g" "0.orig/include/blockParameters"
     sed -i "s/BACKWALLTYPE_PLACEHOLDER/patch/g" "0.orig/include/blockParameters"
