@@ -305,7 +305,7 @@ fi
 echo "=========================* RUNNING THE SIMULATION *========================="
 
 #Create the results directory if it does not exist
-mkdir -p results
+mkdir -p logs
 
 # Run the applications and return the log files to the results directory
 
@@ -353,7 +353,7 @@ echo "========================================================================"
 touch train.foam
 
 # Move all the log files to the results directory
-mv log.* results
+mv log.* logs
 
 
 #------------------------------------------------------------------------------

@@ -43,7 +43,9 @@ cp -r "$localDir"/simulation "$scratchDir"
 # Remove the Allrun, Allrun_autoangle and train_run_single.sh files from the simulation directory
 rm -f "$scratchDir"/"$name"/Allrun
 rm -f "$scratchDir"/"$name"/Allrun_autoangle
-rm -f "$scratchDir"/"$name"/train_run_single.sh
+rm -f "$scratchDir"/"$name"/train_run_local.sh
+rm -f "$scratchDir"/"$name"/train_run_scratch.sh
+rm -f "$scratchDir"/"$name"/Allclean
 # Make the constant/triSurface directory if it does not exist
 mkdir -p "$scratchDir"/"$name"/constant/triSurface
 
