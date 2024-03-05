@@ -52,9 +52,9 @@ forces1
     dragDir         ($dragX 0 $dragZ);
     CofR            (0 0 0);  // Axle midpoint on ground
     pitchAxis       ($pitchX 0 $pitchZ);
-    magUInf         $parallelVelocity;
+    magUInf         1;
     lRef            0.434;        // Wheelbase length
-    Aref            #eval{ $lCross * 0.118};        // Estimated
+    Aref            #eval{ $lCross * 0.00895};        // Estimated
 }
 
 
@@ -74,7 +74,12 @@ binField1
         direction   (1 0 0);     // bin direction
         cumulative  yes;
     }
-    writeControl            timeStep;
+    timeStart       0;
+    timeEnd         800;
+    executeControl  timeStep;
+    executeInterval 800;
+    writeControl    timeStep;
+    writeInterval   800;
 }
 
 

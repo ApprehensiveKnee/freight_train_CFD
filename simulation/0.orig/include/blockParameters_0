@@ -33,3 +33,7 @@ OUTER_7    OUTER_PLACEHOLDER_7;
 NCELLS_X    NCELLS_PLACEHOLDER_0;
 NCELLS_Y    NCELLS_PLACEHOLDER_1;
 NCELLS_Z    NCELLS_PLACEHOLDER_2;
+
+// Define some type parameters for the front and back walls
+frontWallType           FRONTWALLTYPE_PLACEHOLDER;
+backWallType            BACKWALLTYPE_PLACEHOLDER;

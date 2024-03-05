@@ -54,7 +54,7 @@ forceCoeffs1
     lRef            0.434;        // Wheelbase length
     //The estimation for the reference area, in this case, has to be parametrized
     // using the angle of inclination of the wind velocity.
-    Aref            #eval{ $lCross * 0.118};        // Estimated
+    Aref            #eval{ $lCross * 0.00895};        // Estimated
 }
 
 /*

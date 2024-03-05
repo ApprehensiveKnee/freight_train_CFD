@@ -14,6 +14,8 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#include       "include/initialConditions"
+
 dimensions      [0 2 -1 0 0 0 0];
 
 internalField   uniform 0;
@@ -22,6 +24,7 @@ boundaryField
 {
     #includeEtc "caseDicts/setConstraintTypes"
 
+    #ifeq $angulationFlag true
     frontWall
     {
         type            calculated;
@@ -33,6 +36,7 @@ boundaryField
         type            calculated;
         value           uniform 0;
     }
+    #endif
 
     inlet
     {
@@ -52,11 +56,6 @@ boundaryField
         value           uniform 0;
     }
 
-    upperWall
-    {
-        type            calculated;
-        value           uniform 0;
-    }
 
     // -<-<-<-<-<-<-<-< INFINITE WALLS >->->->->->->->->-
 

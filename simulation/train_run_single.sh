@@ -23,11 +23,10 @@
 #   for a better constructed mesh even in the eventuality that the case considered is rotated.
 # \----------------------------------------------------------------------------/
 
-
 # Define the local directory where the simulation is run
 localDir='/home/meccanica/ecabiati/freight_train_CFD'
-
-echo "Moved inside $localDir/simulation"                               # Run from this directory
+scratchDir='/global-scratch/ecabiati/simulations'
+name="simulation"
 
 echo "Start Parallel Run":
 
@@ -37,37 +36,40 @@ source "/home/meccanica/ecabiati/.openfoam_modules"
 
 echo "- Preparing the simulation environment..."
 
-
-#cd "${0%/*}" || exit                                # Run from this directory
-#. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
-#------------------------------------------------------------------------------
-# Alternative decomposeParDict name:
-#decompDict="-decomposeParDict system/decomposeParDict.6"
-## Standard decomposeParDict name:
-# unset decompDict
-
-# copy train surface from resources directory
-mkdir -p "$localDir"/simulation/constant/triSurface
+# Copy the case to /global-scratch/ecabiati/simulations/ inside a directoty named after the string passed as the first argument to the script
+echo "Copying the case to the global scratch space..."
+cp -r "$localDir"/simulation "$scratchDir"
+# Remove the Allrun, Allrun_autoangle and train_run_single.sh files from the simulation directory
+rm -f "$scratchDir"/"$name"/Allrun
+rm -f "$scratchDir"/"$name"/Allrun_autoangle
+rm -f "$scratchDir"/"$name"/train_run_single.sh
+# Make the constant/triSurface directory if it does not exist
+mkdir -p "$scratchDir"/"$name"/constant/triSurface
 
 # cp -f \
-#     "$localDir"/objects/motrice_rescaled.stl \
+#     "$scratchDir"/objects/motrice_rescaled.stl \
 #     constant/triSurface/
 
 cp -f \
     "$localDir"/objects/box_galleria.stl \
-    constant/triSurface/
+    "$scratchDir"/"$name"/constant/triSurface/
 
 cp -f \
     "$localDir"/objects/frontInternalWall.stl \
-    constant/triSurface/   
+    "$scratchDir"/"$name"/constant/triSurface/   
 
 cp -f \
     "$localDir"/objects/backInternalWall.stl \
-    constant/triSurface/
+    "$scratchDir"/"$name"/constant/triSurface/
 
 cp -f \
     "$localDir"/objects/train.stl \
-    constant/triSurface/
+    "$scratchDir"/"$name"/constant/triSurface/
+
+
+
+# Move to the global scratch space
+cd "$scratchDir"/"$name"
 
 # ----------------------------* PARAMETER PARSING *--------------------------
 # Define some default values
@@ -229,7 +231,13 @@ while getopts ${OPTSTRING} opt; do
         echo "========================================================================"
 
     ;;
-    \?) echo "Invalid option -$OPTARG" >&2
+    :)
+        echo "Option -${OPTARG} requires an argument."
+        exit 1
+    ;;
+    \?) 
+        echo "Invalid option -$OPTARG" >&2
+        exit 1
     ;;
   esac
 done
@@ -317,17 +325,17 @@ echo "=========================* RUNNING THE SIMULATION *=======================
 
 
 #Create the logs directory if it does not exist
-mkdir -p "$localDir"/simulation/logs
+mkdir -p "$scratchDir"/"$name"/logs
 
 echo "- Meshing..."
 
 # Run the applications and return the log files to the logs directory
 
-surfaceFeatureExtract >& "$localDir"/simulation/log.surfaceFeatureExtract
+surfaceFeatureExtract >& "$scratchDir"/"$name"/log.surfaceFeatureExtract
 
-blockMesh >& "$localDir"/simulation/log.blockMesh
+blockMesh >& "$scratchDir"/"$name"/log.blockMesh
 
-decomposePar >& "$localDir"/simulation/log.decomposePar
+decomposePar >& "$scratchDir"/"$name"/log.decomposePar
 
 # Using distributedTriSurfaceMesh?
 # if foamDictionary -entry geometry -value system/snappyHexMeshDict | \
@@ -337,24 +345,34 @@ decomposePar >& "$localDir"/simulation/log.decomposePar
 #     echo " - distributedTriSurfaceMesh will do on-the-fly redistribution"
 # fi
 
-mpirun --hostfile machinefile.$JOB_ID snappyHexMesh -parallel -overwrite >& "$localDir"/simulation/log.snappyHexMesh
+# Time snappyHexMesh and save the time to a log file
+start_time=$(date +%s.%N)  # Get the start time in seconds with nanoseconds precision
+mpirun --hostfile machinefile.$JOB_ID snappyHexMesh -parallel >& "$scratchDir"/"$name"/log.snappyHexMesh
+end_time=$(date +%s.%N)  # Get the end time in seconds with nanoseconds precision
+execution_time=$(echo "$end_time - $start_time" | bc)  # Calculate the execution time
+echo "SnappyHexMesh_Time: $execution_time" >> "$scratchDir"/"$name"/log.time  # Write the execution time to the log.time file
 
-mpirun --hostfile machinefile.$JOB_ID topoSet -parallel >& "$localDir"/simulation/log.topoSet
+mpirun --hostfile machinefile.$JOB_ID topoSet -parallel >& "$scratchDir"/"$name"/log.topoSet
 
-mpirun --hostfile machinefile.$JOB_ID cretePatch -parallel -overwrite >& "$localDir"/simulation/log.createPatch
+mpirun --hostfile machinefile.$JOB_ID cretePatch -parallel -overwrite >& "$scratchDir"/"$name"/log.createPatch
 
 echo "- Running the simulation..."
 # restore the 0/ directory from the 0.orig/ directory inside each processor directory
 \ls -d processor* | xargs -I {} rm -rf ./{}/0
 \ls -d processor* | xargs -I {} cp -r 0.orig ./{}/0 #> /dev/null 2>&1
 
-mpirun --hostfile machinefile.$JOB_ID patchSummary -parallel >& "$localDir"/simulation/log.patchSummary
+mpirun --hostfile machinefile.$JOB_ID patchSummary -parallel >& "$scratchDir"/"$name"/log.patchSummary
 
-mpirun --hostfile machinefile.$JOB_ID potentialFoam -parallel -writephi >& "$localDir"/simulation/log.potentialFoam
+mpirun --hostfile machinefile.$JOB_ID potentialFoam -parallel -writephi >& "$scratchDir"/"$name"/log.potentialFoam
 
-mpirun --hostfile machinefile.$JOB_ID checkMesh -parallel -writeFields '(nonOrthoAngle)' -constant >& "$localDir"/simulation/log.checkMesh
+mpirun --hostfile machinefile.$JOB_ID checkMesh -parallel -writeFields '(nonOrthoAngle)' -constant >& "$scratchDir"/"$name"/log.checkMesh
 
-mpirun --hostfile machinefile.$JOB_ID simpleFoam -parallel >& "$localDir"/simulation/log.simpleFoam
+# Time simpleFoam and append the time to log.time
+start_time=$(date +%s.%N)  # Get the start time in seconds with nanoseconds precision
+mpirun --hostfile machinefile.$JOB_ID simpleFoam -parallel >& "$scratchDir"/"$name"/log.simpleFoam
+end_time=$(date +%s.%N)  # Get the end time in seconds with nanoseconds precision
+execution_time=$(echo "$end_time - $start_time" | bc)  # Calculate the execution time
+echo "SimpleFoam_Time: $execution_time" >> "$scratchDir"/"$name"/log.time  # Write the execution time to the log.time file
 
 reconstructParMesh -constant
 
@@ -363,10 +381,10 @@ reconstructPar -latestTime
 echo "========================================================================"
 
 #Generate the train.foam file
-touch "$localDir"/simulation/train.foam
+touch "$scratchDir"/"$name"/train.foam
 
 # Move all the log files to the logs directory
-mv "$localDir"/simulation/log.* "$localDir"/simulation/logs
+mv "$scratchDir"/"$name"/log.* "$scratchDir"/"$name"/logs
 
 
 #------------------------------------------------------------------------------

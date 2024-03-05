@@ -49,22 +49,24 @@ edges
 
 boundary
 (
+
     frontWall
     {
-        type patch;
-        faces
-        (
-           (4 5 6 7) 
-        );
-    }
-    backWall
-    {
-        type patch;
+        type $frontWallType;
         faces
         (
             (0 3 2 1)
         );
     }
+    backWall
+    {
+        type $backWallType;
+        faces
+        (
+            (4 5 6 7)
+        );
+    }
+
     inlet
     {
         type patch;
@@ -91,7 +93,7 @@ boundary
     }
     upperWall
     {
-        type patch;
+        type symmetryPlane;
         faces
         (
             (3 7 6 2)

@@ -8,18 +8,28 @@
 
 upperWall
 {
-    type slip;
+    type symmetryPlane;
 }
 
-frontWall
-{
-    type slip;
-}
-
-backWall
-{
-    type slip;
-}
+#ifeq $angulationFlag false
+    frontWall
+    {
+        type symmetryPlane;
+    }
+    backWall
+    {
+        type symmetryPlane;
+    }
+#else
+    frontWall
+    {
+        type slip;
+    }
+    backWall
+    {
+        type slip;
+    }
+#endif
 
 // -<-<-<-<-<-<-<-< Patches created from snappyHex >->->->->->->->->-
 

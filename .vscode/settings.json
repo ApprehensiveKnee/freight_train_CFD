@@ -43,5 +43,6 @@
         "Allrun": "shellscript",
         "Allrun_autoangle": "shellscript",
         "train_run_single.sh": "shellscript",
+        "boundaries": "csharp",
     }
 }
