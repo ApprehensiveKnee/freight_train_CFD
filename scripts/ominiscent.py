@@ -283,15 +283,20 @@ def run_box():
         
     # Import the different cases into a list in shell
     # Create a list for the boxes
+    os.system("box=()")
     for i in range(len(boxes)):
-        os.system("box[" + str(i) + "]=" + box_string(boxes[i]))
-        os.system('echo "${box[' + str(i) + ']}"')
+        os.system("box+=(" + box_string(boxes[i]) + ")")
     os.environ["cells"] = cells_string(cells_0)
     os.environ["refinement_boxes"] = refinement_boxes_string(refinement_boxes_0)
     os.environ["refinement_train"] = refinement_train_string(refinement_train_0)
+    os.system('''
+        for item in "${box[@]}"; do
+            echo $item
+        done
+    ''')
 
     os.system('''
-        for i in "${!box[@]}"; do
+        for i in "${box[@]}"; do
             echo "                         <<<<<<< RUNNING BOX CASE n " $i " >>>>>>>"
             echo "Running the simulation with the current parameters:"
             echo "*--------------------------------------------------------------------------------*"
