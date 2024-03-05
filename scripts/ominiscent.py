@@ -399,4 +399,4 @@ def optimize(optimization_case):
 #             run_optimization_refinement_train()
 
 #Calle the test function
-test("/global-scratch/ecabiati/simulations/simulation/postProcessing/forces1/0/forces.dat", "/global-scratch/ecabiati/simulations/simulation/simulation/logs/log.time")
+test("/global-scratch/ecabiati/simulations/simulation/postProcessing/forces1/0/force.dat", "/global-scratch/ecabiati/simulations/simulation/simulation/logs/log.time")
