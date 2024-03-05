@@ -7,6 +7,7 @@
 #$ -q all.q             # queueName
 #$ -pe mpi 32           # cpuNumber
 
+process=32
 
 # /----------------------------------------------------------------------------\
 #                             USAGE OF THIS SCRIPT:
@@ -348,45 +349,45 @@ blockMesh >& "$scratchDir"/"$name"/log.blockMesh
 decomposePar >& "$scratchDir"/"$name"/log.decomposePar
 
 # Using distributedTriSurfaceMesh?
-# if foamDictionary -entry geometry -value system/snappyHexMeshDict | \
-#    grep -q distributedTriSurfaceMesh
-# then
-#     echo "surfaceRedistributePar does not need to be run anymore"
-#     echo " - distributedTriSurfaceMesh will do on-the-fly redistribution"
-# fi
+if foamDictionary -entry geometry -value system/snappyHexMeshDict | \
+   grep -q distributedTriSurfaceMesh
+then
+    echo "surfaceRedistributePar does not need to be run anymore"
+    echo " - distributedTriSurfaceMesh will do on-the-fly redistribution"
+fi
 
 # Time snappyHexMesh and save the time to a log file
 start_time=$(date +%s.%N)  # Get the start time in seconds with nanoseconds precision
-mpirun --hostfile machinefile.$JOB_ID snappyHexMesh -parallel >& "$scratchDir"/"$name"/log.snappyHexMesh
+mpirun --hostfile machinefile.$JOB_ID -np $process snappyHexMesh -overwrite -parallel  >& "$scratchDir"/"$name"/log.snappyHexMesh
 end_time=$(date +%s.%N)  # Get the end time in seconds with nanoseconds precision
 execution_time=$(echo "$end_time - $start_time" | bc)  # Calculate the execution time
 echo "SnappyHexMesh_Time: $execution_time" >> "$scratchDir"/"$name"/log.time  # Write the execution time to the log.time file
 
-mpirun --hostfile machinefile.$JOB_ID topoSet -parallel >& "$scratchDir"/"$name"/log.topoSet
+mpirun --hostfile machinefile.$JOB_ID -np $process topoSet -parallel >& "$scratchDir"/"$name"/log.topoSet
 
-mpirun --hostfile machinefile.$JOB_ID cretePatch -parallel -overwrite >& "$scratchDir"/"$name"/log.createPatch
+mpirun --hostfile machinefile.$JOB_ID -np $process createPatch -parallel -overwrite >& "$scratchDir"/"$name"/log.createPatch
 
 echo "- Running the simulation..."
 # restore the 0/ directory from the 0.orig/ directory inside each processor directory
 \ls -d processor* | xargs -I {} rm -rf ./{}/0
 \ls -d processor* | xargs -I {} cp -r 0.orig ./{}/0 #> /dev/null 2>&1
 
-mpirun --hostfile machinefile.$JOB_ID patchSummary -parallel >& "$scratchDir"/"$name"/log.patchSummary
+mpirun --hostfile machinefile.$JOB_ID -np $process patchSummary -parallel >& "$scratchDir"/"$name"/log.patchSummary
 
-mpirun --hostfile machinefile.$JOB_ID potentialFoam -parallel -writephi >& "$scratchDir"/"$name"/log.potentialFoam
+mpirun --hostfile machinefile.$JOB_ID -np $process potentialFoam -parallel -writephi >& "$scratchDir"/"$name"/log.potentialFoam
 
-mpirun --hostfile machinefile.$JOB_ID checkMesh -parallel -writeFields '(nonOrthoAngle)' -constant >& "$scratchDir"/"$name"/log.checkMesh
+mpirun --hostfile machinefile.$JOB_ID -np $process checkMesh -parallel -writeFields '(nonOrthoAngle)' -constant >& "$scratchDir"/"$name"/log.checkMesh
 
 # Time simpleFoam and append the time to log.time
 start_time=$(date +%s.%N)  # Get the start time in seconds with nanoseconds precision
-mpirun --hostfile machinefile.$JOB_ID simpleFoam -parallel >& "$scratchDir"/"$name"/log.simpleFoam
+mpirun --hostfile machinefile.$JOB_ID -np $process simpleFoam -parallel >& "$scratchDir"/"$name"/log.simpleFoam
 end_time=$(date +%s.%N)  # Get the end time in seconds with nanoseconds precision
 execution_time=$(echo "$end_time - $start_time" | bc)  # Calculate the execution time
 echo "SimpleFoam_Time: $execution_time" >> "$scratchDir"/"$name"/log.time  # Write the execution time to the log.time file
 
-reconstructParMesh -constant
+reconstructParMesh -constant >& "$scratchDir"/"$name"/log.reconstructParMesh
 
-reconstructPar -latestTime
+reconstructPar -latestTime >& "$scratchDir"/"$name"/log.reconstructPar
 
 echo "========================================================================"
 
