@@ -353,18 +353,18 @@ def run_optimization_refinement_train():
 # The function will return the best choice for the parameters, based on the trade-off between the computational time and the accuracy of the results
         
 def optimize(optimization_case):
-    match optimization_case:
-        case "box":
-            run_optimization_box()
-        case "cells":
-            run_optimization_cells()
-        case "refinement_boxes":
-            run_optimization_refinement_boxes()
-        case "refinement_train":
-            run_optimization_refinement_train()
-        case _:
-            print("Invalid optimization case")
-            sys.exit(2)
+    if optimization_case == "b":
+        run_optimization_box()
+    elif optimization_case == "c":
+        run_optimization_cells()
+    elif optimization_case == "r":
+        run_optimization_refinement_boxes()
+    elif optimization_case == "t":
+        run_optimization_refinement_train()
+    else:
+        print("Invalid optimization case")
+        return
+    # DO ACTUAL OPTIMIZATION HERE
 # ===============================================================================================================================
 
 # Now parse the options to the python scipt and run the optimization process based on those:
