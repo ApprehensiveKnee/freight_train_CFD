@@ -297,13 +297,13 @@ def run_box():
         echo "                             <<<<<<< RUNNING BOX CASE n $i >>>>>>>"
         echo "Running the simulation with the current parameters:"
         echo "*--------------------------------------------------------------------------------*"
-        echo "Box: $box"
+        echo "Box: ${$box}"
         echo "Cells: $cells"
         echo "Refinement boxes: $refinement_boxes"
         echo "Refinement train: $refinement_train"
         echo "*--------------------------------------------------------------------------------*"
         # Run the simulation with the current parameters
-        qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n case_box$i -b $box -c $cells -r $refinement_boxes -t $refinement_train
+        qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n case_box$i -b ${$box} -c $cells -r $refinement_boxes -t $refinement_train
     done
               
 
