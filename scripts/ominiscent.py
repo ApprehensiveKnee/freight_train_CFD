@@ -283,46 +283,48 @@ def run_box():
         
     # Import the different cases into a list in shell
     # Create a list for the boxes
-    boxes_string = " ".join(boxes)
-    os.environ["box"] = boxes_string
+    for i in range(len(boxes)):
+        os.environ["box_" + str(i)] = box_string(boxes[i])
+    os.environ["Ncases"] = str(len(boxes))
     os.environ["cells"] = cells_string(cells_0)
     os.environ["refinement_boxes"] = refinement_boxes_string(refinement_boxes_0)
     os.environ["refinement_train"] = refinement_train_string(refinement_train_0)
+    
+    # Run the simulation with the current parameters
     os.system('''
-        for item in "$\{box[@]\}"; do
-            echo $item
-        done
+    for i in ((i=0; i<$Ncases; i++)), do
+        box="box_$i"
+        echo "                         <<<<<<< RUNNING BOX CASE n $i >>>>>>>"
+        echo "Running the simulation with the current parameters:"
+        echo "*--------------------------------------------------------------------------------*"
+        echo "Box: $box"
+        echo "Cells: $cells"
+        echo "Refinement boxes: $refinement_boxes"
+        echo "Refinement train: $refinement_train"
+        echo "*--------------------------------------------------------------------------------*"
+        # Run the simulation with the current parameters
+        qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -b $box -c $cells -r $refinement_boxes -t $refinement_train
+        # Move the results of the simulation (in '/global-scratch/ecabiati/simulations') to '/global-scratch/ecabiati/results'
+        mv /global-scratch/ecabiati/simulations/simulation/0.orig /global-scratch/ecabiati/results/box_case_$i
+        mv /global-scratch/ecabiati/simulations/simulation/constant /global-scratch/ecabiati/results/box_case
+        mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/box_case
+        mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/box_case
+        # Remove the simulation folder
+        rm -r /global-scratch/ecabiati/simulations/simulation
+        # Run the allclean script to clean the /home/meccanica/ecabiati/freight_train_CFD/simulation folder
+        /home/meccanica/ecabiati/freight_train_CFD/simulation/Allclean
+    done
+              
+
     ''')
 
-    os.system('''
-        for i in "${box[@]}"; do
-            echo "                         <<<<<<< RUNNING BOX CASE n " $i " >>>>>>>"
-            echo "Running the simulation with the current parameters:"
-            echo "*--------------------------------------------------------------------------------*"
-            echo "Box: ${box[i]}"
-            echo "Cells: $cells"
-            echo "Refinement boxes: $refinement_boxes"
-            echo "Refinement train: $refinement_train"
-            echo "*--------------------------------------------------------------------------------*"
-            # Move to the simulation folder
-            cd /home/meccanica/ecabiati/freight_train_CFD/simulation
-            # Run the simulation with the current parameters
-            qsub train_run_scratch.sh -b ${box[i]} -c $cells -r $refinement_boxes -t $refinement_train
-            mv /global-scratch/ecabiati/simulations/simulation/0.orig /global-scratch/ecabiati/results/box_case_$i
-            mv /global-scratch/ecabiati/simulations/simulation/constant /global-scratch/ecabiati/results/box_case_$i
-            mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/box_case_$i
-            mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/box_case_$i
-            rm -r /global-scratch/ecabiati/simulations/simulation
-            /home/meccanica/ecabiati/freight_train_CFD/simulation/Allclean
-        done
-
-    ''')
 
     # Clean the environment
-    # os.environ["box"] = ""
-    # os.environ["cells"] = ""
-    # os.environ["refinement_boxes"] = ""
-    # os.environ["refinement_train"] = ""
+    for i in range(len(boxes)):
+        os.environ["box_" + str(i)] = ""
+    os.environ["cells"] = ""
+    os.environ["refinement_boxes"] = ""
+    os.environ["refinement_train"] = ""
     # 
     
     # DO ACTUAL OPTIMIZATION HERE
