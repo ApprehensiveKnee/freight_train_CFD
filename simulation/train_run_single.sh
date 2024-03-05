@@ -5,7 +5,7 @@
 #$ -S /bin/bash         # scripting language
 #$ -l h_rt=1:00:00      # jobDuration hh:mm:ss
 #$ -q all.q             # queueName
-#$ -pe mpi 16           # cpuNumber
+#$ -pe mpi 32           # cpuNumber
 
 
 # /----------------------------------------------------------------------------\
@@ -37,7 +37,7 @@ source "/home/meccanica/ecabiati/.openfoam_modules"
 echo "- Preparing the simulation environment..."
 
 # Copy the case to /global-scratch/ecabiati/simulations/ inside a directoty named after the string passed as the first argument to the script
-echo "Copying the case to the global scratch space..."
+echo " - Copying the case to the global scratch space..."
 cp -r "$localDir"/simulation "$scratchDir"
 # Remove the Allrun, Allrun_autoangle and train_run_single.sh files from the simulation directory
 rm -f "$scratchDir"/"$name"/Allrun
