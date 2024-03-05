@@ -286,9 +286,9 @@ def run_box():
     for i in range(len(boxes)):
         box_s = box_string(boxes[i])
         os.environ["box_"+str(i)] = box_s[i]
-    cells_s = cells_string(cells)
-    refinement_boxes_s = refinement_boxes_string(refinement_boxes)
-    refinement_train_s = refinement_train_string(refinement_train)
+    cells_s = cells_string(cells_0)
+    refinement_boxes_s = refinement_boxes_string(refinement_boxes_0)
+    refinement_train_s = refinement_train_string(refinement_train_0)
     # Export the variables to the shell
     os.environ["cells"] = cells_s
     os.environ["refinement_boxes"] = refinement_boxes_s
