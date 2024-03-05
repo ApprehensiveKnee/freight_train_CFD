@@ -299,7 +299,7 @@ def run_box():
         for i in {0..$Ncases}; do
             echo "Running the simulation with the current parameters:"
             echo "*--------------------------------------------------------------------------------*"
-            echo "Box: $box_i"
+            echo "Box: ${box_$i}"
             echo "Cells: $cells"
             echo "Refinement boxes: $refinement_boxes"
             echo "Refinement train: $refinement_train"
@@ -307,7 +307,7 @@ def run_box():
             # Move to the simulation folder
             cd /home/meccanica/ecabiati/freight_train_CFD/simulation
             # Run the simulation with the current parameters
-            qsub train_run_scratch.sh -b $box_i -c $cells -r $refinement_boxes -t $refinement_train
+            qsub train_run_scratch.sh -b {box_$i} -c $cells -r $refinement_boxes -t $refinement_train
             mv /global-scratch/ecabiati/simulations/simulation/0.orig /global-scratch/ecabiati/results/box_case_$i
             mv /global-scratch/ecabiati/simulations/simulation/constant /global-scratch/ecabiati/results/box_case_$i
             mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/box_case_$i
