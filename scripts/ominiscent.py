@@ -35,11 +35,11 @@ import getopt
 
 # Dafault case
 
-box = [(-1., 0, -1.25), (5, 0, -1.25), (5, 1.5, -1.25), (-1., 1.5, -1.25),
+box_0 = [(-1., 0, -1.25), (5, 0, -1.25), (5, 1.5, -1.25), (-1., 1.5, -1.25),
          (-1., 0, 1.25), (5, 0, 1.25), (5, 1.5, 1.25), (-1., 1.5, 1.25)]
-cells = [80, 40, 24]
-refinement_boxes = [["true", 2, (3.5, 0.5, 0.8), -0.7, -0.5],["true", 3, (3., 0.4, 0.65), -0.65, -0.35],["true", 4, (2.6, 0.3, 0.4), -0.55, -0.3],["false", 5 , (2.2, 0.25, 0.35),-0.4 , -0.25]]
-refinement_train = ["false", 0.07, 5]
+cells_0 = [80, 40, 24]
+refinement_boxes_0 = [["true", 2, (3.5, 0.5, 0.8), -0.7, -0.5],["true", 3, (3., 0.4, 0.65), -0.65, -0.35],["true", 4, (2.6, 0.3, 0.4), -0.55, -0.3],["false", 5 , (2.2, 0.25, 0.35),-0.4 , -0.25]]
+refinement_train_0 = ["false", 0.07, 5]
 
 
 
@@ -250,7 +250,7 @@ def test(path_results, path_times):
 
 # Function to run the optimization of the box dimensions based on the use cases defined in the script
 
-def run_optimization_box():
+def run_box():
     print("*----------------------------------------------------------------------------------------*")
     print("*---------------------------------]* OPTIMIZING BOXES *[---------------------------------*")
     print("*----------------------------------------------------------------------------------------*")
@@ -268,15 +268,19 @@ def run_optimization_box():
         run_simulation_cluster(boxes[i], cells, refinement_boxes, refinement_train) 
         # Move the results of the simulation (in '/global-scratch/ecabiati/simulations') to '/global-scratch/ecabiati/results'
         os.system("mv /global-scratch/ecabiati/simulations/simulation/0.orig /global-scratch/ecabiati/results/box_case_" + str(i))
+        os.system("mv /global-scratch/ecabiati/simulations/simulation/constant /global-scratch/ecabiati/results/box_case_" + str(i))
         os.system("mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/box_case_" + str(i))
         os.system("mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/box_case_" + str(i))
-        # Run the allclean script to clean the simulation folder
-        os.system("/global-scratch/ecabiati/simulations/simulation/Allclean")
+        # Remove the simulation folder
+        os.system("rm -r /global-scratch/ecabiati/simulations/simulation")
+        # Run the allclean script to clean the /home/meccanica/ecabiati/freight_train_CFD/simulation folder
+        os.system("/home/meccanica/ecabiati/freight_train_CFD/simulation/Allclean")
+        
     # DO ACTUAL OPTIMIZATION HERE
 
 # Function to run the optimization of the cells dimensions based on the use cases defined in the script
 
-def run_optimization_cells():
+def run_cells():
     print("*----------------------------------------------------------------------------------------*")
     print("*---------------------------------]* OPTIMIZING CELLS *[---------------------------------*")
     print("*----------------------------------------------------------------------------------------*")
@@ -293,16 +297,19 @@ def run_optimization_cells():
         run_simulation_cluster(box, cells[i], refinement_boxes, refinement_train)
         # Move the results of the simulation (in '/global-scratch/ecabiati/simulations') to '/global-scratch/ecabiati/results'
         os.system("mv /global-scratch/ecabiati/simulations/simulation/0.orig /global-scratch/ecabiati/results/cells_case_" + str(i))
+        os.system("mv /global-scratch/ecabiati/simulations/simulation/constant /global-scratch/ecabiati/results/cells_case_" + str(i))
         os.system("mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/cells_case_" + str(i))
         os.system("mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/cells_case_" + str(i))
-        # Run the allclean script to clean the simulation folder
-        os.system("/global-scratch/ecabiati/simulations/simulation/Allclean")
+        # Remove the simulation folder
+        os.system("rm -r /global-scratch/ecabiati/simulations/simulation")
+        # Run the allclean script to clean the /home/meccanica/ecabiati/freight_train_CFD/simulation folder
+        os.system("/home/meccanica/ecabiati/freight_train_CFD/simulation/Allclean")
     # DO ACTUAL OPTIMIZATION HERE
     
 
 # Function to run the optimization of the refinement boxes based on the use cases defined in the script
 
-def run_optimization_refinement_boxes():
+def run_refinement_box():
     print("*----------------------------------------------------------------------------------------*")
     print("*--------------------------]* OPTIMIZING REFINEMENT BOXES *[-----------------------------*")
     print("*----------------------------------------------------------------------------------------*")
@@ -319,17 +326,20 @@ def run_optimization_refinement_boxes():
         run_simulation_cluster(box, cells, refinement_boxes[i], refinement_train)
         # Move the results of the simulation (in '/global-scratch/ecabiati/simulations') to '/global-scratch/ecabiati/results'
         os.system("mv /global-scratch/ecabiati/simulations/simulation/0.orig /global-scratch/ecabiati/results/refinement_boxes_case_" + str(i))
+        os.system("mv /global-scratch/ecabiati/simulations/simulation/constant /global-scratch/ecabiati/results/refinement_boxes_case_" + str(i))
         os.system("mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/refinement_boxes_case_" + str(i))
         os.system("mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/refinement_boxes_case_" + str(i))
-        # Run the allclean script to clean the simulation folder
-        os.system("/global-scratch/ecabiati/simulations/simulation/Allclean")
+        # Remove the simulation folder
+        os.system("rm -r /global-scratch/ecabiati/simulations/simulation")
+        # Run the allclean script to clean the /home/meccanica/ecabiati/freight_train_CFD/simulation folder
+        os.system("/home/meccanica/ecabiati/freight_train_CFD/simulation/Allclean")
     # DO ACTUAL OPTIMIZATION HERE
 
     
 
 # Function to run the optimization of the refinement train based on the use cases defined in the script
         
-def run_optimization_refinement_train():
+def run_refinement_train():
     print("*----------------------------------------------------------------------------------------*")
     print("*--------------------------]* OPTIMIZING REFINEMENT TRAIN *[-----------------------------*")
     print("*----------------------------------------------------------------------------------------*")
@@ -347,10 +357,12 @@ def run_optimization_refinement_train():
         # Move the results of the simulation (in '/global-scratch/ecabiati/simulations') to '/global-scratch/ecabiati/results'
         os.system("mv /global-scratch/ecabiati/simulations/simulation/0.orig /global-scratch/ecabiati/results/refinement_train_case_" + str(i))
         os.system("mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/refinement_train_case_" + str(i))
+        os.system("mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/refinement_train_case_" + str(i))
         os.system("mv /global-scratch/ecabiati/simulations/simulation/logs /global-scratch/ecabiati/results/refinement_train_case_" + str(i))
-        # Run the allclean script to clean the simulation folder
-        os.system("/global-scratch/ecabiati/simulations/simulation/Allclean")
-    # DO ACTUAL OPTIMIZATION HERE
+        # Remove the simulation folder
+        os.system("rm -r /global-scratch/ecabiati/simulations/simulation")
+        # Run the allclean script to clean the /home/meccanica/ecabiati/freight_train_CFD/simulation folder
+        os.system("/home/meccanica/ecabiati/freight_train_CFD/simulation/Allclean")
 
 
 
@@ -358,18 +370,52 @@ def run_optimization_refinement_train():
 # The function will return the best choice for the parameters, based on the trade-off between the computational time and the accuracy of the results
         
 def optimize(optimization_case):
-    if optimization_case == "b":
-        run_optimization_box()
-    elif optimization_case == "c":
-        run_optimization_cells()
-    elif optimization_case == "r":
-        run_optimization_refinement_boxes()
-    elif optimization_case == "t":
-        run_optimization_refinement_train()
+    # Define a list to store the results of the simulations
+    results = []
+    # Define a list to store the times of the simulations
+    times = []
+    # Define a list to store the best choice for the parameters
+    best_choice = []
+    # Run the optimization based on the use cases
+    if optimization_case == "box":
+        run_box()
+    elif optimization_case == "cells":
+        run_cells()
+    elif optimization_case == "refinement_boxes":
+        run_refinement_box()
+    elif optimization_case == "refinement_train":
+        run_refinement_train()
+    # Extract the results and the times of the simulations
+    for i in range(len(use_cases)):
+        # Extract the results
+        Cx, Cx_std = extract_results("/global-scratch/ecabiati/results/" + optimization_case + "_case_" + str(i) + "/postProcessing/forces1/0/force.dat")
+        # Extract the times
+        total_time, mesh_time, foam_time = extract_times("/global-scratch/ecabiati/results/" + optimization_case + "_case_" + str(i) + "/logs/log.time")
+        # Append the results and the times to the lists
+        results.append([Cx, Cx_std])
+        times.append([total_time, mesh_time, foam_time])
+
+    # Choose the best choice for the parameters based on the trade-off between the computational time and the accuracy of the results
+    # For each use case, we define a score which purpouse is to give a measure of the trade-off between the computational time and the accuracy of the results:
+    # - first term of the score: the computational time multiplied by a constant aplha (to be defined)
+    # - second term of the score: the difference between the Cx and a reference value, computed as the mean value of the Cx over all the use cases, weighted by a factor 1 + deltas[i] (1-delta[i] if case = "box")
+    
+    # Define the reference value for the Cx
+    if optimization_case == "box":
+        ref_Cx = sum([results[i][0]*(1-deltas[i]) for i in range(len(results))])/len(results)
     else:
-        print("Invalid optimization case")
-        return
-    # DO ACTUAL OPTIMIZATION HERE
+        ref_Cx = sum([results[i][0]*(1+deltas[i]) for i in range(len(results))])/len(results)
+    
+    alpha = 100
+    # Compute the scores
+    scores = []
+    for i in range(len(results)):
+        scores.append(times[i][0]*alpha + 1/abs(results[i][0] - ref_Cx))
+    
+    # Choose the best choice for the parameters based on the scores
+    best_choice = use_cases[scores.index(min(scores))]
+
+    return best_choice
 # ===============================================================================================================================
 
 # Now parse the options to the python scipt and run the optimization process based on those:
@@ -389,19 +435,21 @@ def optimize(optimization_case):
 #         if opt in ("-b", "--box"):
 #             print("Optimizing the box dimensions")
 #             # Run the optimization of the box dimensions
-#             run_optimization_box()
+#             run_box()
 #         elif opt in ("-c", "--cells"):
 #             print("Optimizing the cells dimensions")
 #             # Run the optimization of the cells dimensions
-#             run_optimization_cells()
+#             run_cells()
 #         elif opt in ("-r", "--refinement_boxes"):
 #             print("Optimizing the refinement boxes")
 #             # Run the optimization of the refinement boxes
-#             run_optimization_refinement_boxes()
+#             run_refinement_box()
 #         elif opt in ("-t", "--refinement_train"):
 #             print("Optimizing the refinement train")
 #             # Run the optimization of the refinement train
 #             run_optimization_refinement_train()
 
-#Calle the test function
-test("/global-scratch/ecabiati/simulations/simulation/postProcessing/forces1/0/force.dat", "/global-scratch/ecabiati/simulations/simulation/logs/log.time")
+# Test run_simulation_cluster
+
+run_simulation_cluster(box_0, cells_0, refinement_boxes_0, refinement_train_0)
+
