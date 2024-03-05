@@ -450,5 +450,5 @@ def optimize(optimization_case):
 
 # Test run_simulation_cluster
 
-run_simulation_cluster(box_0, cells_0, refinement_boxes_0, refinement_train_0)
+run_box()
 
