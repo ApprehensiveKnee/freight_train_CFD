@@ -461,7 +461,8 @@ def optimize(optimization_case):
         scores.append(times[i][0]*alpha + 1/abs(results[i][0] - ref_Cx))
     
     # Choose the best choice for the parameters based on the scores
-    best_choice = use_cases[scores.index(min(scores))]
+    best_choice = scores.index(min(scores))
+    print("The best choice for the parameters is delta = ", deltas[best_choice])
 
     return best_choice
 # ===============================================================================================================================
