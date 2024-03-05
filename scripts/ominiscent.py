@@ -290,7 +290,7 @@ def run_box():
     os.environ["refinement_boxes"] = refinement_boxes_string(refinement_boxes_0)
     os.environ["refinement_train"] = refinement_train_string(refinement_train_0)
     os.system('''
-        for item in "${box[@]}"; do
+        for item in "$\{box[@]\}"; do
             echo $item
         done
     ''')
