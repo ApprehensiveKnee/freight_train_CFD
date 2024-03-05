@@ -292,7 +292,7 @@ def run_box():
     
     # Run the simulation with the current parameters
     os.system('''
-    for i in {0..$Ncases}; do
+    for i in {0.."$Ncases"}; do
         box="box_$i"
         echo "                         <<<<<<< RUNNING BOX CASE n $i >>>>>>>"
         echo "Running the simulation with the current parameters:"
