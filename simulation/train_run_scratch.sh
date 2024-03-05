@@ -26,8 +26,9 @@ process=32
 
 # Define the local directory where the simulation is run
 localDir='/home/meccanica/ecabiati/freight_train_CFD'
-scratchDir='/global-scratch/ecabiati/simulations'
+scratchDir='"$scratchDir"'
 name="simulation"
+case_name="train"
 
 echo "Start Parallel Run":
 
@@ -37,8 +38,8 @@ source "/home/meccanica/ecabiati/.openfoam_modules"
 
 echo "- Preparing the simulation environment..."
 
-# Copy the case to /global-scratch/ecabiati/simulations/ inside a directoty named after the string passed as the first argument to the script
-echo " - Copying the case to the global scratch space..."
+# Copy the case to "$scratchDir"/ inside a directory named after the string passed as the first argument to the script
+echo "- Copying the case to the global scratch space..."
 cp -r "$localDir"/simulation "$scratchDir"
 # Remove the Allrun, Allrun_autoangle and train_run_single.sh files from the simulation directory
 rm -f "$scratchDir"/"$name"/Allrun
@@ -81,7 +82,7 @@ angle_value=0
 gallery_included="false"
 rotated_refinement="false"
 
-OPTSTRING="av:gor:t:b:c:"
+OPTSTRING="n:av:gor:t:b:c:"
 
 # Copy the original refinementParameters_0 (template) file to the refinementParameters file
 cp 0.orig/include/refinementParameters_0 0.orig/include/refinementParameters
@@ -91,6 +92,10 @@ cp 0.orig/include/blockParameters_0 0.orig/include/blockParameters
 # Parse the arguments passed to the script
 while getopts ${OPTSTRING} opt; do
   case $opt in
+    n)
+        # Use this option to later move the simulation results to a directory named after the case name
+        name_case="$OPTARG"
+    ;;
     a) 
         angulation_flag="true"
         echo "The angulation flag is set to: $angulation_flag"
@@ -398,8 +403,25 @@ touch "$scratchDir"/"$name"/train.foam
 
 # Move all the log files to the logs directory
 mv "$scratchDir"/"$name"/log.* "$scratchDir"/"$name"/logs
-
-
 #------------------------------------------------------------------------------
 
-echo "End Parallel Run"
+echo "- End Parallel Run"
+
+# Move the results of the simulation (in '"$scratchDir"/"$name"') to '/global-scratch/ecabiati/results'
+# Create the results directory if it does not exist
+mkdir -p "$scratchDir"/results/
+mkdir -p "$scratchDir"/results/"$name_case"
+
+echo "- Rerouting the results to the results directory and cleaning the simulation directory..."
+
+mv "$scratchDir"/"$name"/0.orig "$scratchDir"/results/"$name_case"
+mv "$scratchDir"/"$name"/constant "$scratchDir"/results/"$name_case"
+mv "$scratchDir"/"$name"/postProcessing "$scratchDir"/results/"$name_case"
+mv "$scratchDir"/"$name"/logs "$scratchDir"/results/"$name_case"
+
+# Remove the simulation folder
+rm -r "$scratchDir"/"$name"
+
+# Run the allclean script to clean the /home/meccanica/ecabiati/freight_train_CFD/simulation folder
+"$localDir"/simulation/Allclean
+
