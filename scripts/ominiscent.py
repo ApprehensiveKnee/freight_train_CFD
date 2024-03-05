@@ -290,15 +290,16 @@ def run_box():
     refinement_boxes_s = refinement_boxes_string(refinement_boxes_0)
     refinement_train_s = refinement_train_string(refinement_train_0)
     # Export the variables to the shell
+    os.environ["Ncases"] = str(len(boxes)-1)
     os.environ["cells"] = cells_s
     os.environ["refinement_boxes"] = refinement_boxes_s
     os.environ["refinement_train"] = refinement_train_s
 
     os.system('''
-        for i in "${!box_@}"; do
+        for i in {0..$Ncases}; do
             echo "Running the simulation with the current parameters:"
             echo "*--------------------------------------------------------------------------------*"
-            echo "Box: ${box[i]}"
+            echo "Box: $box_i"
             echo "Cells: $cells"
             echo "Refinement boxes: $refinement_boxes"
             echo "Refinement train: $refinement_train"
@@ -306,7 +307,7 @@ def run_box():
             # Move to the simulation folder
             cd /home/meccanica/ecabiati/freight_train_CFD/simulation
             # Run the simulation with the current parameters
-            qsub train_run_scratch.sh -b ${box[i]} -c $cells -r $refinement_boxes -t $refinement_train
+            qsub train_run_scratch.sh -b $box_i -c $cells -r $refinement_boxes -t $refinement_train
             mv /global-scratch/ecabiati/simulations/simulation/0.orig /global-scratch/ecabiati/results/box_case_$i
             mv /global-scratch/ecabiati/simulations/simulation/constant /global-scratch/ecabiati/results/box_case_$i
             mv /global-scratch/ecabiati/simulations/simulation/postProcessing /global-scratch/ecabiati/results/box_case_$i
