@@ -365,6 +365,8 @@ def run_refinement_box():
         # Run the simulation with the current parameters
         
         qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $refinement_boxes -b $box -c $cells -r ${!refinement_boxes} -t $refinement_train
+        #Wait for the parsing of the parameters inside the variables to take place
+        sleep 1
     done
     ''')
 
@@ -503,4 +505,3 @@ def optimize(optimization_case):
 # Test run_simulation_cluster
 
 run_box()
-

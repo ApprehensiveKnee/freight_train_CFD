@@ -28,7 +28,7 @@ process=32
 localDir='/home/meccanica/ecabiati/freight_train_CFD'
 scratchDir='/global-scratch/ecabiati/simulations'
 name="simulation"
-case_name="train"
+name_case="train"
 
 echo "Start Parallel Run":
 
