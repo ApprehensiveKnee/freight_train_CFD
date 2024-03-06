@@ -464,9 +464,9 @@ def optimize(optimization_case,use_cases,deltas):
     # Extract the results and the times of the simulations
     for i in range(len(use_cases)):
         # Extract the results
-        Cx, Cx_std = extract_results("/global-scratch/ecabiati/results/" + optimization_case + "_" + str(i) + "/postProcessing/forces1/0/force.dat")
+        Cx, Cx_std = extract_results("/global-scratch/ecabiati/simulations/results/" + optimization_case + "_" + str(i) + "/postProcessing/forces1/0/force.dat")
         # Extract the times
-        total_time, mesh_time, foam_time = extract_times("/global-scratch/ecabiati/results/" + optimization_case + "_" + str(i) + "/logs/log.time")
+        total_time, mesh_time, foam_time = extract_times("/global-scratch/ecabiati/simulations/results/" + optimization_case + "_" + str(i) + "/logs/log.time")
         # Append the results and the times to the lists
         results.append([Cx, Cx_std])
         times.append([total_time, mesh_time, foam_time])
