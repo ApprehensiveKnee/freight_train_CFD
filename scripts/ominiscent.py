@@ -523,7 +523,7 @@ def main(argv):
         elif opt in ("-b", "--batch"):
             print("Running a batch of simulations on the case: ", arg)
             if arg == "box" or arg == "cells" or arg == "refinement_boxes" or arg == "refinement_train":
-                run_cases(arg,boxes[7])
+                run_cases(arg)
             else:
                 print("Invalid case: ", arg, " please choose one of the following cases: box, cells, refinement_boxes, refinement_train")
                 sys.exit(2)
