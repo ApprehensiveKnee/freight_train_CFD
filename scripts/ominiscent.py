@@ -415,8 +415,10 @@ def run_refinement_train(box_0, cells_0, refinement_boxes_0, refinement_train):
 def run_cases(optimization_case):
     # Create the job file to be executed
     os.system("touch /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
+    os.system("chmod +x /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
     # The job file will contain the commands to run the simulations
     os.system("echo \"#!/bin/bash\" >> job_file")
+
     # Run the optimization based on the use cases
     if optimization_case == "box":
         run_box(boxes, cells_0, refinement_boxes_0, refinement_train_0)
