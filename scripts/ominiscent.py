@@ -283,15 +283,6 @@ def run_box():
         echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $box -b ${!box} -c $cells -r $refinement_boxes -t $refinement_train" > job_file
     done     
     ''')
-    # Read each line of the job file and schedule the job
-    with open("job_file", "r") as file:
-        for line in file:
-            # Print the command to be executed
-            print(line)
-            os.system(line)
-    # Remove the job file
-    os.system("rm /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
-
     
     # Clean the environment
     for i in range(len(boxes)):
