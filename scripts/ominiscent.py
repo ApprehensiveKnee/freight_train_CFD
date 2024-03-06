@@ -53,8 +53,9 @@ deltas = [0.3, 0.25, 0.2, 0.1, 0, -0.1, -0.2, -0.25, -0.3]
 boxes = []
 
 for delta in deltas:
-    box_temp = [(-1. + (-1)*delta, 0 , -1.25 + (-1.25)*delta), (5 + 5*delta, 0, -1.25 + (-1.25)*delta), (5 + 5*delta, 1.5 + delta, -1.25 + (-1.25)*delta), (-1. + (-1)*delta, 1.5 + delta, -1.25 + (-1.25)*delta),
-                (-1. + (-1)*delta, 0, 1.25 + 1.25*delta), (5 + 5*delta, 0, 1.25 + 1.25*delta), (5 + 5*delta, 1.5 + delta, 1.25 + 1.25*delta), (-1. + (-1)*delta, 1.5 + delta, 1.25 + 1.25*delta)]
+    box_temp = box_0
+    for i in range(len(box_0)):
+        box_temp[i] = (box_0[i][0] + box_0[i][0]*delta, box_0[i][1] + box_0[i][1]*delta, box_0[i][2] + box_0[i][2]*delta)
     boxes.append(box_temp)
             
 
@@ -63,10 +64,9 @@ for delta in deltas:
 cells = []
 
 for delta in deltas:
-    cells_temp = [80, 40, 24]
-    cells_temp[0] = int(80 + 80*delta)
-    cells_temp[1] = int(40 + 40*delta)
-    cells_temp[2] = int(24 + 24*delta)
+    cells_temp = cells_0
+    for i in range(len(cells_0)):
+        cells_temp[i] = cells_0[i] + cells_0[i]*delta
     cells.append(cells_temp)
 
 # Use case 3: REFINEMENT BOXES
@@ -74,11 +74,11 @@ for delta in deltas:
 refinement_boxes= []
 
 for delta in deltas:
-    refinement_boxes_temp = [["true", 2, (3.5, 0.5, 0.8), -0.7, -0.5],["true", 3, (3., 0.4, 0.65), -0.65, -0.35],["true", 4, (2.6, 0.3, 0.4), -0.55, -0.30],["false", 5 , (2.2, 0.25, 0.35),-0.5 , -0.25]]
-    for i in range(len(refinement_boxes_temp)):
-        refinement_boxes_temp[i][2] = (refinement_boxes_temp[i][2][0] + refinement_boxes_temp[i][2][0]*delta, refinement_boxes_temp[i][2][1] + refinement_boxes_temp[i][2][1]*delta, refinement_boxes_temp[i][2][2] + refinement_boxes_temp[i][2][2]*delta)
-        refinement_boxes_temp[i][3] = refinement_boxes_temp[i][3] + refinement_boxes_temp[i][3]*delta
-        refinement_boxes_temp[i][4] = refinement_boxes_temp[i][4] + refinement_boxes_temp[i][4]*delta
+    refinement_boxes_temp = refinement_boxes_0
+    for i in range(len(refinement_boxes_0)):
+        refinement_boxes_temp[i][2] = (refinement_boxes_0[i][2][0] + refinement_boxes_0[i][2][0]*delta, refinement_boxes_0[i][2][1] + refinement_boxes_0[i][2][1]*delta, refinement_boxes_0[i][2][2] + refinement_boxes_0[i][2][2]*delta)
+        refinement_boxes_temp[i][3] = refinement_boxes_0[i][3] + refinement_boxes_0[i][3]*delta
+        refinement_boxes_temp[i][4] = refinement_boxes_0[i][4] + refinement_boxes_0[i][4]*delta
     refinement_boxes.append(refinement_boxes_temp)
 
 # Use case 4: REFINEMENT TRAIN
@@ -86,8 +86,8 @@ for delta in deltas:
 refinement_train = []
 
 for delta in deltas:
-    refinement_train_temp = ["true", 0.08, 5]
-    refinement_train_temp[1] = refinement_train_temp[1] + refinement_train_temp[1]*delta
+    refinement_train_temp = refinement_train_0
+    refinement_train_temp[1] = refinement_train_0[1] + refinement_train_0[1]*delta
     refinement_train.append(refinement_train_temp)
 
 
