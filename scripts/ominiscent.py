@@ -270,7 +270,7 @@ def run_box():
     
     # Run the simulation with the current parameters
     os.system('''
-    for i in $(seq 0 $Ncases); do
+    for i in $(seq 0 0); do
         box="box_$i"
         echo "                             <<<<<<< RUNNING BOX CASE n $i >>>>>>>"
         echo "Running the simulation with the current parameters:"
@@ -281,10 +281,9 @@ def run_box():
         echo "Refinement train: $refinement_train"
         echo "*--------------------------------------------------------------------------------*"
         # Run the simulation with the current parameters
-        echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $box -b ${!box} -c $cells -r $refinement_boxes -t $refinement_train"
-        qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $box -b ${!box} -c $cells -r $refinement_boxes -t $refinement_train
-        # Wait
-        sleep 10
+        call="qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $cells -b $box -c ${!cells} -r $refinement_boxes -t $refinement_train"
+        echo $call
+        $call
     done
               
 
@@ -327,7 +326,9 @@ def run_cells():
         echo "Refinement train: $refinement_train"
         echo "*--------------------------------------------------------------------------------*"
         # Run the simulation with the current parameters
-        qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $cells -b $box -c ${!cells} -r $refinement_boxes -t $refinement_train
+        call="qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $cells -b $box -c ${!cells} -r $refinement_boxes -t $refinement_train"
+        echo $call
+        $call
         #Wait for the parsing of the parameters inside the variables to take place
         sleep 1
     done
