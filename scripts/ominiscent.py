@@ -56,7 +56,6 @@ for delta in deltas:
     box_temp = box_0
     for i in range(len(box_temp)):
         box_temp[i] = (box_temp[i][0] + box_temp[i][0]*delta, box_temp[i][1] + box_temp[i][1]*delta, box_temp[i][2] + box_temp[i][2]*delta)
-        os.system("echo " + str(box_temp[i]))
     boxes.append(box_temp)
             
 
@@ -488,9 +487,6 @@ def optimize(optimization_case,use_cases,deltas):
 
 # Move to the simulation folder
 os.chdir("/home/meccanica/ecabiati/freight_train_CFD/simulation")
-# Test run_simulation_cluster
-run_cases("box")
-
 
 # The main function shall parse the options ( two options: either run a batch of simulations or optimize the parameters on the 
 # previously run simulations) and call the appropriate functions
@@ -533,3 +529,8 @@ def main(argv):
                 sys.exit(2)
 
             optimize(arg,use_cases,deltas)
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
+
+# ===============================================================================================================================
