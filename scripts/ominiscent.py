@@ -281,7 +281,7 @@ def run_box():
         echo "Refinement train: $refinement_train"
         echo "*--------------------------------------------------------------------------------*"
         # Run the simulation with the current parameters
-        call="qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $cells -b $box -c ${!cells} -r $refinement_boxes -t $refinement_train"
+        call="qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $box -b ${!box} -c $cells -r $refinement_boxes -t $refinement_train"
         echo $call
         $call
     done
