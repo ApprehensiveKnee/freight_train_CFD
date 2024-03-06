@@ -56,6 +56,7 @@ for delta in deltas:
     box_temp = box_0
     for i in range(len(box_temp)):
         box_temp[i] = (box_temp[i][0] + box_temp[i][0]*delta, box_temp[i][1] + box_temp[i][1]*delta, box_temp[i][2] + box_temp[i][2]*delta)
+        os.system("echo " + str(box_temp[i]))
     boxes.append(box_temp)
             
 
