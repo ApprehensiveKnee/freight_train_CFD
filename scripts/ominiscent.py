@@ -252,7 +252,7 @@ def test(path_results, path_times):
 
 # Function to run the optimization of the box dimensions based on the use cases defined in the script
 
-def run_box():
+def run_box(boxes, cells_0, refinement_boxes_0, refinement_train_0):
     os.system('''
     echo "*----------------------------------------------------------------------------------------*"
     echo "*---------------------------------]* OPTIMIZING BOXES *[---------------------------------*"
@@ -293,7 +293,7 @@ def run_box():
 
 # Function to run the optimization of the cells dimensions based on the use cases defined in the script
 
-def run_cells():
+def run_cells(box_0, cells, refinement_boxes_0, refinement_train_0):
     print("*----------------------------------------------------------------------------------------*")
     print("*---------------------------------]* OPTIMIZING CELLS *[---------------------------------*")
     print("*----------------------------------------------------------------------------------------*")
@@ -333,7 +333,7 @@ def run_cells():
     
 
 # Function to run the optimization of the refinement boxes based on the use cases defined in the script
-def run_refinement_box():
+def run_refinement_box(box_0, cells_0, refinement_boxes, refinement_train_0):
     print("*----------------------------------------------------------------------------------------*")
     print("*--------------------------]* OPTIMIZING REFINEMENT BOXES *[-----------------------------*")
     print("*----------------------------------------------------------------------------------------*")
@@ -373,7 +373,7 @@ def run_refinement_box():
 
 # Function to run the optimization of the refinement train based on the use cases defined in the script
         
-def run_refinement_train():
+def run_refinement_train(box_0, cells_0, refinement_boxes_0, refinement_train):
     print("*----------------------------------------------------------------------------------------*")
     print("*--------------------------]* OPTIMIZING REFINEMENT TRAIN *[-----------------------------*")
     print("*----------------------------------------------------------------------------------------*")
@@ -413,27 +413,30 @@ def run_refinement_train():
 # Define the general function to perform the optimization, based on the results of the use cases and their time of execution
 # The function will return the best choice for the parameters, based on the trade-off between the computational time and the accuracy of the results
 def run_cases(optimization_case):
+    # Create the job file to be executed
+    os.system("touch /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
+    # The job file will contain the commands to run the simulations
+    os.system("echo \"#!/bin/bash\" >> job_file")
     # Run the optimization based on the use cases
     if optimization_case == "box":
-        run_box()
+        run_box(boxes, cells_0, refinement_boxes_0, refinement_train_0)
         use_cases = boxes
     elif optimization_case == "cells":
-        run_cells()
+        run_cells(box_0, cells, refinement_boxes_0, refinement_train_0)
         use_cases = cells
     elif optimization_case == "refinement_boxes":
-        run_refinement_box()
+        run_refinement_box(box_0, cells_0, refinement_boxes, refinement_train_0)
         use_cases = refinement_boxes
     elif optimization_case == "refinement_train":
-        run_refinement_train()
+        run_refinement_train(box_0, cells_0, refinement_boxes_0, refinement_train)
         use_cases = refinement_train
-    # Read each line of the job file, print and schedule the job
+    # Exxecute the job file
     os.system('''
-    while read line; do
-        echo "Scheduling the job with the following parameters:"
-        echo $line
-        $line
-    done < job_file
+    /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file
     ''')
+
+    # Delete the job file
+    os.system("rm job_file")
     # Remove the job file
     #os.system("rm /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
     return use_cases
