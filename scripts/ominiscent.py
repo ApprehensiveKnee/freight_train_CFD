@@ -288,13 +288,6 @@ def run_box():
     # Run the simulation with the current parameters
     os.system(''' echo "qsub -N loop -t 1-whatever < job_file"''')
     os.system("qsub -N loop -t 1-" + str(len(boxes)) + " < job_file")
-    # Clean the environment
-    for i in range(len(boxes)):
-        os.environ["box_" + str(i)] = ""
-    os.environ["cells"] = ""
-    os.environ["refinement_boxes"] = ""
-    os.environ["refinement_train"] = ""
-    # 
     
     # DO ACTUAL OPTIMIZATION HERE
 
