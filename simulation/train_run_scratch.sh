@@ -26,7 +26,7 @@ process=32
 
 # Define the local directory where the simulation is run
 localDir='/home/meccanica/ecabiati/freight_train_CFD'
-scratchDir='"$scratchDir"'
+scratchDir='/global-scratch/ecabiati/simulations'
 name="simulation"
 case_name="train"
 
