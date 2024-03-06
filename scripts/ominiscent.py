@@ -270,9 +270,9 @@ def run_box():
     
     # Run the simulation with the current parameters
     os.system('''
-    for i in $(seq 0 0); do
-        box="box_$i"
-        echo "                             <<<<<<< RUNNING BOX CASE n $i >>>>>>>"
+    #for i in $(seq 0 0); do
+        box="box_0"
+        echo "                             <<<<<<< RUNNING BOX CASE n 0 >>>>>>>"
         echo "Running the simulation with the current parameters:"
         echo "*--------------------------------------------------------------------------------*"
         echo "Box: ${!box}"
@@ -282,12 +282,10 @@ def run_box():
         echo "*--------------------------------------------------------------------------------*"
         # Append the command to a job file
         call="qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $box -b ${!box} -c $cells -r $refinement_boxes -t $refinement_train"
-        echo $call >> job_file
-    done     
+        echo $call 
+        $call
+    #done     
     ''')
-    # Run the simulation with the current parameters
-    os.system(''' echo "qsub -N loop -t 1-whatever < job_file"''')
-    os.system("qsub -N loop -t 1-" + str(len(boxes)) + " < job_file")
     
     # DO ACTUAL OPTIMIZATION HERE
 
