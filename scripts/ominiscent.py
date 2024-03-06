@@ -57,6 +57,10 @@ for delta in deltas:
     for i in range(len(box_temp)):
         box_temp[i] = (box_temp[i][0] + box_temp[i][0]*delta, box_temp[i][1] + box_temp[i][1]*delta, box_temp[i][2] + box_temp[i][2]*delta)
     boxes.append(box_temp)
+
+# Print the boxes
+for i in range(len(boxes)):
+    print("Box ", i, ": ", boxes[i])
             
 
 # Use case 2: CELLS
