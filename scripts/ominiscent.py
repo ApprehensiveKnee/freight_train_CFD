@@ -429,7 +429,7 @@ def run_refinement_train(box_0, cells_0, refinement_boxes_0, refinement_train):
 
 # Define the general function to perform the optimization, based on the results of the use cases and their time of execution
 # The function will return the best choice for the parameters, based on the trade-off between the computational time and the accuracy of the results
-def run_cases(optimization_case, box_0, cells_0, refinement_boxes_0, refinement_train_0, boxes = boxes, cells = cells, refinement_boxes= refinement_boxes, refinement_train = refinement_train):
+def run_cases(optimization_case, box_0 = box_0, cells_0 = cells_0, refinement_boxes_0 = refinement_boxes_0, refinement_train_0 = refinement_train_0, boxes = boxes, cells = cells, refinement_boxes= refinement_boxes, refinement_train = refinement_train):
     # Create the job file to be executed
     os.system("touch /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
     os.system("chmod +x /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
@@ -486,6 +486,13 @@ def optimize(optimization_case,use_cases,deltas):
     scores = []
     for i in range(len(results)):
         scores.append(times[i][0]*alpha + 1/abs(results[i][0] - ref_Cx))
+
+    # Print a summary of the scores for the use cases, divided in the two terms of the score: we use a tabular format
+    print("Use case | Time | Cx | First_Term | Second_Term | Score")
+    for i in range(len(results)):
+        print(i, " | ", times[i][0], " | ", results[i][0], " | ", times[i][0]*alpha, " | ", 1/abs(results[i][0] - ref_Cx), " | ", scores[i])
+    
+    
     
     # Choose the best choice for the parameters based on the scores
     best_choice = scores.index(min(scores))
@@ -516,7 +523,7 @@ def main(argv):
         elif opt in ("-b", "--batch"):
             print("Running a batch of simulations on the case: ", arg)
             if arg == "box" or arg == "cells" or arg == "refinement_boxes" or arg == "refinement_train":
-                run_cases(arg)
+                run_cases(arg,boxes[7])
             else:
                 print("Invalid case: ", arg, " please choose one of the following cases: box, cells, refinement_boxes, refinement_train")
                 sys.exit(2)
