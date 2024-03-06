@@ -283,8 +283,8 @@ def run_box():
         # Run the simulation with the current parameters
         echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $box -b ${!box} -c $cells -r $refinement_boxes -t $refinement_train"
         qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $box -b ${!box} -c $cells -r $refinement_boxes -t $refinement_train
-        # Wait for the parsing of the parameters inside the variables to take place
-        sleep 1
+        # Wait
+        sleep 10
     done
               
 
