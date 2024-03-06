@@ -502,6 +502,7 @@ def optimize(optimization_case):
 #             # Run the optimization of the refinement train
 #             run_optimization_refinement_train()
 
+# Move to the simulation folder
+os.chdir("/home/meccanica/ecabiati/freight_train_CFD/simulation")
 # Test run_simulation_cluster
-
 run_box()
