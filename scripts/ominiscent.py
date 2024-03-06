@@ -493,7 +493,7 @@ os.chdir("/home/meccanica/ecabiati/freight_train_CFD/simulation")
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv,"hbco:",["batch","case","optimize="])
+        opts, args = getopt.getopt(argv,"hb:o:",["batch=","optimize="])
     except getopt.GetoptError:
         print("ominiscent.py -b <case> -o <optimize>")
         sys.exit(2)
