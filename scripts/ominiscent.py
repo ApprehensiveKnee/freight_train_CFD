@@ -38,7 +38,7 @@ import getopt
 box_0 = [(-1., 0, -1.25), (5, 0, -1.25), (5, 1.5, -1.25), (-1., 1.5, -1.25),
          (-1., 0, 1.25), (5, 0, 1.25), (5, 1.5, 1.25), (-1., 1.5, 1.25)]
 cells_0 = [80, 40, 24]
-refinement_boxes_0 = [["true", 2, (3.5, 0.5, 0.8), -0.7, -0.5],["true", 3, (3., 0.4, 0.65), -0.65, -0.35],["true", 4, (2.6, 0.3, 0.4), -0.55, -0.3],["false", 5 , (2.2, 0.25, 0.35),-0.4 , -0.25]]
+refinement_boxes_0 = [["true", 2, (3.5, 0.5, 0.9), -0.7, -0.45],["true", 3, (3., 0.4, 0.6), -0.55, -0.3],["true", 4, (2.6, 0.3, 0.4), -0.45, -0.2],["false", 5 , (2.2, 0.25, 0.3),-0.4 ,-0.15]]
 refinement_train_0 = ["false", 0.07, 5]
 
 
@@ -171,6 +171,10 @@ def extract_results(path, angle = 0, velocity = 20):
     theta = angle;  # Angle of attack
     U= velocity;          # Freestream velocity
     p_dyn_f = 0.5*rho*U**2; # Dynamic pressure
+    # If the file is not found, return an error
+    if not os.path.exists(path):
+        print("File:"+ path + " not found")
+        return -1
     #Open up the file and read the lines
     f = open(path, "r")
     lines = f.readlines()
@@ -212,6 +216,10 @@ def extract_results(path, angle = 0, velocity = 20):
 
 # Function to extract the times to perform the simulation on the log.time file 
 def extract_times(path):
+    # If the file is not found, return an error
+    if not os.path.exists(path):
+        print("File:"+ path + " not found")
+        return -1
     # Open the file and read the lines
     f = open(path, "r")
     lines = f.readlines()
@@ -422,26 +430,19 @@ def run_cases(optimization_case):
     # Run the optimization based on the use cases
     if optimization_case == "box":
         run_box(boxes, cells_0, refinement_boxes_0, refinement_train_0)
-        use_cases = boxes
     elif optimization_case == "cells":
         run_cells(box_0, cells, refinement_boxes_0, refinement_train_0)
-        use_cases = cells
     elif optimization_case == "refinement_boxes":
         run_refinement_box(box_0, cells_0, refinement_boxes, refinement_train_0)
-        use_cases = refinement_boxes
     elif optimization_case == "refinement_train":
         run_refinement_train(box_0, cells_0, refinement_boxes_0, refinement_train)
-        use_cases = refinement_train
     # Exxecute the job file
     os.system('''
     /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file
     ''')
 
-    # Delete the job file
-    os.system("rm job_file")
     # Remove the job file
-    #os.system("rm /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
-    return use_cases
+    os.system("rm /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
 
 def optimize(optimization_case,use_cases,deltas):
     # Define a list to store the results of the simulations
@@ -484,38 +485,50 @@ def optimize(optimization_case,use_cases,deltas):
     return best_choice
 # ===============================================================================================================================
 
-# Now parse the options to the python scipt and run the optimization process based on those:
-# -b : optimization of on the box dimensions (based on the use cases defined in the script)
-# -c : optimization of the cells dimensions (based on the use cases defined in the script)
-# -r : optimization of the refinement boxes (based on the use cases defined in the script)
-# -t : optimization of the refinement train (based on the use cases defined in the script)
-    
-#Parse the options
-# def main(argv):
-#     try:
-#         opts, args = getopt.getopt(argv, "b:c:r:t:", ["box=", "cells=", "refinement_boxes=", "refinement_train="])
-#     except getopt.GetoptError:
-#         print("ominiscent.py -b <box> -c <cells> -r <refinement_boxes> -t <refinement_train>")
-#         sys.exit(2)
-#     for opt, arg in opts:
-#         if opt in ("-b", "--box"):
-#             print("Optimizing the box dimensions")
-#             # Run the optimization of the box dimensions
-#             run_box()
-#         elif opt in ("-c", "--cells"):
-#             print("Optimizing the cells dimensions")
-#             # Run the optimization of the cells dimensions
-#             run_cells()
-#         elif opt in ("-r", "--refinement_boxes"):
-#             print("Optimizing the refinement boxes")
-#             # Run the optimization of the refinement boxes
-#             run_refinement_box()
-#         elif opt in ("-t", "--refinement_train"):
-#             print("Optimizing the refinement train")
-#             # Run the optimization of the refinement train
-#             run_optimization_refinement_train()
-
 # Move to the simulation folder
 os.chdir("/home/meccanica/ecabiati/freight_train_CFD/simulation")
 # Test run_simulation_cluster
 run_cases("box")
+
+
+# The main function shall parse the options ( two options: either run a batch of simulations or optimize the parameters on the 
+# previously run simulations) and call the appropriate functions
+
+def main(argv):
+    try:
+        opts, args = getopt.getopt(argv,"hbco:",["batch","case","optimize="])
+    except getopt.GetoptError:
+        print("ominiscent.py -b <case> -o <optimize>")
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print("ominiscent.py -b <case> -o <optimize>")
+            print(" - b <case> : run a batch of simulations for the case <case>")
+            print(" - o <optimize> : optimize the parameters based on the results of the simulations")
+            sys.exit()
+        elif opt in ("-b", "--batch"):
+            print("Running a batch of simulations on the case: ", arg)
+            if arg == "box" or arg == "cells" or arg == "refinement_boxes" or arg == "refinement_train":
+                run_cases(arg)
+            else:
+                print("Invalid case: ", arg, " please choose one of the following cases: box, cells, refinement_boxes, refinement_train")
+                sys.exit(2)
+        elif opt in ("-o", "--optimize"):
+            print("Optimizing the parameters based on the results of the simulations for the case: ", arg)
+            if arg == "box":
+                use_cases = boxes
+                best_choice = optimize(arg,use_cases,deltas)
+            elif arg == "cells":
+                use_cases = cells
+                best_choice = optimize(arg,use_cases,deltas)
+            elif arg == "refinement_boxes":
+                use_cases = refinement_boxes
+                best_choice = optimize(arg,use_cases,deltas)
+            elif arg == "refinement_train":
+                use_cases = refinement_train
+                best_choice = optimize(arg,use_cases,deltas)
+            else:
+                print("Invalid case: ", arg, " please choose one of the following cases: box, cells, refinement_boxes, refinement_train")
+                sys.exit(2)
+
+            optimize(arg,use_cases,deltas)
