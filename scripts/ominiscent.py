@@ -280,7 +280,7 @@ def run_box():
         echo "Refinement train: $refinement_train"
         echo "*--------------------------------------------------------------------------------*"
         # Append the command to a job file
-        echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $box -b ${!box} -c $cells -r $refinement_boxes -t $refinement_train" > job_file
+        echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $box -b ${!box} -c $cells -r $refinement_boxes -t $refinement_train" >> job_file
     done     
     ''')
     
@@ -319,7 +319,7 @@ def run_cells():
         echo "Refinement train: $refinement_train"
         echo "*--------------------------------------------------------------------------------*"
         # Append the command to a job file
-        echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $cells -b $box -c ${!cells} -r $refinement_boxes -t $refinement_train" > job_file
+        echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $cells -b $box -c ${!cells} -r $refinement_boxes -t $refinement_train" >> job_file
     done
     ''')
 
@@ -359,7 +359,7 @@ def run_refinement_box():
         echo "Refinement train: $refinement_train"
         echo "*--------------------------------------------------------------------------------*"
         # Append the command to a job file
-        echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $refinement_boxes -b $box -c $cells -r ${!refinement_boxes} -t $refinement_train" > job_file
+        echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $refinement_boxes -b $box -c $cells -r ${!refinement_boxes} -t $refinement_train" >> job_file
     done
     ''')
 
@@ -399,7 +399,7 @@ def run_refinement_train():
         echo "Refinement train: ${!refinement_train}"
         echo "*--------------------------------------------------------------------------------*"
         # Append the command to a job file
-        echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $refinement_train -b $box -c $cells -r $refinement_boxes -t ${!refinement_train}" > job_file
+        echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $refinement_train -b $box -c $cells -r $refinement_boxes -t ${!refinement_train}" >> job_file
     done
     ''')
 
@@ -431,7 +431,7 @@ def run_cases(optimization_case):
     while read line; do
         echo "Scheduling the job with the following parameters:"
         echo $line
-        eval $line
+        $line
     done < job_file
     ''')
     # Remove the job file
