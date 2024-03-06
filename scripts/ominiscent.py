@@ -282,6 +282,8 @@ def run_box():
         echo "*--------------------------------------------------------------------------------*"
         # Run the simulation with the current parameters
         qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $box -b ${!box} -c $cells -r $refinement_boxes -t $refinement_train
+        # Wait for the parsing of the parameters inside the variables to take place
+        sleep 1
     done
               
 
@@ -324,8 +326,9 @@ def run_cells():
         echo "Refinement train: $refinement_train"
         echo "*--------------------------------------------------------------------------------*"
         # Run the simulation with the current parameters
-
         qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $cells -b $box -c ${!cells} -r $refinement_boxes -t $refinement_train
+        #Wait for the parsing of the parameters inside the variables to take place
+        sleep 1
     done
     ''')
     # Clean the environment
@@ -363,7 +366,6 @@ def run_refinement_box():
         echo "Refinement train: $refinement_train"
         echo "*--------------------------------------------------------------------------------*"
         # Run the simulation with the current parameters
-        
         qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $refinement_boxes -b $box -c $cells -r ${!refinement_boxes} -t $refinement_train
         #Wait for the parsing of the parameters inside the variables to take place
         sleep 1
@@ -409,6 +411,8 @@ def run_refinement_train():
         echo "*--------------------------------------------------------------------------------*"
         # Run the simulation with the current parameters
         qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $refinement_train -b $box -c $cells -r $refinement_boxes -t ${!refinement_train}
+        #Wait for the parsing of the parameters inside the variables to take place
+        sleep 1
     done
     ''')
 
