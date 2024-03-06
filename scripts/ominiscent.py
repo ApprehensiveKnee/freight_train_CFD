@@ -286,8 +286,8 @@ def run_box():
     done     
     ''')
     # Run the simulation with the current parameters
-    os.system(' echo "qsub -N loop -t 0-" + str(len(boxes)-1) + " < job_file"')
-    os.system("qsub -N loop -t 0-" + str(len(boxes)-1) + " < job_file")
+    os.system(''' echo "qsub -N loop -t 1-whatever < job_file"''')
+    os.system("qsub -N loop -t 1-" + str(len(boxes)) + " < job_file")
     # Clean the environment
     for i in range(len(boxes)):
         os.environ["box_" + str(i)] = ""
