@@ -173,7 +173,7 @@ def run_simulation_cluster(box, cells, refinement_boxes, refinement_train, PATH 
 # Function to extract the results of the simulation: the function shall take as input the path to a coefficient.dat file
 # and return the values of the Cx, Cy and Cl coefficients at the end of the simulation
     
-def extract_results(path, angle = 0, velocity = 20):
+def extract_results(path, n_0 = 200, angle = 0, velocity = 20):
     # Define some constants for the computation of the coefficients
     A_ref = 0.00739277;	# Reference area
     rho = 1;        # Air density
@@ -212,7 +212,7 @@ def extract_results(path, angle = 0, velocity = 20):
         Cl.append(Fz[i]/p_dyn_f/A_ref)
         Cd.append(Cx[i]**2 + Cy[i]**2)
     # Select the number of steps to consider for the computation of the mean value of the coefficients
-    n = 100
+    n = n_0
     # Compute the mean value of the coefficients
     Cx_mean = sum(Cx[-n:])/n
     #Cy_mean = sum(Cy[-n:])/n
