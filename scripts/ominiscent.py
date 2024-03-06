@@ -429,12 +429,13 @@ def run_cases(optimization_case):
     # Read each line of the job file, print and schedule the job
     os.system('''
     while read line; do
+        echo "Scheduling the job with the following parameters:"
         echo $line
-        $line
+        eval $line
     done < job_file
     ''')
     # Remove the job file
-    os.system("rm /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
+    #os.system("rm /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
     return use_cases
 
 def optimize(optimization_case,use_cases,deltas):
