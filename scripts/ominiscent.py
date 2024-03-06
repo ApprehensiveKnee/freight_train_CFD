@@ -42,7 +42,6 @@ refinement_boxes_0 = [["true", 2, (3.5, 0.5, 0.8), -0.7, -0.5],["true", 3, (3., 
 refinement_train_0 = ["false", 0.07, 5]
 
 
-
 # =================================================]* USE CASES *[=================================================
 
 deltas = [0.3, 0.25, 0.2, 0.1, 0, -0.1, -0.2, -0.25, -0.3]
@@ -270,7 +269,7 @@ def run_box():
     
     # Run the simulation with the current parameters
     os.system('''
-    for i in $(seq 0 0); do
+    for i in $(seq 0 $Ncases); do
         box="box_$i"
         echo "                             <<<<<<< RUNNING BOX CASE n $i >>>>>>>"
         echo "Running the simulation with the current parameters:"
@@ -294,7 +293,12 @@ def run_box():
     os.system("rm /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
 
     
-    # DO ACTUAL OPTIMIZATION HERE
+    # Clean the environment
+    for i in range(len(boxes)):
+        os.environ["box_" + str(i)] = ""
+    os.environ["cells"] = ""
+    os.environ["refinement_boxes"] = ""
+    os.environ["refinement_train"] = ""
 
 # Function to run the optimization of the cells dimensions based on the use cases defined in the script
 
@@ -323,14 +327,12 @@ def run_cells():
         echo "Refinement boxes: $refinement_boxes"
         echo "Refinement train: $refinement_train"
         echo "*--------------------------------------------------------------------------------*"
-        # Run the simulation with the current parameters
-        call="qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $cells -b $box -c ${!cells} -r $refinement_boxes -t $refinement_train"
-        echo $call
-        $call
-        #Wait for the parsing of the parameters inside the variables to take place
-        sleep 1
+        # Append the command to a job file
+        echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $cells -b $box -c ${!cells} -r $refinement_boxes -t $refinement_train" > job_file
     done
     ''')
+
+
     # Clean the environment
     for i in range(len(cells)):
         os.environ["cells_" + str(i)] = ""
@@ -365,10 +367,8 @@ def run_refinement_box():
         echo "Refinement boxes: ${!refinement_boxes}"
         echo "Refinement train: $refinement_train"
         echo "*--------------------------------------------------------------------------------*"
-        # Run the simulation with the current parameters
-        qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $refinement_boxes -b $box -c $cells -r ${!refinement_boxes} -t $refinement_train
-        #Wait for the parsing of the parameters inside the variables to take place
-        sleep 1
+        # Append the command to a job file
+        echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $refinement_boxes -b $box -c $cells -r ${!refinement_boxes} -t $refinement_train" > job_file
     done
     ''')
 
@@ -378,8 +378,6 @@ def run_refinement_box():
     os.environ["box"] = ""
     os.environ["cells"] = ""
     os.environ["refinement_train"] = ""
-
-
     
 
 # Function to run the optimization of the refinement train based on the use cases defined in the script
@@ -399,7 +397,7 @@ def run_refinement_train():
 
     # Run the simulation with the current parameters
     os.system('''
-    for i in $(seq 0 0); do
+    for i in $(seq 0 $Ncases); do
         refinement_train="refinement_train_$i"
         echo "                             <<<<<<< RUNNING REFINEMENT TRAIN CASE n $i >>>>>>>"
         echo "Running the simulation with the current parameters:"
@@ -409,10 +407,8 @@ def run_refinement_train():
         echo "Refinement boxes: $refinement_boxes"
         echo "Refinement train: ${!refinement_train}"
         echo "*--------------------------------------------------------------------------------*"
-        # Run the simulation with the current parameters
-        
-        qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $refinement_train -b $box -c $cells -r $refinement_boxes -t ${!refinement_train}
-        
+        # Append the command to a job file
+        echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $refinement_train -b $box -c $cells -r $refinement_boxes -t ${!refinement_train}" > job_file
     done
     ''')
 
@@ -425,28 +421,44 @@ def run_refinement_train():
 
 # Define the general function to perform the optimization, based on the results of the use cases and their time of execution
 # The function will return the best choice for the parameters, based on the trade-off between the computational time and the accuracy of the results
-def optimize(optimization_case):
+def run_cases(optimization_case):
+    # Run the optimization based on the use cases
+    if optimization_case == "box":
+        run_box()
+        use_cases = boxes
+    elif optimization_case == "cells":
+        run_cells()
+        use_cases = cells
+    elif optimization_case == "refinement_boxes":
+        run_refinement_box()
+        use_cases = refinement_boxes
+    elif optimization_case == "refinement_train":
+        run_refinement_train()
+        use_cases = refinement_train
+    # Read each line of the job file and schedule the job
+    with open("job_file", "r") as file:
+        for line in file:
+            # Print the command to be executed
+            print(line)
+            os.system(line)
+
+    # Remove the job file
+    os.system("rm /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
+    return use_cases
+
+def optimize(optimization_case,use_cases,deltas):
     # Define a list to store the results of the simulations
     results = []
     # Define a list to store the times of the simulations
     times = []
     # Define a list to store the best choice for the parameters
     best_choice = []
-    # Run the optimization based on the use cases
-    if optimization_case == "box":
-        run_box()
-    elif optimization_case == "cells":
-        run_cells()
-    elif optimization_case == "refinement_boxes":
-        run_refinement_box()
-    elif optimization_case == "refinement_train":
-        run_refinement_train()
     # Extract the results and the times of the simulations
     for i in range(len(use_cases)):
         # Extract the results
-        Cx, Cx_std = extract_results("/global-scratch/ecabiati/results/" + optimization_case + "_case_" + str(i) + "/postProcessing/forces1/0/force.dat")
+        Cx, Cx_std = extract_results("/global-scratch/ecabiati/results/" + optimization_case + "_" + str(i) + "/postProcessing/forces1/0/force.dat")
         # Extract the times
-        total_time, mesh_time, foam_time = extract_times("/global-scratch/ecabiati/results/" + optimization_case + "_case_" + str(i) + "/logs/log.time")
+        total_time, mesh_time, foam_time = extract_times("/global-scratch/ecabiati/results/" + optimization_case + "_" + str(i) + "/logs/log.time")
         # Append the results and the times to the lists
         results.append([Cx, Cx_std])
         times.append([total_time, mesh_time, foam_time])
@@ -509,4 +521,4 @@ def optimize(optimization_case):
 # Move to the simulation folder
 os.chdir("/home/meccanica/ecabiati/freight_train_CFD/simulation")
 # Test run_simulation_cluster
-run_box()
+run_cases("box")
