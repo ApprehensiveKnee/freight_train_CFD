@@ -426,13 +426,13 @@ def run_cases(optimization_case):
     elif optimization_case == "refinement_train":
         run_refinement_train()
         use_cases = refinement_train
-    # Read each line of the job file and schedule the job
-    with open("job_file", "r") as file:
-        for line in file:
-            # Print the command to be executed
-            print(line)
-            os.system(line)
-
+    # Read each line of the job file, print and schedule the job
+    os.system('''
+    while read line; do
+        echo $line
+        $line
+    done < job_file
+    ''')
     # Remove the job file
     os.system("rm /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
     return use_cases
