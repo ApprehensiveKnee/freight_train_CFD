@@ -55,8 +55,7 @@ boxes = []
 for delta in deltas:
     box_temp = []
     for i in range(len(box_0)):
-        box_temp.append((box_0[i][0] + box_0[i][0]*delta, box_0[i][1] + box_0[i][1]*delta, box_0[i][2] + box_0[i][2]*delta))
-    print(box_temp)    
+        box_temp.append((box_0[i][0] + box_0[i][0]*delta, box_0[i][1] + box_0[i][1]*delta, box_0[i][2] + box_0[i][2]*delta))    
     boxes.append(box_temp)
 
 
@@ -430,7 +429,7 @@ def run_refinement_train(box_0, cells_0, refinement_boxes_0, refinement_train):
 
 # Define the general function to perform the optimization, based on the results of the use cases and their time of execution
 # The function will return the best choice for the parameters, based on the trade-off between the computational time and the accuracy of the results
-def run_cases(optimization_case):
+def run_cases(optimization_case, box_0, cells_0, refinement_boxes_0, refinement_train_0, boxes = boxes, cells = cells, refinement_boxes= refinement_boxes, refinement_train = refinement_train):
     # Create the job file to be executed
     os.system("touch /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
     os.system("chmod +x /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
@@ -490,7 +489,8 @@ def optimize(optimization_case,use_cases,deltas):
     
     # Choose the best choice for the parameters based on the scores
     best_choice = scores.index(min(scores))
-    print("The best choice for the parameters is delta = ", deltas[best_choice])
+    print("The best delta is: ", deltas[best_choice])
+    print("The best choice for the choosen parameter is: ", use_cases[best_choice])
 
     return best_choice
 # ===============================================================================================================================
@@ -523,22 +523,16 @@ def main(argv):
         elif opt in ("-o", "--optimize"):
             print("Optimizing the parameters based on the results of the simulations for the case: ", arg)
             if arg == "box":
-                use_cases = boxes
-                best_choice = optimize(arg,use_cases,deltas)
+                best_choice = optimize(arg,boxes,deltas)
             elif arg == "cells":
-                use_cases = cells
-                best_choice = optimize(arg,use_cases,deltas)
+                best_choice = optimize(arg,cells,deltas)
             elif arg == "refinement_boxes":
-                use_cases = refinement_boxes
-                best_choice = optimize(arg,use_cases,deltas)
+                best_choice = optimize(arg,refinement_boxes,deltas)
             elif arg == "refinement_train":
-                use_cases = refinement_train
-                best_choice = optimize(arg,use_cases,deltas)
+                best_choice = optimize(arg,refinement_train,deltas)
             else:
                 print("Invalid case: ", arg, " please choose one of the following cases: box, cells, refinement_boxes, refinement_train")
                 sys.exit(2)
-
-            optimize(arg,use_cases,deltas)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
