@@ -280,14 +280,14 @@ def run_box():
         echo "Refinement boxes: $refinement_boxes"
         echo "Refinement train: $refinement_train"
         echo "*--------------------------------------------------------------------------------*"
-        # Run the simulation with the current parameters
+        # Append the command to a job file
         call="qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $box -b ${!box} -c $cells -r $refinement_boxes -t $refinement_train"
-        echo $call
-        $call
-    done
-              
-
+        echo $call >> job_file
+    done     
     ''')
+    # Run the simulation with the current parameters
+    os.system(' echo "qsub -N loop -t 0-" + str(len(boxes)-1) + " < job_file"')
+    os.system("qsub -N loop -t 0-" + str(len(boxes)-1) + " < job_file")
     # Clean the environment
     for i in range(len(boxes)):
         os.environ["box_" + str(i)] = ""
