@@ -481,7 +481,7 @@ def optimize(optimization_case,use_cases,deltas):
         ref_Cx = sum([results[i][0]*((1-deltas[i])/(len(deltas))) for i in range(len(results))])/len(results)
     else:
         ref_Cx = sum([results[i][0]*((1+deltas[i])/(len(deltas))) for i in range(len(results))])/len(results)
-    
+    print("The reference value for the Cx is: ", ref_Cx)
     # Define the constant alpha
     alpha = 5
 
