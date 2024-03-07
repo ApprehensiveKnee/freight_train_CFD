@@ -462,7 +462,7 @@ def optimize(optimization_case,use_cases,deltas):
     # Define a list to store the best choice for the parameters
     best_choice = []
     # Extract the results and the times of the simulations
-    for i in range(6):
+    for i in range(len(use_cases)):
         # Extract the results
         Cx, Cx_std = extract_results("/global-scratch/ecabiati/simulations/results/" + optimization_case + "_" + str(i) + "/postProcessing/forces1/0/force.dat")
         # Extract the times
@@ -487,13 +487,13 @@ def optimize(optimization_case,use_cases,deltas):
 
     # Compute the scores
     scores = []
-    for i in range(6):
+    for i in range(len(use_cases)):
         scores.append(math.log(times[i][0]) + alpha * abs(results[i][0] - ref_Cx))
 
     # Print a summary of the scores for the use cases, divided in the two terms of the score: we use a tabular format
     # Clip to the 2nd decimal digit
     print("Use case |  Time  | Cx | First_Term | Second_Term | Score")
-    for i in range(6):
+    for i in range(len(use_cases)):
         print(i, "   |", round(times[i][0],2), "|", round(results[i][0],2), "|", round(math.log(times[i][0]),2), "|", round(alpha * abs(results[i][0] - ref_Cx),2), "|", round(scores[i],2))
     
     
