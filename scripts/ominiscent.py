@@ -483,7 +483,7 @@ def optimize(optimization_case,use_cases,deltas):
         ref_Cx = sum([results[i][0]*((1+deltas[i])/(len(deltas))) for i in range(len(results))])/len(results)
     
     # Define the constant alpha
-    alpha = 50
+    alpha = 5
 
     # Compute the scores
     scores = []
