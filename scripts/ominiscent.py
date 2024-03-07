@@ -483,7 +483,7 @@ def optimize(optimization_case,use_cases,deltas):
         ref_Cx = sum([results[i][0]*(1.+deltas[i]) for i in range(len(results))])/sum([1.+deltas[i] for i in range(len(results))])
     print("The reference value for the Cx is: ", ref_Cx)
     # Define the constant alpha
-    alpha = 70
+    alpha = 150
 
     # Compute the scores
     scores = []
