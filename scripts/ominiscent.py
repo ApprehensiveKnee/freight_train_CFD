@@ -494,7 +494,7 @@ def optimize(optimization_case,use_cases,deltas):
     # Clip to the 2nd decimal digit
     print("Use case |  Time  | Cx | First_Term | Second_Term | Score")
     for i in range(6):
-        print(use_cases[i], "   |", round(times[i][0],2), "|", round(results[i][0],2), "|", round(math.log(times[i][0]),2), "|", round(alpha * abs(results[i][0] - ref_Cx),2), "|", round(scores[i],2))
+        print(i, "   |", round(times[i][0],2), "|", round(results[i][0],2), "|", round(math.log(times[i][0]),2), "|", round(alpha * abs(results[i][0] - ref_Cx),2), "|", round(scores[i],2))
     
     
     # Choose the best choice for the parameters based on the scores
