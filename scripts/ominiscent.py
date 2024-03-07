@@ -303,7 +303,7 @@ def run_box(boxes, cells_0, refinement_boxes_0, refinement_train_0):
         echo "Refinement train: $refinement_train"
         echo "*--------------------------------------------------------------------------------*"
         # Append the command to a job file
-        echo "/home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $box -b ${!box} -c $cells -r $refinement_boxes -t $refinement_train" >> job_file
+        echo "qsub /home/meccanica/ecabiati/freight_train_CFD/simulation/train_run_scratch.sh -n $box -b ${!box} -c $cells -r $refinement_boxes -t $refinement_train" >> job_file
     done     
     ''')
     
