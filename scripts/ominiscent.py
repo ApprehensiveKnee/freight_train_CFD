@@ -31,6 +31,7 @@
 import os
 import sys
 import getopt
+import math
 
 
 # Dafault case
@@ -472,26 +473,28 @@ def optimize(optimization_case,use_cases,deltas):
 
     # Choose the best choice for the parameters based on the trade-off between the computational time and the accuracy of the results
     # For each use case, we define a score which purpouse is to give a measure of the trade-off between the computational time and the accuracy of the results:
-    # - first term of the score: the computational time multiplied by a constant aplha (to be defined)
-    # - second term of the score: the difference between the Cx and a reference value, computed as the mean value of the Cx over all the use cases, weighted by a factor 1 + deltas[i] (1-delta[i] if case = "box")
+    # - first term of the score: the computational time multiplied by a constant aplha (to be defined), inverted
+    # - second term of the score: the difference between the Cx and a reference value, computed as the mean value of the Cx over all the use cases, weighted by a factor 1 + deltas[i](1-delta[i] if case = "box")/len(deltas), inverted
     
     # Define the reference value for the Cx
     if optimization_case == "box":
-        ref_Cx = sum([results[i][0]*(1-deltas[i]) for i in range(len(results))])/len(results)
+        ref_Cx = sum([results[i][0]*((1-deltas[i])/(len(deltas))) for i in range(len(results))])/len(results)
     else:
-        ref_Cx = sum([results[i][0]*(1+deltas[i]) for i in range(len(results))])/len(results)
+        ref_Cx = sum([results[i][0]*((1+deltas[i])/(len(deltas))) for i in range(len(results))])/len(results)
     
-    alpha = 0.0005
+    # Define the constant alpha
+    alpha = 50
+
     # Compute the scores
     scores = []
     for i in range(6):
-        scores.append(times[i][0]*alpha + 1/abs(results[i][0] - ref_Cx))
+        scores.append(math.log(times[i][0]) + alpha * abs(results[i][0] - ref_Cx))
 
     # Print a summary of the scores for the use cases, divided in the two terms of the score: we use a tabular format
-    print("Use case | Time | Cx | First_Term | Second_Term | Score")
+    # Clip to the 2nd decimal digit
+    print("Use case |  Time  | Cx | First_Term | Second_Term | Score")
     for i in range(6):
-        print(i, " | ", times[i][0], " | ", results[i][0], " | ", times[i][0]*alpha, " | ", 1/abs(results[i][0] - ref_Cx), " | ", scores[i])
-    
+        print(use_cases[i], "   |", round(times[i][0],2), "|", round(results[i][0],2), "|", round(math.log(times[i][0]),2), "|", round(alpha * abs(results[i][0] - ref_Cx),2), "|", round(scores[i],2))
     
     
     # Choose the best choice for the parameters based on the scores
