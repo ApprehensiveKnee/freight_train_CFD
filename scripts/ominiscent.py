@@ -474,13 +474,13 @@ def optimize(optimization_case,use_cases,deltas):
     # Choose the best choice for the parameters based on the trade-off between the computational time and the accuracy of the results
     # For each use case, we define a score which purpouse is to give a measure of the trade-off between the computational time and the accuracy of the results:
     # - first term of the score: the computational time multiplied by a constant aplha (to be defined), inverted
-    # - second term of the score: the difference between the Cx and a reference value, computed as the mean value of the Cx over all the use cases, weighted by a factor 1 + deltas[i](1-delta[i] if case = "box")/len(deltas), inverted
+    # - second term of the score: the difference between the Cx and a reference value, computed as the mean value of the Cx over all the use cases, weighted by a factor 1 + deltas[i](1-delta[i] if case = "box"), inverted
     
     # Define the reference value for the Cx
     if optimization_case == "box":
-        ref_Cx = sum([results[i][0]*((1-deltas[i])/(len(deltas))) for i in range(len(results))])/len(results)
+        ref_Cx = sum([results[i][0]*(1.-deltas[i]) for i in range(len(results))])/sum([1.-deltas[i] for i in range(len(results))])
     else:
-        ref_Cx = sum([results[i][0]*((1+deltas[i])/(len(deltas))) for i in range(len(results))])/len(results)
+        ref_Cx = sum([results[i][0]*(1.+deltas[i]) for i in range(len(results))])/sum([1.+deltas[i] for i in range(len(results))])
     print("The reference value for the Cx is: ", ref_Cx)
     # Define the constant alpha
     alpha = 5
