@@ -292,7 +292,7 @@ def run_box(boxes, cells_0, refinement_boxes_0, refinement_train_0):
     
     # Run the simulation with the current parameters
     os.system('''
-    for i in $(seq 6 $Ncases); do
+    for i in $(seq 0 $Ncases); do
         box="box_$i"
         echo "                             <<<<<<< RUNNING BOX CASE n $i >>>>>>>"
         echo "Running the simulation with the current parameters:"
