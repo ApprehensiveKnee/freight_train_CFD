@@ -47,7 +47,6 @@ rm -f "$scratchDir"/"$name"/Allrun_autoangle
 rm -f "$scratchDir"/"$name"/train_run_local.sh
 rm -f "$scratchDir"/"$name"/train_run_scratch.sh
 rm -f "$scratchDir"/"$name"/Allclean
-rm -f "$scratchDir"/"$name"/machinefile.*
 rm -f "$scratchDir"/"$name"/freight_train.*
 # Make the constant/triSurface directory if it does not exist
 mkdir -p "$scratchDir"/"$name"/constant/triSurface
@@ -421,7 +420,7 @@ echo "- Rerouting the results to the results directory and cleaning the simulati
 
 mv "$scratchDir"/"$name"/0.orig "$scratchDir"/results/"$name_case"
 mv "$localDir"/simulation/freight_train.* "$scratchDir"/results/"$name_case"
-mv "$localDir"/simulation/machinefile.* "$scratchDir"/results/"$name_case"
+mv "$scratchDir"/"$name"/machinefile.* "$scratchDir"/results/"$name_case"
 mv "$scratchDir"/"$name"/constant "$scratchDir"/results/"$name_case"
 mv "$scratchDir"/"$name"/postProcessing "$scratchDir"/results/"$name_case"
 mv "$scratchDir"/"$name"/logs "$scratchDir"/results/"$name_case"
