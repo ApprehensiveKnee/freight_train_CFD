@@ -24,7 +24,7 @@
 #    - the dimension for a sigle (lower lever) cell
 #    - the number of refinement blocks
 #    - the dimension for the refinement blocks
-#    PLESASE NOTE: the parameters that could be optimized are not limited to the ones listed above. Still, as to keep the
+#    PLEASE NOTE: the parameters that could be optimized are not limited to the ones listed above. Still, as to keep the
 #    complexity of the problem low, we will just consider the optimization to the parameters listed above. Nonetheless, the
 #    structure of the script can be easily extended to consider more parameters.
 #
@@ -179,7 +179,7 @@ def run_simulation_cluster(box, cells, refinement_boxes, refinement_train, PATH 
 # Function to extract the results of the simulation: the function shall take as input the path to a coefficient.dat file
 # and return the values of the Cx, Cy and Cl coefficients at the end of the simulation
     
-def extract_results(path, n_0 = 200, angle = 0, velocity = 20):
+def extract_results(path, n_0 = 150, angle = 0, velocity = 20):
     # Define some constants for the computation of the coefficients
     A_ref = 0.00739277;	# Reference area
     rho = 1;        # Air density
