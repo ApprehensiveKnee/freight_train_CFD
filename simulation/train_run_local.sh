@@ -12,16 +12,7 @@ process=32
 # /----------------------------------------------------------------------------\
 #                             USAGE OF THIS SCRIPT:
 # The script is used to run the simulation. It allows the user to set some parameters
-# to be used in the simulation. These parameters shall be passed as arguments to the script.
-# Parameters:
-# 1. The first parameter is a flag to indicate whether the simulation should be run 
-#   with the train angulated or not. The default value is false.
-# 2. The second parameter is the angle to be used for the simulation. The default value is 0.
-# 3. The third parameter is a flag to indicate whether the gallery should be included in the 
-#   simulation. The default value is false.
-# 4. The fourth parameter is a flag to indicate whether the refinement boxes should be rotated.
-#   The default value is false. This last parameter was added to the script since it would allow
-#   for a better constructed mesh even in the eventuality that the case considered is rotated.
+# to be used in the simulation. 
 # \----------------------------------------------------------------------------/
 
 # Define the local directory where the simulation is run

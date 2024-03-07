@@ -47,6 +47,8 @@ rm -f "$scratchDir"/"$name"/Allrun_autoangle
 rm -f "$scratchDir"/"$name"/train_run_local.sh
 rm -f "$scratchDir"/"$name"/train_run_scratch.sh
 rm -f "$scratchDir"/"$name"/Allclean
+rm -f "$scratchDir"/"$name"/machinefile.*
+rm -f "$scratchDir"/"$name"/freight_train.*
 # Make the constant/triSurface directory if it does not exist
 mkdir -p "$scratchDir"/"$name"/constant/triSurface
 
@@ -385,9 +387,12 @@ mpirun --hostfile machinefile.$JOB_ID -np $process potentialFoam -parallel -writ
 
 mpirun --hostfile machinefile.$JOB_ID -np $process checkMesh -parallel -writeFields '(nonOrthoAngle)' -constant >& "$scratchDir"/"$name"/log.checkMesh
 
+sleep 30 
+
 # Time simpleFoam and append the time to log.time
 start_time=$(date +%s.%N)  # Get the start time in seconds with nanoseconds precision
 mpirun --hostfile machinefile.$JOB_ID -np $process simpleFoam -parallel >& "$scratchDir"/"$name"/log.simpleFoam
+sleep 30
 end_time=$(date +%s.%N)  # Get the end time in seconds with nanoseconds precision
 execution_time=$(echo "$end_time - $start_time" | bc)  # Calculate the execution time
 echo "SimpleFoam_Time: $execution_time" >> "$scratchDir"/"$name"/log.time  # Write the execution time to the log.time file
@@ -399,7 +404,7 @@ reconstructPar -latestTime >& "$scratchDir"/"$name"/log.reconstructPar
 echo "========================================================================"
 
 #Generate the train.foam file
-touch "$scratchDir"/"$name"/train.foam
+#touch "$scratchDir"/"$name"/train.foam
 
 # Move all the log files to the logs directory
 mv "$scratchDir"/"$name"/log.* "$scratchDir"/"$name"/logs
@@ -415,6 +420,8 @@ mkdir -p "$scratchDir"/results/"$name_case"
 echo "- Rerouting the results to the results directory and cleaning the simulation directory..."
 
 mv "$scratchDir"/"$name"/0.orig "$scratchDir"/results/"$name_case"
+mv "$localDir"/simulation/freight_train.* "$scratchDir"/results/"$name_case"
+mv "$localDir"/simulation/machinefile.* "$scratchDir"/results/"$name_case"
 mv "$scratchDir"/"$name"/constant "$scratchDir"/results/"$name_case"
 mv "$scratchDir"/"$name"/postProcessing "$scratchDir"/results/"$name_case"
 mv "$scratchDir"/"$name"/logs "$scratchDir"/results/"$name_case"

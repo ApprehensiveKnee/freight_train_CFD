@@ -10,23 +10,28 @@
 #    and the time required to solve it. In this regard, no gradient-based optimization method will be used, nor end-to-end 
 #    training will be performed, also due to the lack of a proper dataset, i.e a proper solution for each problem/case
 #    explored during the optimization process.
+#    The script will need to be called multiple times, after each bacth of simulations, to perform the optimization of the
+#    chosen parameters. It will then require to modify the standard parameters used to perform the successive simulations to 
+#    to one use case deemed to be the best choice for the parameters.
 #
 #    The optimization of the paramethers, in general, is carried out by plotting the results of the simulations and choosing
 #    best parameters by considering the trade-off between the computational time and the accuracy of the results. The script
-#    will also provide a few plots to show the results of the simulations and the optimization process, while trying to provide
-#    also the best choice for the parameters.
+#    will try to mimic this process by running the simulations and choosing the best parameters based an empirical algorithm
+#    of our choosing.
 #    
 #    The parameters to be optimized are:
 #    - the dimensions of the box (length, width, height)
 #    - the dimension for a sigle (lower lever) cell
 #    - the number of refinement blocks
 #    - the dimension for the refinement blocks
-#    - the rotation/not rotation of the refinment blocks
+#    PLESASE NOTE: the parameters that could be optimized are not limited to the ones listed above. Still, as to keep the
+#    complexity of the problem low, we will just consider the optimization to the parameters listed above. Nonetheless, the
+#    structure of the script can be easily extended to consider more parameters.
 #
 # The general outline for the script it the following: it will run a few simulations by changing a single parameter at a time,
-# while keeping the others fixed. The results of the simulations will be plotted and the best choice for the parameter will be
-# chosen. The process will be repeated for all the parameters to be optimized. To do so, the script will rely on also on the 
-# ./Allrun script
+# while keeping the others fixed. The results for the different simulations will be store and the best choice for the chosed
+# parameter will be derived. The process will be repeated for all the parameters to be optimized. To do so, the script will 
+# rely on also on the parametric ./Allrun script
 
 import os
 import sys
@@ -287,7 +292,7 @@ def run_box(boxes, cells_0, refinement_boxes_0, refinement_train_0):
     
     # Run the simulation with the current parameters
     os.system('''
-    for i in $(seq 0 $Ncases); do
+    for i in $(seq 6 $Ncases); do
         box="box_$i"
         echo "                             <<<<<<< RUNNING BOX CASE n $i >>>>>>>"
         echo "Running the simulation with the current parameters:"
