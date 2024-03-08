@@ -1,0 +1,55 @@
+flowchart-diagram
+
+title Oscent.py
+
+// Define nodes and relationships
+Start [shape: oval, color:orange] > Parse options
+Parse options > Run batch of simulations [icon: play]: batch (-b)
+Parse options > Optimize parameters [icon: sliders]: optimize (-o)
+Run batch of simulations > Choose batch case [shape: diamond]
+Choose batch case > Run box simulations : box
+Choose batch case > Run cells simulations : cells
+Choose batch case > Run refinement boxes simulations: refinement boxes
+Choose batch case > Run refinement train simulations: refinement train
+Choose batch case > Invalid case [shape: oval, icon: x]: else
+Optimize parameters > Choose optimization case [shape: diamond]
+Choose optimization case > Optimize box: box
+Choose optimization case > Optimize cells: cells
+Choose optimization case > Optimize refinement boxes: refinement boxes
+Choose optimization case > Optimize refinement train: refinement train
+Choose optimization case > Invalid optimization case [shape: oval, icon: x]: else
+Run box simulations > Create job file [icon: file, color:orangered]
+Run cells simulations > Create job file
+Run refinement boxes simulations > Create job file
+Run refinement train simulations > Create job file
+Create job file [icon: file, color:orangered] > Call train_run_scratch.sh [ icon: terminal, color:orangered]
+Call train_run_scratch.sh > Launch multiple simulations [icon:flag, color: green]
+Launch multiple simulations > End
+Invalid case > End[shape : oval, color: orange]
+Optimize box > Call optimize() routine[icon:code, color:orangered]
+Optimize cells > Call optimize() routine
+Optimize refinement boxes > Call optimize() routine
+Optimize refinement train > Call optimize() routine
+Call optimize() routine > Return best choice [icon: flag, color: green]
+Return best choice > End
+Invalid optimization case > End
+
+// Define Groups
+Batch of simulations [icon: repeat] {
+  Run box simulations
+  Run cells simulations
+  Run refinement boxes simulations
+  Run refinement train simulations
+  Create job file
+  Call train_run_scratch.sh
+  Launch multiple simulations
+}
+
+Optimization [icon: repeat] {
+  Optimize box
+  Optimize cells
+  Optimize refinement boxes
+  Optimize refinement train
+  Call optimize() routine
+  Return best choice
+}

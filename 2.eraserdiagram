@@ -1,0 +1,51 @@
+flowchart-diagram
+
+
+title train_run_scratch.sh
+
+// Define nodes and relationships
+Start [shape: oval, color:orange] > Importing OpenFOAM on the cluster nodes[icon: server]
+Importing OpenFOAM on the cluster nodes > Preparing the simulation folders [icon: folder]
+Preparing the simulation folders > Parse options and parameters
+Parse options and parameters > Parse name of the case
+Parse options and parameters > Parse angulation flag and angle value
+Parse options and parameters > Parse gallery included flag
+Parse options and parameters > Parse rotated refinement flag
+Parse options and parameters > Parse refinement boxes
+Parse options and parameters > Parse refinement train
+Parse options and parameters > Parse block mesh vertices
+Parse options and parameters > Parse block mesh cells
+Parse block mesh cells > Set default values for missing parameters
+Parse block mesh vertices > Set default values for missing parameters
+Parse refinement train > Set default values for missing parameters
+Parse refinement boxes > Set default values for missing parameters
+Parse rotated refinement flag > Set default values for missing parameters
+Parse gallery included flag > Set default values for missing parameters
+Parse angulation flag and angle value > Set default values for missing parameters
+Parse name of the case > Running the Simulation
+Set default values for missing parameters > Running the Simulation 
+Meshing - Solving - Post processing > End Parallel Run[icon: flag, color:green]
+End Parallel Run > Cleaning up the simulation folders and moving results[icon: trash]
+Cleaning up the simulation folders and moving results > End[shape: oval, color:orange]
+
+End Parallel Run [shape: oval, icon: check]
+
+// Define Groups
+Parameter Parsing [icon: repeat] {
+  Parse options and parameters 
+  Parse angulation flag and angle value 
+  Parse gallery included flag
+  Parse rotated refinement flag
+  Parse refinement boxes 
+  Parse refinement train
+  Parse block mesh vertices 
+  Parse block mesh cells 
+  Set default values for missing parameters [icon: alert-circle]
+  Parse name of the case
+}
+
+Running the Simulation [icon: play] {
+  Meshing[color:orangered]
+  Solving[color:orangered]
+  Post processing 
+}
