@@ -17,6 +17,7 @@ process=32
 
 # Define the local directory where the simulation is run
 localDir='/home/meccanica/ecabiati/freight_train_CFD'
+name_case="train"
 
 echo "Start Parallel Run":
 
@@ -57,7 +58,7 @@ angle_value=0
 gallery_included="false"
 rotated_refinement="false"
 
-OPTSTRING="av:gor:t:b:c:"
+OPTSTRING="n:av:gor:t:b:c:"
 
 # Copy the original refinementParameters_0 (template) file to the refinementParameters file
 cp 0.orig/include/refinementParameters_0 0.orig/include/refinementParameters
@@ -67,6 +68,10 @@ cp 0.orig/include/blockParameters_0 0.orig/include/blockParameters
 # Parse the arguments passed to the script
 while getopts ${OPTSTRING} opt; do
   case $opt in
+    n)
+        # Use this option to later move the simulation results to a directory named after the case name
+        name_case="$OPTARG"
+    ;;
     a) 
         angulation_flag="true"
         echo "The angulation flag is set to: $angulation_flag"
