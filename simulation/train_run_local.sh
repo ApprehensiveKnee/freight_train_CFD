@@ -27,6 +27,9 @@ source "/home/meccanica/ecabiati/.openfoam_modules"
 
 echo "- Preparing the simulation environment..."
 
+# Move to the directory where the simulation is run
+cd "$localDir"/simulation
+
 # Make the constant/triSurface directory if it does not exist
 mkdir -p "$localDir"/simulation/constant/triSurface
 
