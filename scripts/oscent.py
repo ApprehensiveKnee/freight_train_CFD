@@ -486,14 +486,17 @@ def optimize(optimization_case,use_cases,deltas):
     # For each use case, we define a score which purpouse is to give a measure of the trade-off between the computational time and the accuracy of the results:
     # - first term: the logarithm of the total time of the simulation
     # - second term: a measure of the difference between the results and the reference value for the Cx
+    # Define the constant alpha to tilt the trade-off towards the accuracy of the results
+    alpha = 150
+    # Define the constant beta, to shift the attention for the second term of the score to finer meshes
+    beta = 1.3
     # Define the reference value for the Cx
     if optimization_case == "box":
-        ref_Cx = sum([results[i][0]*(1.-deltas[hash_map[i]]) for i in range(len(results))])/sum([1.-deltas[hash_map[i]] for i in range(len(results))])
+        ref_Cx = sum([results[i][0]*(1.-deltas[hash_map[i]]*beta) for i in range(len(results))])/sum([1.-deltas[hash_map[i]]*beta for i in range(len(results))])
     else:
-        ref_Cx = sum([results[i][0]*(1.+deltas[hash_map[i]]) for i in range(len(results))])/sum([1.+deltas[hash_map[i]] for i in range(len(results))])
+        ref_Cx = sum([results[i][0]*(1.+deltas[hash_map[i]]*beta) for i in range(len(results))])/sum([1.+deltas[hash_map[i]]*beta for i in range(len(results))])
     print("The reference value for the Cx is: ", ref_Cx)
-    # Define the constant alpha
-    alpha = 150
+    
 
     # Compute the scores
     scores = []
