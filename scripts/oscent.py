@@ -41,10 +41,10 @@ import math
 
 # Dafault case
 
-box_0 = [(-1., 0, -1.25), (5, 0, -1.25), (5, 1.5, -1.25), (-1., 1.5, -1.25),
-         (-1., 0, 1.25), (5, 0, 1.25), (5, 1.5, 1.25), (-1., 1.5, 1.25)]
-cells_0 = [80, 40, 24]
-refinement_boxes_0 = [["true", 2, (3.5, 0.5, 0.9), -0.7, -0.45],["true", 3, (3., 0.4, 0.6), -0.55, -0.3],["true", 4, (2.6, 0.3, 0.4), -0.45, -0.2],["false", 5 , (2.2, 0.25, 0.3),-0.4 ,-0.15]]
+box_0 = [(-1.27, 0, -1.25), (3.7, 0, -1.25), (3.7, 1.5, -1.25), (-1.27, 1.5, -1.25),
+         (-1.27, 0, 1.25), (3.7, 0, 1.25), (3.7, 1.5, 1.25), (-1.27, 1.5, 1.25)]
+cells_0 = [90, 45, 27]
+refinement_boxes_0 = [["true", 2, (4.1, 0.7, 1.4), -0.77, -0.6],["true", 3, (3.4, 0.5, 0.8), -0.47, -0.4],["true", 4, (2.9, 0.35, 0.5), -0.37, -0.25],["false", 5 , (2.5, 0.2, 0.3),-0.27 ,-0.15]]
 refinement_train_0 = ["false", 0.07, 5]
 
 
@@ -435,7 +435,7 @@ def run_refinement_train(box_0, cells_0, refinement_boxes_0, refinement_train):
 
 # Define the general function to perform the optimization, based on the results of the use cases and their time of execution
 # The function will return the best choice for the parameters, based on the trade-off between the computational time and the accuracy of the results
-def run_cases(optimization_case, box_0 = box_0, cells_0 = cells_0, refinement_boxes_0 = refinement_boxes_0, refinement_train_0 = refinement_train_0, boxes = boxes, cells = cells, refinement_boxes= refinement_boxes, refinement_train = refinement_train):
+def run_cases(optimization_case, box_0 = box_0, cells_0 = cells[opt], refinement_boxes_0 = refinement_boxes_0, refinement_train_0 = refinement_train_0, boxes = boxes, cells = cells, refinement_boxes= refinement_boxes, refinement_train = refinement_train):
     # Create the job file to be executed
     os.system("touch /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
     os.system("chmod +x /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
