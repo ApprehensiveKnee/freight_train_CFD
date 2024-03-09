@@ -435,12 +435,13 @@ def run_refinement_train(box_0, cells_0, refinement_boxes_0, refinement_train):
 
 # Define the general function to perform the optimization, based on the results of the use cases and their time of execution
 # The function will return the best choice for the parameters, based on the trade-off between the computational time and the accuracy of the results
-def run_cases(optimization_case, box_0 = box_0, cells_0 = cells[opt], refinement_boxes_0 = refinement_boxes_0, refinement_train_0 = refinement_train_0, boxes = boxes, cells = cells, refinement_boxes= refinement_boxes, refinement_train = refinement_train):
+def run_cases(optimization_case, box_0 = box_0, cells_0 = cells_0, refinement_boxes_0 = refinement_boxes_0, refinement_train_0 = refinement_train_0, boxes = boxes, cells = cells, refinement_boxes= refinement_boxes, refinement_train = refinement_train):
     # Create the job file to be executed
     os.system("touch /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
     os.system("chmod +x /home/meccanica/ecabiati/freight_train_CFD/simulation/job_file")
     # The job file will contain the commands to run the simulations
     os.system("echo \"#!/bin/bash\" >> job_file")
+    os.system("cd /home/meccanica/ecabiati/freight_train_CFD/simulation")
 
     # Run the optimization based on the use cases
     if optimization_case == "box":
