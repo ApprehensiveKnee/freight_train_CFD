@@ -74,7 +74,7 @@ cells = []
 for delta in deltas:
     cells_temp = []
     for i in range(len(cells_0)):
-        cells_temp.append(cells_0[i] + cells_0[i]*delta)
+        cells_temp.append(cells_0[i] + int(cells_0[i]*delta))
     cells.append(cells_temp)
 
 # Use case 3: REFINEMENT BOXES
