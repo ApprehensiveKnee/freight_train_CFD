@@ -489,7 +489,8 @@ def optimize(optimization_case,use_cases,deltas):
     # Define the constant alpha to tilt the trade-off towards the accuracy of the results
     alpha = 150
     # Define the constant beta, to shift the attention for the second term of the score to finer meshes
-    beta = 1.3
+    # The value of beta should be higher for asymmetric deltas, and close to 1 for symmetric deltas
+    beta = 1.7
     # Define the reference value for the Cx
     if optimization_case == "box":
         ref_Cx = sum([results[i][0]*(1.-deltas[hash_map[i]]*beta) for i in range(len(results))])/sum([1.-deltas[hash_map[i]]*beta for i in range(len(results))])
