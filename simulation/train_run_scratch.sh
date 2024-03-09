@@ -371,9 +371,9 @@ end_time=$(date +%s.%N)  # Get the end time in seconds with nanoseconds precisio
 execution_time=$(echo "$end_time - $start_time" | bc)  # Calculate the execution time
 echo "SnappyHexMesh_Time: $execution_time" >> "$scratchDir"/"$name"/log.time  # Write the execution time to the log.time file
 
-mpirun --hostfile machinefile.$JOB_ID -np $process topoSet -parallel >& "$scratchDir"/"$name"/log.topoSet
+#mpirun --hostfile machinefile.$JOB_ID -np $process topoSet -parallel >& "$scratchDir"/"$name"/log.topoSet
 
-mpirun --hostfile machinefile.$JOB_ID -np $process createPatch -parallel -overwrite >& "$scratchDir"/"$name"/log.createPatch
+#mpirun --hostfile machinefile.$JOB_ID -np $process createPatch -parallel -overwrite >& "$scratchDir"/"$name"/log.createPatch
 
 echo "- Running the simulation..."
 # restore the 0/ directory from the 0.orig/ directory inside each processor directory
@@ -385,6 +385,8 @@ mpirun --hostfile machinefile.$JOB_ID -np $process patchSummary -parallel >& "$s
 mpirun --hostfile machinefile.$JOB_ID -np $process potentialFoam -parallel -writephi >& "$scratchDir"/"$name"/log.potentialFoam
 
 mpirun --hostfile machinefile.$JOB_ID -np $process checkMesh -parallel -writeFields '(nonOrthoAngle)' -constant >& "$scratchDir"/"$name"/log.checkMesh
+
+mpirun --hostfile machinefile.$JOB_ID -np $process renumberMesh -overwrite -parallel >& "$scratchDir"/"$name"/log.renumberMesh
 
 sleep 30 
 

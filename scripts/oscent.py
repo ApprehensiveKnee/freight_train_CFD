@@ -50,7 +50,7 @@ refinement_train_0 = ["false", 0.07, 5]
 
 # =================================================]* USE CASES *[=================================================
 
-deltas = [ 0.1, 0, -0.1, -0.2, -0.3, -0.4, -0.5, -0.6]
+deltas = [ 0.3, 0.2, 0.1, 0, -0.1, -0.2, -0.3, -0.4, -0.5, -0.6]
 # Use case 1: BOXES
 # Define a boxes list with different options for the box coordinates
 # The box coordinates are defined as a list of 8 tuples, each containing the coordinates of a vertex of the box
