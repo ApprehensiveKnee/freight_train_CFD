@@ -189,7 +189,7 @@ def extract_results(path, n_0 = 150, angle = 0, velocity = 20):
     # If the file is not found, return an error
     if not os.path.exists(path):
         print("File:"+ path + " not found")
-        return -1
+        return -1,-1
     #Open up the file and read the lines
     f = open(path, "r")
     lines = f.readlines()
@@ -231,10 +231,10 @@ def extract_results(path, n_0 = 150, angle = 0, velocity = 20):
 
 # Function to extract the times to perform the simulation on the log.time file 
 def extract_times(path):
-    # If the file is not found, return an error
+    # If the file is not found, just skip the computation
     if not os.path.exists(path):
         print("File:"+ path + " not found")
-        return -1
+        return -1,-1,-1
     # Open the file and read the lines
     f = open(path, "r")
     lines = f.readlines()
@@ -467,15 +467,20 @@ def optimize(optimization_case,use_cases,deltas):
     times = []
     # Define a list to store the best choice for the parameters
     best_choice = []
+    # Define a hash map
+    hash_map = []
     # Extract the results and the times of the simulations
     for i in range(len(use_cases)):
+        
         # Extract the results
         Cx, Cx_std = extract_results("/global-scratch/ecabiati/simulations/results/" + optimization_case + "_" + str(i) + "/postProcessing/forces1/0/force.dat")
         # Extract the times
         total_time, mesh_time, foam_time = extract_times("/global-scratch/ecabiati/simulations/results/" + optimization_case + "_" + str(i) + "/logs/log.time")
         # Append the results and the times to the lists
-        results.append([Cx, Cx_std])
-        times.append([total_time, mesh_time, foam_time])
+        if Cx != -1 and Cx_std != -1 and total_time != -1:
+            hash_map.append(i)
+            results.append([Cx, Cx_std])
+            times.append([total_time, mesh_time, foam_time])
 
     # Choose the best choice for the parameters based on the trade-off between the computational time and the accuracy of the results
     # For each use case, we define a score which purpouse is to give a measure of the trade-off between the computational time and the accuracy of the results:
@@ -483,27 +488,27 @@ def optimize(optimization_case,use_cases,deltas):
     # - second term: a measure of the difference between the results and the reference value for the Cx
     # Define the reference value for the Cx
     if optimization_case == "box":
-        ref_Cx = sum([results[i][0]*(1.-deltas[i]) for i in range(len(results))])/sum([1.-deltas[i] for i in range(len(results))])
+        ref_Cx = sum([results[i][0]*(1.-deltas[hash_map[i]]) for i in range(len(results))])/sum([1.-deltas[hash_map[i]] for i in range(len(results))])
     else:
-        ref_Cx = sum([results[i][0]*(1.+deltas[i]) for i in range(len(results))])/sum([1.+deltas[i] for i in range(len(results))])
+        ref_Cx = sum([results[i][0]*(1.+deltas[hash_map[i]]) for i in range(len(results))])/sum([1.+deltas[hash_map[i]] for i in range(len(results))])
     print("The reference value for the Cx is: ", ref_Cx)
     # Define the constant alpha
     alpha = 150
 
     # Compute the scores
     scores = []
-    for i in range(len(use_cases)):
+    for i in range(len(results)):
         scores.append(math.log(times[i][0]) + alpha * abs(results[i][0] - ref_Cx))
 
     # Print a summary of the scores for the use cases, divided in the two terms of the score: we use a tabular format
     # Clip to the 2nd decimal digit
     print("Use case |  Time  | Cx | First_Term | Second_Term | Score")
-    for i in range(len(use_cases)):
-        print(i, "   |", round(times[i][0],2), "|", round(results[i][0],2), "|", round(math.log(times[i][0]),2), "|", round(alpha * abs(results[i][0] - ref_Cx),2), "|", round(scores[i],2))
+    for i in range(len(results)):
+        print(hash_map[i], "   |", round(times[i][0],2), "|", round(results[i][0],2), "|", round(math.log(times[i][0]),2), "|", round(alpha * abs(results[i][0] - ref_Cx),2), "|", round(scores[i],2))
     
     
     # Choose the best choice for the parameters based on the scores
-    best_choice = scores.index(min(scores))
+    best_choice = hash_map[scores.index(min(scores))]
     print("The best delta is: ", deltas[best_choice])
     print("The best choice for the choosen parameter is: ", use_cases[best_choice])
 
