@@ -493,9 +493,9 @@ def optimize(optimization_case,use_cases,deltas):
     beta = 1.7
     # Define the reference value for the Cx
     if optimization_case == "box":
-        ref_Cx = sum([results[i][0]*(1.-deltas[hash_map[i]])*beta for i in range(len(results))])/sum([(1.-deltas[hash_map[i]])*beta for i in range(len(results))])
+        ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta)) for i in range(len(results))])/sum(math.exp(deltas[hash_map[i]]*beta) for i in range(len(results))])
     else:
-        ref_Cx = sum([results[i][0]*(1.+deltas[hash_map[i]])*beta for i in range(len(results))])/sum([(1.+deltas[hash_map[i]])*beta for i in range(len(results))])
+        ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta)) for i in range(len(results))])/sum(math.exp(deltas[hash_map[i]]*beta) for i in range(len(results))])
     print("The reference value for the Cx is: ", ref_Cx)
     
 
