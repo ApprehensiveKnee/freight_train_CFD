@@ -43,8 +43,8 @@ import math
 
 box_0 = [(-1.35, 0, -1.25), (3.65, 0, -1.25), (3.65, 1.5, -1.25), (-1.35, 1.5, -1.25),
          (-1.35, 0, 1.25), (3.65, 0, 1.25), (3.65, 1.5, 1.25), (-1.35, 1.5, 1.25)]
-cells_0 = [90, 45, 27]
-refinement_boxes_0 = [["true", 2, (4.1, 0.7, 1.4), -0.85, -0.6],["true", 3, (3.4, 0.5, 0.8), -0.55, -0.4],["true", 4, (2.9, 0.35, 0.5), -0.45, -0.25],["false", 5 , (2.5, 0.2, 0.3),-0.35 ,-0.15]]
+cells_0 = [90, 27, 45,]
+refinement_boxes_0 = [["true", 2, (4.1, 0.7, 1.2), -0.85, -0.6],["true", 3, (3.4, 0.5, 0.8), -0.55, -0.4],["true", 4, (2.9, 0.35, 0.5), -0.45, -0.25],["false", 5 , (2.5, 0.2, 0.3),-0.35 ,-0.15]]
 refinement_train_0 = ["false", 0.07, 5]
 
 
@@ -74,7 +74,7 @@ cells = []
 for delta in deltas:
     cells_temp = []
     for i in range(len(cells_0)):
-        cells_temp.append(cells_0[i] + int(cells_0[i]*delta))
+        cells_temp.append(cells_0[i] + int(cells_0[0]*delta))
     cells.append(cells_temp)
 
 # Use case 3: REFINEMENT BOXES
