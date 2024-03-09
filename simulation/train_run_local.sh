@@ -39,19 +39,19 @@ mkdir -p "$localDir"/simulation/constant/triSurface
 
 cp -f \
     "$localDir"/objects/box_galleria.stl \
-    /constant/triSurface/
+    "$localDir"/simulation/constant/triSurface/
 
 cp -f \
     "$localDir"/objects/frontInternalWall.stl \
-    /constant/triSurface/   
+    "$localDir"/simulation/constant/triSurface/   
 
 cp -f \
     "$localDir"/objects/backInternalWall.stl \
-    /constant/triSurface/
+    "$localDir"/simulation/constant/triSurface/
 
 cp -f \
     "$localDir"/objects/train.stl \
-    /constant/triSurface/
+    "$localDir"/simulation/constant/triSurface/
 
 
 # ----------------------------* PARAMETER PARSING *--------------------------
