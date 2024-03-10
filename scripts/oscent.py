@@ -168,7 +168,14 @@ def autocorrelation(l):
         c.append(sum([(l[i] - m)*(l[(i+k)%n] - m) for i in range(n)])/sum([(l[i] - m)**2 for i in range(n)]))
     return c
 
-
+# Function to boost importance of successive terms in a list closer in values
+def boost(l):
+    m = mean(l)
+    n = len(l)
+    c = []
+    for k in range(n-1):
+        c.append(math.log(1/(abs(l[k] - l[k+1]))))
+    return c
 
 # Function to call the allrun script given the list of parametersn on local
 def run_simulation_local(box, cells, refinement_boxes, refinement_train, PATH = "../simulation/Allrun"):
@@ -511,14 +518,24 @@ def optimize(optimization_case,use_cases,deltas):
     # Define the constant beta, to shift the attention for the second term of the score to finer meshes
     # The value of beta should be higher for asymmetric deltas, and close to 1 for symmetric deltas
     beta = 15
-    # Compute autocorrelation of the first elements of results
-    succ_c = autocorrelation([results[i][0] for i in range(len(results))])
-    print("The autocorrelation of the results is: ", succ_c)
+    boost_c = boost([results[i][0] for i in range(len(results))])
+
+    print("The autocorrelation of the results is: ", boost_c)
     # Define the reference value for the Cx
-    if optimization_case == "box":
-        ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta*succ_c[i])) for i in range(len(results))])/sum([math.exp(deltas[hash_map[i]]*beta*succ_c[i]) for i in range(len(results))])
-    else:
-        ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta*succ_c[i])) for i in range(len(results))])/sum([math.exp(deltas[hash_map[i]]*beta*succ_c[i]) for i in range(len(results))])
+    #ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta*succ_c[i])) for i in range(len(results))])/sum([math.exp(deltas[hash_map[i]]*beta*succ_c[i]) for i in range(len(results))])
+    for i in range(len(results)):
+        if i != 0 and i != len(results)-1:
+            add = results[i][0]*(math.exp(deltas[hash_map[i]]*beta*((boost_c[i-1]+boost_c[i])/2)))
+            sum = math.exp(deltas[hash_map[i]]*beta*((boost_c[i-1]+boost_c[i])/2))
+        elif i == 0:
+            add = results[i][0]*(math.exp(deltas[hash_map[i]]*beta*boost_c[i]))
+            sum = math.exp(deltas[hash_map[i]]*beta*boost_c[i])
+        elif i == len(results)-1:
+            add = results[i][0]*(math.exp(deltas[hash_map[i]]*beta*boost_c[i-1]))
+            sum = math.exp(deltas[hash_map[i]]*beta*boost_c[i-1])
+        ref_Cx += add
+        sum_ref_Cx += sum
+    ref_Cx = ref_Cx/sum_ref_Cx
     print("The reference value for the Cx is: ", ref_Cx)
     
 
