@@ -487,10 +487,10 @@ def optimize(optimization_case,use_cases,deltas):
     # - first term: the logarithm of the total time of the simulation
     # - second term: a measure of the difference between the results and the reference value for the Cx
     # Define the constant alpha to tilt the trade-off towards the accuracy of the results
-    alpha = 150
+    alpha = 300
     # Define the constant beta, to shift the attention for the second term of the score to finer meshes
     # The value of beta should be higher for asymmetric deltas, and close to 1 for symmetric deltas
-    beta = 1
+    beta = 4
     # Define the reference value for the Cx
     if optimization_case == "box":
         ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta)) for i in range(len(results))])/sum([math.exp(deltas[hash_map[i]]*beta) for i in range(len(results))])
