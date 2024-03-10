@@ -50,7 +50,7 @@ refinement_train_0 = ["false", 0.07, 5]
 
 # =================================================]* USE CASES *[=================================================
 
-deltas = [ 0.3, 0.2, 0.1, 0, -0.1, -0.2, -0.3, -0.4, -0.5, -0.6]
+deltas = [ 0.3, 0.2, 0.1, 0, -0.1, -0.2, -0.3, -0.4, -0.5]
 # Use case 1: BOXES
 # Define a boxes list with different options for the box coordinates
 # The box coordinates are defined as a list of 8 tuples, each containing the coordinates of a vertex of the box
@@ -490,7 +490,7 @@ def optimize(optimization_case,use_cases,deltas):
     alpha = 150
     # Define the constant beta, to shift the attention for the second term of the score to finer meshes
     # The value of beta should be higher for asymmetric deltas, and close to 1 for symmetric deltas
-    beta = 10
+    beta = 2
     # Define the reference value for the Cx
     if optimization_case == "box":
         ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta)) for i in range(len(results))])/sum([math.exp(deltas[hash_map[i]]*beta) for i in range(len(results))])
