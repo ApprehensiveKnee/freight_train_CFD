@@ -513,6 +513,7 @@ def optimize(optimization_case,use_cases,deltas):
     beta = 15
     # Compute autocorrelation of the first elements of results
     succ_c = autocorrelation([results[i][0] for i in range(len(results))])
+    print("The autocorrelation of the results is: ", succ_c)
     # Define the reference value for the Cx
     if optimization_case == "box":
         ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta*succ_c[i])) for i in range(len(results))])/sum([math.exp(deltas[hash_map[i]]*beta*succ_c[i]) for i in range(len(results))])
