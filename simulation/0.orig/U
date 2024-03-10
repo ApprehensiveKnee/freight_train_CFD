@@ -35,7 +35,9 @@ boundaryField
 
     lowerWall
     {
-        type            noSlip;
+        //type            noSlip;
+        type            movingWallVelocity;
+        value           uniform ($x_velocity 0 -$z_velocity);
     }
 
     train
