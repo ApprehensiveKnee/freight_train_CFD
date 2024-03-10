@@ -152,6 +152,7 @@ def cells_string(l):
 
 # Function to return the mean of a list
 def mean(l):
+    print(l)
     return sum(l)/len(l)
 
 # Function to return the standard deviation of a list
