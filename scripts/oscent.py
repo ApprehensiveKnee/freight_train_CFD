@@ -168,12 +168,7 @@ def autocorrelation(l):
         c.append(sum([(l[i] - m)*(l[(i+k)%n] - m) for i in range(n)])/sum([(l[i] - m)**2 for i in range(n)]))
     return c
 
-# Function to compute the correlation between successive elements of a list
-def correlation(l):
-    m = mean(l)
-    n = len(l)
-    c = sum([(l[i] - m)*(l[i+1] - m) for i in range(n-1)])/sum([(l[i] - m)**2 for i in range(n-1)])
-    return c
+
 
 # Function to call the allrun script given the list of parametersn on local
 def run_simulation_local(box, cells, refinement_boxes, refinement_train, PATH = "../simulation/Allrun"):
@@ -516,10 +511,8 @@ def optimize(optimization_case,use_cases,deltas):
     # Define the constant beta, to shift the attention for the second term of the score to finer meshes
     # The value of beta should be higher for asymmetric deltas, and close to 1 for symmetric deltas
     beta = 15
-    # Compute the correlation between successive elements of the results
-    succ_c = correlation(results)
-    # Add a unitary element to the beginning of the list
-    succ_c = [1] + succ_c
+    # Compute autocorrelation of the results
+    succ_c = autocorrelation(results)
     # Define the reference value for the Cx
     if optimization_case == "box":
         ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta*succ_c[i])) for i in range(len(results))])/sum([math.exp(deltas[hash_map[i]]*beta*succ_c[i]) for i in range(len(results))])
