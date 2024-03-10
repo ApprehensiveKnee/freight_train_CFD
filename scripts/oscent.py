@@ -152,7 +152,6 @@ def cells_string(l):
 
 # Function to return the mean of a list
 def mean(l):
-    print(l)
     return sum(l)/len(l)
 
 # Function to return the standard deviation of a list
@@ -512,8 +511,8 @@ def optimize(optimization_case,use_cases,deltas):
     # Define the constant beta, to shift the attention for the second term of the score to finer meshes
     # The value of beta should be higher for asymmetric deltas, and close to 1 for symmetric deltas
     beta = 15
-    # Compute autocorrelation of the results
-    succ_c = autocorrelation(results)
+    # Compute autocorrelation of the first elements of results
+    succ_c = autocorrelation([results[i][0] for i in range(len(results))])
     # Define the reference value for the Cx
     if optimization_case == "box":
         ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta*succ_c[i])) for i in range(len(results))])/sum([math.exp(deltas[hash_map[i]]*beta*succ_c[i]) for i in range(len(results))])
