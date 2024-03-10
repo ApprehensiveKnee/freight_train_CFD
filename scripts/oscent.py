@@ -517,7 +517,7 @@ def optimize(optimization_case,use_cases,deltas):
     alpha = 300
     # Define the constant beta, to shift the attention for the second term of the score to finer meshes
     # The value of beta should be higher for asymmetric deltas, and close to 1 for symmetric deltas
-    beta = 15
+    beta = 5
     boost_c = boost([results[i][0] for i in range(len(results))])
 
     print("The autocorrelation of the results is: ", boost_c)
