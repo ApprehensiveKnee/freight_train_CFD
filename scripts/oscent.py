@@ -174,7 +174,7 @@ def boost(l):
     n = len(l)
     c = []
     for k in range(n-1):
-        c.append(math.log(1/math.pow(abs(l[k] - l[k+1]),0.1)))
+        c.append(math.log(1/math.pow(abs(l[k] - l[k+1]),0.33))**2)
     return c
 
 # Function to call the allrun script given the list of parametersn on local
