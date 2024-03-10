@@ -517,7 +517,7 @@ def optimize(optimization_case,use_cases,deltas):
     alpha = 300
     # Define the constant beta, to shift the attention for the second term of the score to finer meshes
     # The value of beta should be higher for asymmetric deltas, and close to 1 for symmetric deltas
-    beta = 5
+    beta = 1
     boost_c = boost([results[i][0] for i in range(len(results))])
 
     print("The boosting of the results is: ", boost_c)
@@ -525,18 +525,32 @@ def optimize(optimization_case,use_cases,deltas):
     ref_Cx = 0
     sum_ref_Cx = 0 
     #ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta*succ_c[i])) for i in range(len(results))])/sum([math.exp(deltas[hash_map[i]]*beta*succ_c[i]) for i in range(len(results))])
-    for i in range(len(results)):
-        if i != 0 and i != len(results)-1:
-            add = results[i][0]*(math.exp(deltas[hash_map[i]]*beta*((boost_c[i-1]+boost_c[i])/2)))
-            sum = math.exp(deltas[hash_map[i]]*beta*((boost_c[i-1]+boost_c[i])/2))
-        elif i == 0:
-            add = results[i][0]*(math.exp(deltas[hash_map[i]]*beta*boost_c[i]))
-            sum = math.exp(deltas[hash_map[i]]*beta*boost_c[i])
-        elif i == len(results)-1:
-            add = results[i][0]*(math.exp(deltas[hash_map[i]]*beta*boost_c[i-1]))
-            sum = math.exp(deltas[hash_map[i]]*beta*boost_c[i-1])
-        ref_Cx += add
-        sum_ref_Cx += sum
+    if optimization_case == "box":
+        for i in range(len(results)):
+            if i != 0 and i != len(results)-1:
+                add = results[i][0]*(math.exp(-deltas[hash_map[i]]*beta*((boost_c[i-1]+boost_c[i])/2)))
+                sum = math.exp(deltas[hash_map[i]]*beta*((boost_c[i-1]+boost_c[i])/2))
+            elif i == 0:
+                add = results[i][0]*(math.exp(-deltas[hash_map[i]]*beta*boost_c[i]))
+                sum = math.exp(deltas[hash_map[i]]*beta*boost_c[i])
+            elif i == len(results)-1:
+                add = results[i][0]*(math.exp(-deltas[hash_map[i]]*beta*boost_c[i-1]))
+                sum = math.exp(deltas[hash_map[i]]*beta*boost_c[i-1])
+            ref_Cx += add
+            sum_ref_Cx += sum
+    else:
+        for i in range(len(results)):
+            if i != 0 and i != len(results)-1:
+                add = results[i][0]*(math.exp(deltas[hash_map[i]]*beta*((boost_c[i-1]+boost_c[i])/2)))
+                sum = math.exp(deltas[hash_map[i]]*beta*((boost_c[i-1]+boost_c[i])/2))
+            elif i == 0:
+                add = results[i][0]*(math.exp(deltas[hash_map[i]]*beta*boost_c[i]))
+                sum = math.exp(deltas[hash_map[i]]*beta*boost_c[i])
+            elif i == len(results)-1:
+                add = results[i][0]*(math.exp(deltas[hash_map[i]]*beta*boost_c[i-1]))
+                sum = math.exp(deltas[hash_map[i]]*beta*boost_c[i-1])
+            ref_Cx += add
+            sum_ref_Cx += sum
     ref_Cx = ref_Cx/sum_ref_Cx
     print("The reference value for the Cx is: ", ref_Cx)
     
