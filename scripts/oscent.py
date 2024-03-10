@@ -150,6 +150,31 @@ def cells_string(l):
     s += "}\""
     return s
 
+# Function to return the mean of a list
+def mean(l):
+    return sum(l)/len(l)
+
+# Function to return the standard deviation of a list
+def std(l):
+    m = mean(l)
+    return math.sqrt(sum([(l[i] - m)**2 for i in range(len(l))])/len(l))
+
+# Function to return the autocorrelation of a list
+def autocorrelation(l):
+    m = mean(l)
+    n = len(l)
+    c = []
+    for k in range(n):
+        c.append(sum([(l[i] - m)*(l[(i+k)%n] - m) for i in range(n)])/sum([(l[i] - m)**2 for i in range(n)]))
+    return c
+
+# Function to compute the correlation between successive elements of a list
+def correlation(l):
+    m = mean(l)
+    n = len(l)
+    c = sum([(l[i] - m)*(l[i+1] - m) for i in range(n-1)])/sum([(l[i] - m)**2 for i in range(n-1)])
+    return c
+
 # Function to call the allrun script given the list of parametersn on local
 def run_simulation_local(box, cells, refinement_boxes, refinement_train, PATH = "../simulation/Allrun"):
     # Move to the simulation folder
@@ -220,12 +245,12 @@ def extract_results(path, n_0 = 150, angle = 0, velocity = 20):
     # Select the number of steps to consider for the computation of the mean value of the coefficients
     n = n_0
     # Compute the mean value of the coefficients
-    Cx_mean = sum(Cx[-n:])/n
+    Cx_mean = mean(Cx[-n:])
     #Cy_mean = sum(Cy[-n:])/n
     #Cl_mean = sum(Cl[-n:])/n
 
     # Compute the standard deviation of the coefficients
-    Cx_std = sum([(Cx[i] - Cx_mean)**2 for i in range(len(Cx[-n:]))])/n
+    Cx_std = std(Cx[-n:])
     return Cx_mean, Cx_std
     
 
@@ -491,11 +516,15 @@ def optimize(optimization_case,use_cases,deltas):
     # Define the constant beta, to shift the attention for the second term of the score to finer meshes
     # The value of beta should be higher for asymmetric deltas, and close to 1 for symmetric deltas
     beta = 15
+    # Compute the correlation between successive elements of the results
+    succ_c = correlation(results)
+    # Add a unitary element to the beginning of the list
+    succ_c = [1] + succ_c
     # Define the reference value for the Cx
     if optimization_case == "box":
-        ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta)) for i in range(len(results))])/sum([math.exp(deltas[hash_map[i]]*beta) for i in range(len(results))])
+        ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta*succ_c[i])) for i in range(len(results))])/sum([math.exp(deltas[hash_map[i]]*beta*succ_c[i]) for i in range(len(results))])
     else:
-        ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta)) for i in range(len(results))])/sum([math.exp(deltas[hash_map[i]]*beta) for i in range(len(results))])
+        ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta*succ_c[i])) for i in range(len(results))])/sum([math.exp(deltas[hash_map[i]]*beta*succ_c[i]) for i in range(len(results))])
     print("The reference value for the Cx is: ", ref_Cx)
     
 
