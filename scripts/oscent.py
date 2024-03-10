@@ -522,6 +522,8 @@ def optimize(optimization_case,use_cases,deltas):
 
     print("The autocorrelation of the results is: ", boost_c)
     # Define the reference value for the Cx
+    ref_Cx = 0
+    sum_ref_Cx = 0 
     #ref_Cx = sum([results[i][0]*(math.exp(deltas[hash_map[i]]*beta*succ_c[i])) for i in range(len(results))])/sum([math.exp(deltas[hash_map[i]]*beta*succ_c[i]) for i in range(len(results))])
     for i in range(len(results)):
         if i != 0 and i != len(results)-1:
