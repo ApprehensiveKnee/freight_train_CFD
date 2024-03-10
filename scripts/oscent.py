@@ -520,7 +520,7 @@ def optimize(optimization_case,use_cases,deltas):
     beta = 5
     boost_c = boost([results[i][0] for i in range(len(results))])
 
-    print("The autocorrelation of the results is: ", boost_c)
+    print("The boosting of the results is: ", boost_c)
     # Define the reference value for the Cx
     ref_Cx = 0
     sum_ref_Cx = 0 
