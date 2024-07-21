@@ -7,8 +7,10 @@ The directory also features a pyhon script used to automate the optimization pro
 
 
 ![Flow results from one of the simulations](https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/sim3.png)
-![CAD model used during the simulation - sharp](https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/treno_quad_cad.png)
-![CAD model used during the simulation - rounded](https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/treno_smus_cad.png)
+<p float="left">
+  <img src="https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/treno_quad_cad.png" width="100" />
+  <img src="https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/treno_smus_cad.png" width="100" /> 
+</p>
 
 ## Outilne of the code
 The code is centered around two main files in charge of running the whole simulation and optimization process, on the cluster, in an automated manner. These files are:
