@@ -5,11 +5,10 @@ The code has been modified to be hosted and run on a cluster managed by the _[su
 
 The directory also features a pyhon script used to automate the optimization process for the coice of some simple parameters that one would tipically set when running a CFD simulation
 
-
-![Flow results from one of the simulations](https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/sim3.png)
+<img src="https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/sim3.png" width="100" />
 <p float="left">
-  <img src="https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/treno_quad_cad.png" width="800" />
-  <img src="https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/treno_smus_cad.png" width="800" /> 
+  <img src="https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/treno_quad_cad.png" width="400" />
+  <img src="https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/treno_smus_cad.png" width="400" /> 
 </p>
 
 ## Outilne of the code
