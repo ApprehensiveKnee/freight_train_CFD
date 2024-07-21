@@ -8,8 +8,8 @@ The directory also features a pyhon script used to automate the optimization pro
 
 ![Flow results from one of the simulations](https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/sim3.png)
 <p float="left">
-  <img src="https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/treno_quad_cad.png" width="100" />
-  <img src="https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/treno_smus_cad.png" width="100" /> 
+  <img src="https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/treno_quad_cad.png" width="800" />
+  <img src="https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/treno_smus_cad.png" width="800" /> 
 </p>
 
 ## Outilne of the code
