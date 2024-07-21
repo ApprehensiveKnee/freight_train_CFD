@@ -65,7 +65,7 @@ python oscent.py -o ref
 python oscent.py -o train
 
 ```
-<img src="https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/sim1.png" width= 800 align="center"/>
+<img src="https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/sim1.png" width= 1000/>
 
 
 ## The optimization algorithm
