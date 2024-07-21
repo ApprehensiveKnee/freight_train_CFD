@@ -66,6 +66,8 @@ python oscent.py -o train
 
 ```
 
+![](https://github.com/ApprehensiveKnee/freight_train_CFD/blob/master/img/sim1.png)
+
 ## The optimization algorithm
 
 The optimization algorithm was based on a simple method, which proved to be quite effective in practice. In this sense, we shall refer to it as an empirical algorithm. The algorithm is based on the following steps:
